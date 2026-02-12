@@ -1,0 +1,71 @@
+{{- $title := .Title | default .Site.Title -}}
+{{- $description := .Description | default .Site.Params.description -}}
+{{- $url := .Permalink -}}
+{{- $image := .Params.featuredImage | default .Site.Params.logo -}}
+{{- $image = $image | absURL -}}
+
+{{- if .IsPage -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": {{ $title | jsonify }},
+  "description": {{ $description | jsonify }},
+  "image": {{ $image | jsonify }},
+  "url": {{ $url | jsonify }},
+  "datePublished": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  {{- if .Params.lastmod }}
+  "dateModified": {{ .Params.lastmod.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  {{- end }}
+  "author": {
+    "@type": "Person",
+    "name": {{ .Site.Params.author | jsonify }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ .Site.Title | jsonify }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ .Site.Params.logo | absURL | jsonify }}
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ $url | jsonify }}
+  }
+  {{- if .Params.faq }},
+  "faq": [
+    {{- range $i, $faq := .Params.faq }}
+    {{- if $i }},{{- end }}
+    {
+      "@type": "Question",
+      "name": {{ $faq.question | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ $faq.answer | jsonify }}
+      }
+    }
+    {{- end }}
+  ]
+  {{- end }}
+}
+</script>
+{{- else if .IsHome -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": {{ .Site.Title | jsonify }},
+  "description": {{ .Site.Params.description | jsonify }},
+  "url": {{ .Site.BaseURL | jsonify }},
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ .Site.Title | jsonify }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ .Site.Params.logo | absURL | jsonify }}
+    }
+  }
+}
+</script>
+{{- end -}}

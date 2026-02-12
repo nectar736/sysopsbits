@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Firewall on</title><link>/tags/firewall/</link><description>Recent content in Firewall on</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 11 Feb 2026 10:00:00 +0000</lastBuildDate><atom:link href="/tags/firewall/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Set Up a Secure Linux SMB Server with UFW Firewall Rules (Ubuntu 24.04)</title><link>/tutorials/secure-linux-smb-server-ubuntu/</link><pubDate>Wed, 11 Feb 2026 10:00:00 +0000</pubDate><guid>/tutorials/secure-linux-smb-server-ubuntu/</guid><description>&lt;p&gt;SMB (Server Message Block) is the standard protocol for file sharing in Windows networks. This guide walks you through setting up a secure Samba server on Ubuntu 24.04 with proper firewall configuration and security hardening.&lt;/p&gt;
+&lt;h2 id="what-is-smb"&gt;What is SMB?&lt;/h2&gt;
+&lt;p&gt;SMB is a network file sharing protocol that allows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Cross-platform file sharing between Windows, Linux, and macOS&lt;/li&gt;
+&lt;li&gt;Centralized file storage with access controls&lt;/li&gt;
+&lt;li&gt;Print sharing capabilities&lt;/li&gt;
+&lt;li&gt;Active Directory integration (advanced setups)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;When to use SMB:&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>UniFi vs pfSense (2026): Which Firewall &amp; Network Platform Is Better?</title><link>/comparisons/unifi-vs-pfsense-2026/</link><pubDate>Wed, 11 Feb 2026 10:00:00 +0000</pubDate><guid>/comparisons/unifi-vs-pfsense-2026/</guid><description>&lt;p&gt;Choosing between UniFi and pfSense for your network infrastructure is a critical decision that impacts security, performance, and manageability. This comprehensive comparison helps you make the right choice for your specific needs.&lt;/p&gt;
+&lt;h2 id="quick-summary"&gt;Quick Summary&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;UniFi&lt;/strong&gt; excels in unified management, ease of use, and hardware ecosystem integration. &lt;strong&gt;pfSense&lt;/strong&gt; dominates in advanced networking features, customization, and cost-effective security. Your choice depends on whether you prioritize simplicity (UniFi) or advanced capabilities (pfSense).&lt;/p&gt;
+&lt;h2 id="what-is-unifi"&gt;What is UniFi?&lt;/h2&gt;
+&lt;p&gt;UniFi is Ubiquiti&amp;rsquo;s ecosystem of networking products managed through a single controller interface. It includes access points, switches, routers, security gateways, and cameras—all controlled via UniFi Network Application.&lt;/p&gt;</description></item></channel></rss>

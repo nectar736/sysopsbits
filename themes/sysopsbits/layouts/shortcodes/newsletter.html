@@ -1,0 +1,9 @@
+<div class="newsletter-embed">
+    <h3>{{ .Get "title" | default "Get Weekly SysOps Tips" }}</h3>
+    <p>{{ .Get "description" | default "Join 5,000+ sysadmins getting practical infrastructure advice every week." }}</p>
+    <form class="newsletter-form" action="/subscribe" method="post">
+        <input type="email" name="email" placeholder="Enter your email" required>
+        <button type="submit" class="btn btn-primary">{{ .Get "button-text" | default "Subscribe" }}</button>
+    </form>
+    <p class="newsletter-privacy">No spam. Unsubscribe anytime.</p>
+</div>

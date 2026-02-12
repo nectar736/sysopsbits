@@ -1,0 +1,23 @@
+{{- $title := .Get "title" | default "Recommended Tool" -}}
+{{- $description := .Get "description" | default "" -}}
+{{- $url := .Get "url" | default "#" -}}
+{{- $rating := .Get "rating" | default "5" -}}
+{{- $price := .Get "price" | default "" -}}
+{{- $features := .Get "features" | default "" -}}
+
+<div class="product-card">
+    <h3>{{ $title }}</h3>
+    {{ if $description }}<p>{{ $description }}</p>{{ end }}
+    {{ if $price }}<p class="product-price">{{ $price }}</p>{{ end }}
+    <div class="product-rating">
+        {{ range $i := seq $rating }}⭐{{ end }}
+    </div>
+    {{ if $features }}
+    <ul class="product-features">
+        {{ range $features }}
+        <li>{{ . }}</li>
+        {{ end }}
+    </ul>
+    {{ end }}
+    <a href="{{ $url }}" class="btn btn-primary" target="_blank" rel="sponsored">Get Started →</a>
+</div>

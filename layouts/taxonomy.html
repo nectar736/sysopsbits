@@ -1,0 +1,21 @@
+{{ define "main" }}
+<div class="container">
+    <header class="page-header">
+        <h1>{{ .Title }}</h1>
+        {{ if .Content }}
+        <div class="page-description">
+            {{ .Content }}
+        </div>
+        {{ end }}
+    </header>
+
+    <div class="terms-container">
+        {{ range .Data.Terms }}
+        <div class="term-card">
+            <h2><a href="{{ .Page.Permalink }}">{{ .Page.Title }}</a></h2>
+            <span class="term-count">{{ .Count }} {{ if eq .Count 1 }}post{{ else }}posts{{ end }}</span>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

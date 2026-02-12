@@ -1,0 +1,84 @@
+{{ define "main" }}
+<div class="container">
+    <header class="page-header">
+        <h1>{{ .Title }}</h1>
+        {{ if .Content }}
+        <div class="page-description">
+            {{ .Content }}
+        </div>
+        {{ end }}
+    </header>
+
+    <div class="categories-hero">
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number">{{ len .Data.Terms }}</span>
+                <span class="stat-label">Categories</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">{{ .Site.RegularPages.Len }}</span>
+                <span class="stat-label">Total Articles</span>
+            </div>
+        </div>
+        <p class="hero-description">Explore our comprehensive collection of sysops content organized by topic</p>
+    </div>
+
+    <div class="terms-grid">
+        {{ range .Data.Terms }}
+        <div class="category-card">
+            <div class="category-header">
+                <div class="category-icon">
+                    {{ $category := .Page.Title | lower }}
+                    {{ if eq $category "comparisons" }}🔍{{ end }}
+                    {{ if eq $category "tutorials" }}📚{{ end }}
+                    {{ if eq $category "reviews" }}⭐{{ end }}
+                    {{ if eq $category "tools" }}🛠️{{ end }}
+                    {{ if eq $category "posts" }}📝{{ end }}
+                </div>
+                <div class="category-info">
+                    <h2><a href="{{ .Page.Permalink }}">{{ .Page.Title }}</a></h2>
+                    <div class="category-meta">
+                        <span class="post-count">{{ .Count }} {{ if eq .Count 1 }}article{{ else }}articles{{ end }}</span>
+                        <span class="category-trend">
+                            {{ $recent := 0 }}
+                            {{ range first 5 .Data.Pages.ByDate.Reverse }}
+                                {{ if (time .Date).After (now.AddDate 0 -1 0) }}
+                                    {{ $recent = add $recent 1 }}
+                                {{ end }}
+                            {{ end }}
+                            {{ if gt $recent 0 }}<span class="trend-indicator">📈 {{ $recent }} new this month</span>{{ end }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category-preview">
+                {{ if .Page.Params.description }}
+                    <p class="category-description">{{ .Page.Params.description }}</p>
+                {{ else }}
+                    <p class="category-description">Explore our {{ .Page.Title | lower }} section with in-depth guides, reviews, and tutorials.</p>
+                {{ end }}
+                
+                <div class="recent-posts">
+                    <h4>Recent Articles</h4>
+                    <ul>
+                        {{ range first 3 .Data.Pages.ByDate.Reverse }}
+                        <li>
+                            <a href="{{ .Permalink }}">{{ .Title }}</a>
+                            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2" }}</time>
+                        </li>
+                        {{ end }}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="category-footer">
+                <a href="{{ .Page.Permalink }}" class="category-link">
+                    Browse All {{ .Page.Title }} →
+                </a>
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

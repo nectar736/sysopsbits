@@ -1,0 +1,8 @@
+{{ range $name, $taxonomy := .Site.Taxonomies.categories }}
+<li>
+    <a href="{{ $taxonomy.Page.Permalink }}" class="category-nav-link">
+        {{ $taxonomy.Page.Title }}
+        <span class="post-count">({{ $taxonomy.Count }})</span>
+    </a>
+</li>
+{{ end }}

@@ -1,0 +1,15 @@
+<div class="comparison-table">
+    {{ $headers := .Get "headers" | default "Feature,Provider A,Provider B" | split "," }}
+    <table>
+        <thead>
+            <tr>
+                {{ range $headers }}
+                <th>{{ . }}</th>
+                {{ end }}
+            </tr>
+        </thead>
+        <tbody>
+            {{ .Inner }}
+        </tbody>
+    </table>
+</div>

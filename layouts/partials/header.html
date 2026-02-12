@@ -1,0 +1,42 @@
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="site-branding">
+                <a href="{{ "/" | relURL }}" class="site-title">
+                    {{ .Site.Title }}
+                </a>
+                <p class="site-tagline">{{ .Site.Params.tagline }}</p>
+            </div>
+            
+            <nav class="main-nav">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li>
+                        <a href="{{ "/" | relURL }}" {{ if eq .RelPermalink "/" }}class="active"{{ end }}>
+                            Home
+                        </a>
+                    </li>
+                    {{ range $name, $taxonomy := site.Taxonomies.categories }}
+                    <li>
+                        <a href="{{ $taxonomy.Page.Permalink }}" class="category-nav-link">
+                            {{ $taxonomy.Page.Title }}
+                            <span class="post-count">({{ $taxonomy.Count }})</span>
+                        </a>
+                    </li>
+                    {{ end }}
+                    {{ range .Site.Menus.Main }}
+                    <li>
+                        <a href="{{ .URL | relURL }}" {{ if .Page.Active }}class="active"{{ end }}>
+                            {{ .Name }}
+                        </a>
+                    </li>
+                    {{ end }}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>

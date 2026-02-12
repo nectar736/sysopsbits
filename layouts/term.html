@@ -1,0 +1,35 @@
+{{ define "main" }}
+<div class="container">
+    <header class="page-header">
+        <h1>{{ .Title }}</h1>
+        <p class="term-description">
+            {{ .Data.Term | title }} - {{ len .Data.Pages }} {{ if eq (len .Data.Pages) 1 }}post{{ else }}posts{{ end }}
+        </p>
+    </header>
+
+    <div class="posts-grid">
+        {{ range .Data.Pages.ByDate.Reverse }}
+        <article class="post-card">
+            {{ if .Params.featuredImage }}
+            <div class="post-image">
+                <img src="{{ .Params.featuredImage | relURL }}" alt="{{ .Title }}" loading="lazy">
+            </div>
+            {{ end }}
+            <div class="post-content">
+                <div class="post-meta">
+                    {{ range .Params.categories }}
+                    <a href="/categories/{{ . | urlize }}/" class="category">{{ . }}</a>
+                    {{ end }}
+                    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+                </div>
+                <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+                <p>{{ .Summary }}</p>
+                <a href="{{ .Permalink }}" class="read-more">Read More →</a>
+            </div>
+        </article>
+        {{ end }}
+    </div>
+
+    {{ template "_internal/pagination.html" . }}
+</div>
+{{ end }}

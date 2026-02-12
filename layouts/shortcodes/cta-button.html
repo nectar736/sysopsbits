@@ -1,0 +1,7 @@
+{{- $url := .Get "url" | default "#" -}}
+{{- $text := .Get "text" | default "Get Started" -}}
+{{- $class := .Get "class" | default "btn-primary" -}}
+{{- $target := .Get "target" | default "_blank" -}}
+{{- $rel := .Get "rel" | default "sponsored" -}}
+
+<a href="{{ $url }}" class="btn {{ $class }}" target="{{ $target }}" rel="{{ $rel }}">{{ $text }} →</a>
