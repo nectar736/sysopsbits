@@ -5,14 +5,15 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-
+    
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -31,10 +32,12 @@ jobs:
         HUGO_ENVIRONMENT: production
         HUGO_ENABLEGITINFO: true
       run: |
-        hugo \
-          --gc \
-          --minify \
-          --baseURL "https://nectar736.github.io/sysopsbits/"
+        hugo --gc --minify --baseURL "https://nectar736.github.io/sysopsbits/"
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
