@@ -1,4 +1,5 @@
 baseURL = 'https://nectar736.github.io/sysopsbits/'
+canonifyURLs = true
 languageCode = 'en-us'
 title = 'SysOpsBits'
 theme = 'sysopsbits'
@@ -68,3 +69,7 @@ theme = 'sysopsbits'
   page = "/:slug/"
   categories = "/categories/:slug/"
   tags = "/tags/:slug/"
+
+[security]
+  enableCrossOrigin = false
+  enableHSTS = true
