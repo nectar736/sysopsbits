@@ -34,14 +34,10 @@ jobs:
       run: |
         hugo --gc --minify --baseURL "https://nectar736.github.io/sysopsbits/"
 
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./public
-        destination_dir: sysopsbits
+        # Remove destination_dir to deploy to root of gh-pages branch
+        # GitHub Pages will automatically serve from gh-pages branch
