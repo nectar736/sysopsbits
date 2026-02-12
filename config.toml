@@ -1,5 +1,5 @@
 baseURL = 'https://nectar736.github.io/sysopsbits/'
-canonifyURLs = true
+canonifyURLs = false
 languageCode = 'en-us'
 title = 'SysOpsBits'
 theme = 'sysopsbits'
