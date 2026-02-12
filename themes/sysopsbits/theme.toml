@@ -1,7 +1,0 @@
-name = "SysOpsBits"
-license = "MIT"
-description = "Minimal, fast theme for SysOpsBits blog"
-
-[author]
-  name = "John"
-  homepage = "https://sysopsbits.com"

@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Set Up a Secure Linux SMB Server with UFW Firewall Rules (Ubuntu 24.04) - </title>
+    <meta name="description" content="Step-by-step guide to configure a secure Samba SMB server on Ubuntu 24.04 with UFW firewall rules, user authentication, and security hardening.">
+    
+    
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="/tutorials/secure-linux-smb-server-ubuntu/">
+    
+    
+    <meta property="og:title" content="How to Set Up a Secure Linux SMB Server with UFW Firewall Rules (Ubuntu 24.04)">
+    <meta property="og:description" content="Step-by-step guide to configure a secure Samba SMB server on Ubuntu 24.04 with UFW firewall rules, user authentication, and security hardening.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="/tutorials/secure-linux-smb-server-ubuntu/">
+    <meta property="og:site_name" content="">
+    <meta property="og:image" content="/images/secure-linux-smb-server-ubuntu.jpg">
+    
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="">
+    <meta name="twitter:title" content="How to Set Up a Secure Linux SMB Server with UFW Firewall Rules (Ubuntu 24.04)">
+    <meta name="twitter:description" content="Step-by-step guide to configure a secure Samba SMB server on Ubuntu 24.04 with UFW firewall rules, user authentication, and security hardening.">
+    <meta name="twitter:image" content="/images/secure-linux-smb-server-ubuntu.jpg">
+    
+    
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    
+    
+    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+    <div class="site-wrapper">
+        <header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="site-branding">
+                <a href="/" class="site-title">
+                    
+                </a>
+                <p class="site-tagline"></p>
+            </div>
+            
+            <nav class="main-nav">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li>
+                        <a href="/" >
+                            Home
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/comparisons/" class="category-nav-link">
+                            Comparisons
+                            <span class="post-count">(4)</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tools/" class="category-nav-link">
+                            Tools
+                            <span class="post-count">(1)</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tutorials/" class="category-nav-link">
+                            Tutorials
+                            <span class="post-count">(2)</span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+        
+        <main>
+            
+<article class="post">
+    <div class="container">
+        <header class="post-header">
+            <nav class="post-navigation">
+                <a href="/" class="nav-link nav-home">← Home</a>
+                
+                <a href="/categories/tutorials/" class="nav-link nav-category">Tutorials</a>
+                
+            </nav>
+            <div class="post-meta">
+                
+                <a href="/categories/tutorials/" class="category">Tutorials</a>
+                
+                <time datetime="2026-02-11">February 11, 2026</time>
+                
+                <span class="updated">Updated February 11, 2026</span>
+                
+            </div>
+            <h1>How to Set Up a Secure Linux SMB Server with UFW Firewall Rules (Ubuntu 24.04)</h1>
+            
+            <div class="post-featured-image">
+                <img src="/images/secure-linux-smb-server-ubuntu.jpg" alt="How to Set Up a Secure Linux SMB Server with UFW Firewall Rules (Ubuntu 24.04)" loading="lazy">
+            </div>
+            
+        </header>
+
+        <div class="post-content">
+            
+
+            <p>SMB (Server Message Block) is the standard protocol for file sharing in Windows networks. This guide walks you through setting up a secure Samba server on Ubuntu 24.04 with proper firewall configuration and security hardening.</p>
+<h2 id="what-is-smb">What is SMB?</h2>
+<p>SMB is a network file sharing protocol that allows:</p>
+<ul>
+<li>Cross-platform file sharing between Windows, Linux, and macOS</li>
+<li>Centralized file storage with access controls</li>
+<li>Print sharing capabilities</li>
+<li>Active Directory integration (advanced setups)</li>
+</ul>
+<p><strong>When to use SMB:</strong></p>
+<ul>
+<li>Office file sharing with Windows clients</li>
+<li>Centralized storage for mixed OS environments</li>
+<li>Replacing Windows File Server with Linux</li>
+<li>Home media sharing across devices</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Ubuntu 24.04 server with sudo access</li>
+<li>Static IP address configured</li>
+<li>At least 10GB free disk space for shares</li>
+<li>Network access for client machines</li>
+</ul>
+<h2 id="step-1-install-samba">Step 1: Install Samba</h2>
+<p>Update your system and install Samba packages:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt update
+</span></span><span style="display:flex;"><span>sudo apt upgrade -y
+</span></span><span style="display:flex;"><span>sudo apt install samba samba-common-bin -y
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Verify the installation:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>smbd --version
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Should output: Version 4.19.5-Ubuntu</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="step-2-create-shared-directory">Step 2: Create Shared Directory</h2>
+<p>Create the main share directory with proper permissions:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create base shares directory</span>
+</span></span><span style="display:flex;"><span>sudo mkdir -p /srv/samba/shares
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create specific share directories</span>
+</span></span><span style="display:flex;"><span>sudo mkdir -p /srv/samba/shares/public
+</span></span><span style="display:flex;"><span>sudo mkdir -p /srv/samba/shares/secure
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Set ownership to root (will be configured per-share)</span>
+</span></span><span style="display:flex;"><span>sudo chown root:root /srv/samba/shares
+</span></span><span style="display:flex;"><span>sudo chmod <span style="color:#a5d6ff">755</span> /srv/samba/shares
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="step-3-configure-smbconf">Step 3: Configure smb.conf</h2>
+<p>Back up the original configuration and create a secure setup:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
+</span></span><span style="display:flex;"><span>sudo nano /etc/samba/smb.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Replace the contents with this secure configuration:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">42
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">43
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">44
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">45
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">46
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">47
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">48
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">49
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">50
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">51
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">52
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">53
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">54
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">55
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">56
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">57
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">58
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">59
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">60
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">61
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">62
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">63
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">64
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">65
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#ff7b72">[global]</span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Basic server settings</span>
+</span></span><span style="display:flex;"><span>   workgroup <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">WORKGROUP
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   server string = %h server (Samba, Ubuntu)
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   server role = standalone server
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   map to guest = Bad User
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   obey pam restrictions = Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   pam password change = Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   passwd program = /usr/bin/passwd %u
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   unix password sync = Yes</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Security settings</span>
+</span></span><span style="display:flex;"><span>   security <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">user
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   passdb backend = tdbsam
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   guest account = nobody
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   usershare allow guests = No</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Network interfaces (bind to specific interface)</span>
+</span></span><span style="display:flex;"><span>   interfaces <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">192.168.1.10/24 127.0.0.1/8
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   bind interfaces only = Yes</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Performance tuning</span>
+</span></span><span style="display:flex;"><span>   socket options <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">TCP_NODELAY IPTOS_LOWDELAY SO_KEEPALIVE
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   use sendfile = Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   write cache size = 262144</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Logging</span>
+</span></span><span style="display:flex;"><span>   log file <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">/var/log/samba/log.%m
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   max log size = 1000
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   syslog = 0
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   panic action = /usr/share/samba/panic-action %d</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Name resolution</span>
+</span></span><span style="display:flex;"><span>   dns proxy <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">No
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   wins support = No</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Disable vulnerable SMBv1</span>
+</span></span><span style="display:flex;"><span>   min protocol <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">SMB2_10
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   max protocol = SMB3_11</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Share definitions</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">[public]</span>
+</span></span><span style="display:flex;"><span>   comment <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">Public Share - Read Only
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   path = /srv/samba/shares/public
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   browseable = Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   guest ok = Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   read only = Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   create mask = 0644
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   directory mask = 0755
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   force user = nobody
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   force group = nogroup</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">[secure]</span>
+</span></span><span style="display:flex;"><span>   comment <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">Secure Share - Authenticated Users Only
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   path = /srv/samba/shares/secure
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   browseable = Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   guest ok = No
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   read only = No
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   create mask = 0660
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   directory mask = 0770
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   valid users = @smbusers
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   write list = @smbusers
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   veto files = /.*/lost+found/
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   delete veto files = Yes</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Save and exit (Ctrl+X, Y, Enter).</p>
+<h2 id="step-4-create-samba-users">Step 4: Create Samba Users</h2>
+<p>Create a dedicated group for SMB users and add users:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">19
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create SMB users group</span>
+</span></span><span style="display:flex;"><span>sudo groupadd smbusers
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create a new system user for SMB (replace with actual username)</span>
+</span></span><span style="display:flex;"><span>sudo useradd -m -s /usr/sbin/nologin smbuser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Add user to smbusers group</span>
+</span></span><span style="display:flex;"><span>sudo usermod -aG smbusers smbuser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create Samba password for the user</span>
+</span></span><span style="display:flex;"><span>sudo smbpasswd -a smbuser
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># You&#39;ll be prompted to enter and confirm the password</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Enable the user in Samba</span>
+</span></span><span style="display:flex;"><span>sudo smbpasswd -e smbuser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># For existing users, just add them to the group and create SMB password</span>
+</span></span><span style="display:flex;"><span>sudo usermod -aG smbusers your_existing_user
+</span></span><span style="display:flex;"><span>sudo smbpasswd -a your_existing_user
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Set permissions for the secure share:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Set ownership for secure share</span>
+</span></span><span style="display:flex;"><span>sudo chown -R root:smbusers /srv/samba/shares/secure
+</span></span><span style="display:flex;"><span>sudo chmod -R <span style="color:#a5d6ff">2770</span> /srv/samba/shares/secure
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Set permissions for public share</span>
+</span></span><span style="display:flex;"><span>sudo chown -R nobody:nogroup /srv/samba/shares/public
+</span></span><span style="display:flex;"><span>sudo chmod -R <span style="color:#a5d6ff">755</span> /srv/samba/shares/public
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create test files</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;This is a public read-only file&#34;</span> | sudo tee /srv/samba/shares/public/readme.txt
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;This is a secure shared file&#34;</span> | sudo tee /srv/samba/shares/secure/welcome.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="step-5-configure-ufw-firewall-rules">Step 5: Configure UFW Firewall Rules</h2>
+<p>Set up firewall rules to restrict SMB traffic to your local network only:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># First, allow SSH if not already allowed</span>
+</span></span><span style="display:flex;"><span>sudo ufw allow ssh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Allow Samba ports from your local subnet only</span>
+</span></span><span style="display:flex;"><span>sudo ufw allow from 192.168.1.0/24 to any port <span style="color:#a5d6ff">137</span> comment <span style="color:#a5d6ff">&#34;SMB Name Service (UDP)&#34;</span>
+</span></span><span style="display:flex;"><span>sudo ufw allow from 192.168.1.0/24 to any port <span style="color:#a5d6ff">138</span> comment <span style="color:#a5d6ff">&#34;SMB Datagram Service (UDP)&#34;</span>
+</span></span><span style="display:flex;"><span>sudo ufw allow from 192.168.1.0/24 to any port <span style="color:#a5d6ff">139</span> comment <span style="color:#a5d6ff">&#34;SMB Session Service (TCP)&#34;</span>
+</span></span><span style="display:flex;"><span>sudo ufw allow from 192.168.1.0/24 to any port <span style="color:#a5d6ff">445</span> comment <span style="color:#a5d6ff">&#34;SMB over TCP&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Enable UFW if not already enabled</span>
+</span></span><span style="display:flex;"><span>sudo ufw --force enable
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Verify the firewall rules:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo ufw status verbose
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># You should see the SMB rules listed as &#34;LIMIT&#34; with your subnet</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Test firewall configuration</span>
+</span></span><span style="display:flex;"><span>sudo ufw status numbered
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>Important:</strong> Replace <code>192.168.1.0/24</code> with your actual network subnet. Use <code>ip addr show</code> to find your network range.</p>
+<h2 id="step-6-start-and-enable-samba-services">Step 6: Start and Enable Samba Services</h2>
+<p>Start the Samba services and enable them to start on boot:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Start Samba services</span>
+</span></span><span style="display:flex;"><span>sudo systemctl start smbd nmbd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Enable services to start on boot</span>
+</span></span><span style="display:flex;"><span>sudo systemctl enable smbd nmbd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check service status</span>
+</span></span><span style="display:flex;"><span>sudo systemctl status smbd nmbd --no-pager
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check if Samba is listening on correct ports</span>
+</span></span><span style="display:flex;"><span>sudo netstat -tulpn | grep -E <span style="color:#a5d6ff">&#39;:(137|138|139|445)&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Test the configuration:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Test Samba configuration syntax</span>
+</span></span><span style="display:flex;"><span>sudo testparm
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># List available shares</span>
+</span></span><span style="display:flex;"><span>smbclient -L localhost -U%
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="step-7-test-from-windows-and-linux-clients">Step 7: Test from Windows and Linux Clients</h2>
+<h3 id="windows-client-testing">Windows Client Testing</h3>
+<ol>
+<li>
+<p><strong>File Explorer Method:</strong></p>
+<ul>
+<li>Open File Explorer</li>
+<li>In address bar, type: <code>\\192.168.1.10</code> (replace with your server IP)</li>
+<li>You should see &ldquo;public&rdquo; and &ldquo;secure&rdquo; shares</li>
+<li>&ldquo;public&rdquo; should be accessible without credentials</li>
+<li>&ldquo;secure&rdquo; should prompt for username/password</li>
+</ul>
+</li>
+<li>
+<p><strong>Command Line Method:</strong></p>
+</li>
+</ol>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span># List shares
+</span></span><span style="display:flex;"><span>net view \\192.168.1.10
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span># Map network drive
+</span></span><span style="display:flex;"><span>net use Z: \\192.168.1.10\secure /user:smbuser yourpassword
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li><strong>PowerShell Method:</strong></li>
+</ol>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Test connection</span>
+</span></span><span style="display:flex;"><span>Test-NetConnection -ComputerName <span style="color:#a5d6ff">192.168</span>.<span style="color:#79c0ff">1</span>.<span style="color:#79c0ff">10</span> -Port <span style="color:#a5d6ff">445</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Map drive</span>
+</span></span><span style="display:flex;"><span>New-PSDrive -Name S -Root <span style="color:#a5d6ff">&#34;\\192.168.1.10\secure&#34;</span> -PSProvider FileSystem -Credential (Get-Credential)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="linux-client-testing">Linux Client Testing</h3>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Install client tools</span>
+</span></span><span style="display:flex;"><span>sudo apt install cifs-utils
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Test public share (no credentials)</span>
+</span></span><span style="display:flex;"><span>smbclient //192.168.1.10/public -N
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Test secure share with credentials</span>
+</span></span><span style="display:flex;"><span>smbclient //192.168.1.10/secure -U smbuser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Mount secure share permanently</span>
+</span></span><span style="display:flex;"><span>sudo mkdir -p /mnt/secure
+</span></span><span style="display:flex;"><span>sudo nano /etc/fstab
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Add this line to fstab (replace with your credentials):</p>
+<pre tabindex="0"><code class="language-fstab" data-lang="fstab">//192.168.1.10/secure /mnt/secure cifs username=smbuser,password=yourpassword,uid=1000,gid=1000,file_mode=0660,dir_mode=0770 0 0
+</code></pre><p>Mount the share:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mount -a
+</span></span><span style="display:flex;"><span>df -h | grep /mnt/secure
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="step-8-security-hardening">Step 8: Security Hardening</h2>
+<h3 id="disable-vulnerable-protocols">Disable Vulnerable Protocols</h3>
+<p>Verify SMBv1 is disabled:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo smbcontrol smbd debuglevel <span style="color:#a5d6ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check logs for &#34;SMB2_10&#34; as minimum protocol</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="network-interface-binding">Network Interface Binding</h3>
+<p>Ensure Samba only listens on the internal interface:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check which interfaces Samba is using</span>
+</span></span><span style="display:flex;"><span>sudo netstat -tulpn | grep smbd
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Should only show your internal IP and localhost</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="implement-fail2ban-optional">Implement Fail2Ban (Optional)</h3>
+<p>Install and configure Fail2Ban to protect against brute force attacks:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt install fail2ban -y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create Samba jail configuration</span>
+</span></span><span style="display:flex;"><span>sudo nano /etc/fail2ban/jail.local
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Add this configuration:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#ff7b72">[DEFAULT]</span>
+</span></span><span style="display:flex;"><span>bantime <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">3600</span>
+</span></span><span style="display:flex;"><span>findtime <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">600</span>
+</span></span><span style="display:flex;"><span>maxretry <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff7b72">[samba]</span>
+</span></span><span style="display:flex;"><span>enabled <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">true</span>
+</span></span><span style="display:flex;"><span>port <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">137,138,139,445</span>
+</span></span><span style="display:flex;"><span>filter <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">samba</span>
+</span></span><span style="display:flex;"><span>logpath <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">/var/log/samba/log.smbd</span>
+</span></span><span style="display:flex;"><span>maxretry <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">3</span>
+</span></span><span style="display:flex;"><span>bantime <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">3600</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Enable Fail2Ban:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo systemctl enable fail2ban
+</span></span><span style="display:flex;"><span>sudo systemctl start fail2ban
+</span></span><span style="display:flex;"><span>sudo fail2ban-client status samba
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="log-monitoring">Log Monitoring</h3>
+<p>Set up log monitoring for SMB access:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Monitor SMB logs in real-time</span>
+</span></span><span style="display:flex;"><span>sudo tail -f /var/log/samba/log.smbd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check for failed authentication attempts</span>
+</span></span><span style="display:flex;"><span>sudo grep <span style="color:#a5d6ff">&#34;pam_unix(smbd:auth): authentication failure&#34;</span> /var/log/auth.log
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check Samba access logs</span>
+</span></span><span style="display:flex;"><span>sudo journalctl -u smbd -f
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="file-system-monitoring">File System Monitoring</h3>
+<p>Set up auditd to monitor share access:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt install auditd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create audit rule for share directory</span>
+</span></span><span style="display:flex;"><span>sudo auditctl -w /srv/samba/shares/ -p rwxa -k samba_access
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check audit logs</span>
+</span></span><span style="display:flex;"><span>sudo ausearch -k samba_access
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="step-9-performance-tuning">Step 9: Performance Tuning</h2>
+<h3 id="smb3-optimization">SMB3 Optimization</h3>
+<p>Add these performance settings to your smb.conf <code>[global]</code> section:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Performance settings</span>
+</span></span><span style="display:flex;"><span>   aio read size <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">16384
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   aio write size = 16384
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   aio write behind = Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   </span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Caching</span>
+</span></span><span style="display:flex;"><span>   getwd cache <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   name cache timeout = 660
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   kernel change notify = Yes</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Large file support</span>
+</span></span><span style="display:flex;"><span>   large readwrite <span style="color:#ff7b72;font-weight:bold">=</span> <span style="color:#a5d6ff">Yes
+</span></span></span><span style="display:flex;"><span><span style="color:#a5d6ff">   max xmit = 65535</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="system-level-optimizations">System-level Optimizations</h3>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Increase file descriptor limits</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;* soft nofile 65536&#34;</span> | sudo tee -a /etc/security/limits.conf
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;* hard nofile 65536&#34;</span> | sudo tee -a /etc/security/limits.conf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Optimize network stack</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;net.core.rmem_max = 16777216&#34;</span> | sudo tee -a /etc/sysctl.conf
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;net.core.wmem_max = 16777216&#34;</span> | sudo tee -a /etc/sysctl.conf
+</span></span><span style="display:flex;"><span>sudo sysctl -p
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="step-10-backup-and-recovery">Step 10: Backup and Recovery</h2>
+<h3 id="backup-configuration">Backup Configuration</h3>
+<p>Create a backup script for Samba configuration:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo nano /usr/local/bin/backup-samba.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">23
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-weight:bold;font-style:italic">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#79c0ff">BACKUP_DIR</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#34;/backup/samba&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#79c0ff">DATE</span><span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#ff7b72">$(</span>date +%Y%m%d_%H%M%S<span style="color:#ff7b72">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Create backup directory</span>
+</span></span><span style="display:flex;"><span>mkdir -p <span style="color:#a5d6ff">&#34;</span><span style="color:#79c0ff">$BACKUP_DIR</span><span style="color:#a5d6ff">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Backup configuration files</span>
+</span></span><span style="display:flex;"><span>tar -czf <span style="color:#a5d6ff">&#34;</span><span style="color:#79c0ff">$BACKUP_DIR</span><span style="color:#a5d6ff">/smb-config-</span><span style="color:#79c0ff">$DATE</span><span style="color:#a5d6ff">.tar.gz&#34;</span> <span style="color:#79c0ff">\
+</span></span></span><span style="display:flex;"><span>    /etc/samba/smb.conf <span style="color:#79c0ff">\
+</span></span></span><span style="display:flex;"><span>    /etc/samba/smb.conf.backup <span style="color:#79c0ff">\
+</span></span></span><span style="display:flex;"><span>    /var/lib/samba/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Backup share data (exclude temporary files)</span>
+</span></span><span style="display:flex;"><span>tar -czf <span style="color:#a5d6ff">&#34;</span><span style="color:#79c0ff">$BACKUP_DIR</span><span style="color:#a5d6ff">/smb-shares-</span><span style="color:#79c0ff">$DATE</span><span style="color:#a5d6ff">.tar.gz&#34;</span> <span style="color:#79c0ff">\
+</span></span></span><span style="display:flex;"><span>    --exclude<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;/srv/samba/shares/*/tmp&#39;</span> <span style="color:#79c0ff">\
+</span></span></span><span style="display:flex;"><span>    --exclude<span style="color:#ff7b72;font-weight:bold">=</span><span style="color:#a5d6ff">&#39;/srv/samba/shares/*/.cache&#39;</span> <span style="color:#79c0ff">\
+</span></span></span><span style="display:flex;"><span>    /srv/samba/shares/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;Backup completed: </span><span style="color:#79c0ff">$BACKUP_DIR</span><span style="color:#a5d6ff">/smb-*-</span><span style="color:#79c0ff">$DATE</span><span style="color:#a5d6ff">.tar.gz&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Clean up old backups (keep last 7 days)</span>
+</span></span><span style="display:flex;"><span>find <span style="color:#a5d6ff">&#34;</span><span style="color:#79c0ff">$BACKUP_DIR</span><span style="color:#a5d6ff">&#34;</span> -name <span style="color:#a5d6ff">&#34;smb-*.tar.gz&#34;</span> -mtime +7 -delete
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Make it executable and schedule:</p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo chmod +x /usr/local/bin/backup-samba.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Add to cron (daily at 3 AM)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#a5d6ff">&#34;0 3 * * * /usr/local/bin/backup-samba.sh&#34;</span> | sudo crontab -
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-connection-issues">Common Connection Issues</h3>
+<p><strong>Problem: Can&rsquo;t see shares from Windows</strong></p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check Samba is running</span>
+</span></span><span style="display:flex;"><span>sudo systemctl status smbd nmbd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check firewall</span>
+</span></span><span style="display:flex;"><span>sudo ufw status verbose
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Test network connectivity</span>
+</span></span><span style="display:flex;"><span>nmap -p 139,445 your-server-ip
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check logs</span>
+</span></span><span style="display:flex;"><span>sudo tail -f /var/log/samba/log.smbd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>Problem: Authentication Failed</strong></p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Verify user exists in Samba</span>
+</span></span><span style="display:flex;"><span>sudo pdbedit -L
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check password</span>
+</span></span><span style="display:flex;"><span>sudo pdbedit -L -v smbuser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Reset password if needed</span>
+</span></span><span style="display:flex;"><span>sudo smbpasswd -a smbuser
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>Problem: Permission Denied</strong></p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check directory permissions</span>
+</span></span><span style="display:flex;"><span>ls -la /srv/samba/shares/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check Samba permissions</span>
+</span></span><span style="display:flex;"><span>testparm -s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Fix ownership issues</span>
+</span></span><span style="display:flex;"><span>sudo chown -R root:smbusers /srv/samba/shares/secure
+</span></span><span style="display:flex;"><span>sudo chmod -R <span style="color:#a5d6ff">2770</span> /srv/samba/shares/secure
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="firewall-problems">Firewall Problems</h3>
+<p><strong>Problem: Can&rsquo;t access from specific subnet</strong></p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check current rules</span>
+</span></span><span style="display:flex;"><span>sudo ufw status numbered
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Add specific subnet rule</span>
+</span></span><span style="display:flex;"><span>sudo ufw allow from 192.168.2.0/24 to any port <span style="color:#a5d6ff">445</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Delete and recreate incorrect rules</span>
+</span></span><span style="display:flex;"><span>sudo ufw delete <span style="color:#ff7b72;font-weight:bold">[</span>rule_number<span style="color:#ff7b72;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span>sudo ufw insert <span style="color:#ff7b72;font-weight:bold">[</span>position<span style="color:#ff7b72;font-weight:bold">]</span> allow from correct-subnet to any port <span style="color:#a5d6ff">445</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="performance-issues">Performance Issues</h3>
+<p><strong>Problem: Slow file transfers</strong></p>
+<div class="highlight"><div style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#737679">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#e6edf3;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check network interface saturation</span>
+</span></span><span style="display:flex;"><span>iftop -i eth0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Check disk I/O</span>
+</span></span><span style="display:flex;"><span>iotop -o
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Test network speed</span>
+</span></span><span style="display:flex;"><span>iperf3 -c client-ip
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># Optimize SMB settings in smb.conf</span>
+</span></span><span style="display:flex;"><span><span style="color:#8b949e;font-style:italic"># (See Performance Tuning section above)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="security-best-practices-checklist">Security Best Practices Checklist</h2>
+<ul>
+<li>✅ Disable SMBv1 protocol</li>
+<li>✅ Restrict firewall to local subnet only</li>
+<li>✅ Use strong passwords for SMB users</li>
+<li>✅ Implement Fail2Ban for brute force protection</li>
+<li>✅ Regular backup of configuration and data</li>
+<li>✅ Monitor access logs regularly</li>
+<li>✅ Use separate user accounts for each person</li>
+<li>✅ Enable file system auditing for sensitive data</li>
+<li>✅ Keep Samba packages updated</li>
+<li>✅ Never expose SMB directly to internet</li>
+</ul>
+<hr>
+<hr>
+<div class="cta-section">
+    <h3>Need a Cloud Server?</h3>
+    <p>Deploy Ubuntu on <strong>DigitalOcean Droplets</strong> - Fast SSD cloud servers perfect for hosting Samba file shares. Starting at $4/month.</p>
+    <p><a href="https://www.digitalocean.com/?refcode=YOURREF" target="_blank" rel="sponsored" class="btn btn-primary">Deploy Ubuntu Server →</a></p>
+</div>
+<hr>
+<h2 id="downloadable-configuration">Downloadable Configuration</h2>
+<p>Download our complete Samba configuration template:</p>
+<div class="download-section">
+    <p><strong>Samba Setup Checklist:</strong> Complete configuration checklist and security hardening guide for quick reference.</p>
+    <p><a href="/downloads/samba-server-checklist.txt" class="btn btn-secondary">Download Checklist →</a></p>
+</div>
+<hr>
+<h2 id="faq-section">FAQ Section</h2>
+<p><strong>What ports does SMB use?</strong>
+SMB uses UDP ports 137-138 for name service and datagram service, plus TCP ports 139-445 for file sharing and session service. Always restrict these to your local network using firewall rules.</p>
+<p><strong>How to secure Samba properly?</strong>
+Enable user authentication, disable guest access, bind to specific network interfaces, restrict ports via firewall to local subnet only, disable SMBv1, implement Fail2Ban, and regularly monitor access logs.</p>
+<p><strong>Can I expose SMB to the internet?</strong>
+Absolutely not. SMB was designed for trusted networks and has numerous vulnerabilities when exposed to the internet. Use VPN or SSH tunneling for remote access instead.</p>
+<p><strong>What&rsquo;s the difference between SMB and NFS?</strong>
+SMB is Windows-optimized with better Active Directory integration, while NFS is Unix-native with slightly better performance. SMB is preferred for mixed Windows/Linux environments.</p>
+<p><strong>How many users can Samba handle?</strong>
+Samba can handle hundreds of concurrent users on modern hardware. Performance depends on CPU, RAM, disk speed, and network bandwidth. Consider dedicated hardware for enterprise deployments.</p>
+<p><strong>Should I use Active Directory with Samba?</strong>
+For small to medium networks, standalone mode is sufficient. For large enterprises, Samba AD integration provides centralized authentication and policy management across Windows and Linux systems.</p>
+<hr>
+<p><em>Looking for more Linux security guides? Check out our <a href="/linux-server-hardening">Linux Server Hardening Guide</a> and <a href="/ufw-firewall-setup">UFW Firewall Tutorial</a>.</em></p>
+<p>faq:</p>
+<ul>
+<li>question: &ldquo;What ports does SMB use?&rdquo;
+answer: &ldquo;SMB uses UDP ports 137-138 for name service and datagram service, plus TCP ports 139-445 for file sharing and session service. Always restrict these to your local network using firewall rules.&rdquo;</li>
+<li>question: &ldquo;How to secure Samba properly?&rdquo;
+answer: &ldquo;Enable user authentication, disable guest access, bind to specific network interfaces, restrict ports via firewall to local subnet only, disable SMBv1, implement Fail2Ban, and regularly monitor access logs.&rdquo;</li>
+<li>question: &ldquo;Can I expose SMB to the internet?&rdquo;
+answer: &ldquo;Absolutely not. SMB was designed for trusted networks and has numerous vulnerabilities when exposed to the internet. Use VPN or SSH tunneling for remote access instead.&rdquo;</li>
+<li>question: &ldquo;What&rsquo;s the difference between SMB and NFS?&rdquo;
+answer: &ldquo;SMB is Windows-optimized with better Active Directory integration, while NFS is Unix-native with slightly better performance. SMB is preferred for mixed Windows/Linux environments.&rdquo;</li>
+<li>question: &ldquo;How many users can Samba handle?&rdquo;
+answer: &ldquo;Samba can handle hundreds of concurrent users on modern hardware. Performance depends on CPU, RAM, disk speed, and network bandwidth. Consider dedicated hardware for enterprise deployments.&rdquo;</li>
+</ul>
+<p>relatedProducts:</p>
+<ul>
+<li>name: &ldquo;DigitalOcean Droplets&rdquo;
+description: &ldquo;Fast SSD cloud servers perfect for hosting Samba file shares with reliable performance.&rdquo;
+rating: 4
+affiliateLink: &ldquo;<a href="https://www.digitalocean.com/?refcode=YOURREF%22">https://www.digitalocean.com/?refcode=YOURREF&quot;</a></li>
+<li>name: &ldquo;Vultr Cloud Compute&rdquo;
+description: &ldquo;High-performance cloud instances with global datacenters for low-latency file access.&rdquo;
+rating: 4
+affiliateLink: &ldquo;<a href="https://www.vultr.com/?ref=YOURREF%22">https://www.vultr.com/?ref=YOURREF&quot;</a></li>
+<li>name: &ldquo;Linode Cloud Servers&rdquo;
+description: &ldquo;Akamai-powered cloud hosting with excellent networking for demanding file sharing workloads.&rdquo;
+rating: 4
+affiliateLink: &ldquo;<a href="https://www.linode.com/?r=YOURREF%22">https://www.linode.com/?r=YOURREF&quot;</a></li>
+</ul>
+
+
+            
+
+            
+        </div>
+
+        <footer class="post-footer">
+            <div class="post-tags">
+                
+                <a href="/tags/samba/" class="tag">#samba</a>
+                
+                <a href="/tags/smb/" class="tag">#smb</a>
+                
+                <a href="/tags/ubuntu/" class="tag">#ubuntu</a>
+                
+                <a href="/tags/security/" class="tag">#security</a>
+                
+                <a href="/tags/firewall/" class="tag">#firewall</a>
+                
+                <a href="/tags/file-sharing/" class="tag">#file-sharing</a>
+                
+            </div>
+            
+            <div class="author-bio">
+                <h3>About the Author</h3>
+                <p> is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+            </div>
+
+            <div class="newsletter-cta">
+                <h3>Want more sysops tips?</h3>
+                <p>Join our weekly newsletter for practical infrastructure advice.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </footer>
+    </div>
+</article>
+
+        </main>
+        
+        <footer class="site-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3></h3>
+                <p></p>
+                <div class="social-links">
+                    <a href="https://twitter.com/" target="_blank" rel="noopener">Twitter</a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/about/">About</a></li>
+                    <li><a href="/contact/">Contact</a></li>
+                    <li><a href="/affiliate-disclosure/">Affiliate Disclosure</a></li>
+                    <li><a href="/privacy-policy/">Privacy Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="/categories/tutorials/">Tutorials</a></li>
+                    <li><a href="/categories/comparisons/">Comparisons</a></li>
+                    <li><a href="/categories/reviews/">Reviews</a></li>
+                    <li><a href="/categories/tools/">Tools</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 . All rights reserved.</p>
+            <p>Built with <a href="https://gohugo.io" target="_blank">Hugo</a></p>
+        </div>
+    </div>
+</footer>
+    </div>
+    
+    
+    
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "\"How to Set Up a Secure Linux SMB Server with UFW Firewall Rules (Ubuntu 24.04)\"",
+  "description": "\"Step-by-step guide to configure a secure Samba SMB server on Ubuntu 24.04 with UFW firewall rules, user authentication, and security hardening.\"",
+  "image": "\"/images/secure-linux-smb-server-ubuntu.jpg\"",
+  "url": "\"/tutorials/secure-linux-smb-server-ubuntu/\"",
+  "datePublished": "\"2026-02-11T10:00:00Z\"",
+  "dateModified": "\"2026-02-11T10:00:00Z\"",
+  "author": {
+    "@type": "Person",
+    "name": "null"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "\"\"",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "\"/\""
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "\"/tutorials/secure-linux-smb-server-ubuntu/\""
+  }
+}
+</script>
+    
+    
+    
+    <script src="/js/hero-animation.js" defer></script>
+    <script src="/js/main.js" defer></script>
+</body>
+</html>
