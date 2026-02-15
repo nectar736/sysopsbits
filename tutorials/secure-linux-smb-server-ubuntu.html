@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Set Up a Secure Linux SMB Server on Ubuntu - SysOpsBits</title>
+    <meta name="description" content="Learn how to configure a secure Samba server with proper permissions, encryption, and access controls for your network.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/secure-linux-smb-server-ubuntu.html">
+    <meta property="og:title" content="How to Set Up a Secure Linux SMB Server on Ubuntu">
+    <meta property="og:description" content="Learn how to configure a secure Samba server with proper permissions and encryption.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/secure-linux-smb-server-ubuntu.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/secure-linux-smb-server-ubuntu.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-01-15">January 15, 2026</time>
+                    </div>
+                    <h1>How to Set Up a Secure Linux SMB Server on Ubuntu</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/secure-linux-smb-server-ubuntu.jpg" alt="Secure Linux SMB Server Ubuntu" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Learn how to configure a secure Samba server with proper permissions, encryption, and access controls for your network.</p>
+
+                    <h2>What is Samba?</h2>
+                    <p>Samba is an open-source implementation of the SMB/CIFS protocol that allows file sharing between Linux and Windows systems.</p>
+
+                    <h2>Prerequisites</h2>
+                    <ul>
+                        <li>Ubuntu 20.04 or later</li>
+                        <li>sudo/root access</li>
+                    </ul>
+
+                    <h2>Step 1: Install Samba</h2>
+                    <pre><code>sudo apt update
+sudo apt install samba</code></pre>
+
+                    <h2>Step 2: Configure Samba</h2>
+                    <pre><code>sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
+sudo nano /etc/samba/smb.conf</code></pre>
+
+                    <h2>Step 3: Create Users and Directories</h2>
+                    <pre><code>sudo mkdir -p /srv/sambasecured
+sudo groupadd sambashare
+sudo useradd -m -G sambashare username
+sudo smbpasswd -a username</code></pre>
+
+                    <h2>Step 4: Enable SMBv3 Encryption</h2>
+                    <pre><code>min protocol = SMB2
+max protocol = SMB3</code></pre>
+
+                    <h2>Step 5: Restart and Test</h2>
+                    <pre><code>sudo systemctl restart smbd
+sudo testparm</code></pre>
+
+                    <h2>Security Best Practices</h2>
+                    <ul>
+                        <li>Disable SMBv1</li>
+                        <li>Use strong passwords</li>
+                        <li>Enable encryption</li>
+                        <li>Use firewall rules</li>
+                    </ul>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#samba</span>
+                        <span class="tag">#ubuntu</span>
+                        <span class="tag">#security</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>John is a DevOps engineer with over 10 years of experience.</p>
+                    </div>
+
+                    <div class="newsletter-cta">
+                        <h3>Want more sysops tips?</h3>
+                        <p>Join our weekly newsletter.</p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

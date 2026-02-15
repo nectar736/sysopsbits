@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Set Up Automated Linux Backups with Restic - SysOpsBits</title>
+    <meta name="description" content="Complete guide to implementing automated, encrypted backups for Linux servers using Restic. Step-by-step commands with real-world examples.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/automated-linux-backups-restic.html">
+    <meta property="og:title" content="How to Set Up Automated Linux Backups with Restic">
+    <meta property="og:description" content="Complete guide to implementing automated, encrypted backups for Linux servers using Restic.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/automated-linux-backups-restic.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/automated-linux-backups-restic.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-01-18">January 18, 2026</time>
+                    </div>
+                    <h1>How to Set Up Automated Linux Backups with Restic</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/automated-linux-backups-restic.jpg" alt="Automated Linux Backups with Restic" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <div class="affiliate-disclosure">
+                        <p><strong>Affiliate Disclosure:</strong> This article contains affiliate links.</p>
+                    </div>
+
+                    <p>Restic is a modern backup solution that's fast, secure, and deduplicated. In this guide, you'll learn to set up automated, encrypted backups for your Linux servers.</p>
+
+                    <h2>What is Restic?</h2>
+                    <p>Restic is an open-source backup tool that offers:</p>
+                    <ul>
+                        <li><strong>Client-side encryption</strong> before data leaves your server</li>
+                        <li><strong>Deduplication</strong> across backup snapshots</li>
+                        <li><strong>Multiple storage backends</strong> (local, S3, Backblaze, etc.)</li>
+                    </ul>
+
+                    <h2>Prerequisites</h2>
+                    <ul>
+                        <li>Linux server (Ubuntu 20.04+, CentOS 8+, or similar)</li>
+                        <li>sudo/root access</li>
+                        <li>Backup storage destination</li>
+                    </ul>
+
+                    <h2>Step 1: Install Restic</h2>
+                    <pre><code>sudo apt update
+sudo apt install restic</code></pre>
+
+                    <h2>Step 2: Initialize Repository</h2>
+                    <pre><code>export RESTIC_REPOSITORY=/backup/my-backups
+export RESTIC_PASSWORD_FILE=~/.restic-password
+echo "YourSuperSecurePasswordHere" > ~/.restic-password
+chmod 600 ~/.restic-password
+restic init</code></pre>
+
+                    <h2>Step 3: Create Your First Backup</h2>
+                    <pre><code>restic backup /var/www/html /etc/nginx \
+    --tag "web" \
+    --tag "production"</code></pre>
+
+                    <h2>Step 4: Automation with Cron</h2>
+                    <pre><code>sudo crontab -e</code></pre>
+                    <pre><code>0 2 * * * /usr/local/bin/restic-backup.sh</code></pre>
+
+                    <h2>Best Practices</h2>
+                    <ul>
+                        <li>Store password file with 600 permissions</li>
+                        <li>Use separate backup user account</li>
+                        <li>Test restore procedures regularly</li>
+                    </ul>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>How long does a typical backup take?</h3>
+                                <p>For 10GB of data: Local storage takes 2-5 minutes, S3 takes 5-15 minutes depending on bandwidth.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>How secure are the backups?</h3>
+                                <p>Restic uses AES-256 encryption with a key derived from your password using scrypt.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="related-products">
+                        <h2>Recommended Tools</h2>
+                        <div class="products-grid">
+                            <div class="product-card">
+                                <h3>AWS S3 Storage</h3>
+                                <p>Reliable object storage with 99.999999999% durability.</p>
+                                <div class="product-rating">⭐⭐⭐⭐⭐</div>
+                                <a href="https://aws.amazon.com/s3/" class="btn btn-primary" target="_blank" rel="sponsored">Get Started →</a>
+                            </div>
+                            <div class="product-card">
+                                <h3>Backblaze B2</h3>
+                                <p>Cost-effective cloud storage perfect for backups.</p>
+                                <div class="product-rating">⭐⭐⭐⭐</div>
+                                <a href="https://www.backblaze.com/b2/cloud-storage.html" class="btn btn-primary" target="_blank" rel="sponsored">Get Started →</a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#backups</span>
+                        <span class="tag">#restic</span>
+                        <span class="tag">#linux</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>John is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+
+                    <div class="newsletter-cta">
+                        <h3>Want more sysops tips?</h3>
+                        <p>Join our weekly newsletter for practical infrastructure advice.</p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

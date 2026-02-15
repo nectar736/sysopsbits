@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 10 CLI Tools Every Sysadmin Should Know - SysOpsBits</title>
+    <meta name="description" content="Essential command-line utilities that will boost your productivity and make sysadmin tasks easier.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tools/top-10-cli-tools-sysadmin.html">
+    <meta property="og:title" content="Top 10 CLI Tools Every Sysadmin Should Know">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tools/top-10-cli-tools-sysadmin.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/cli-tools-sysadmin.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+</head>
+<body data-page="tools">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tools.html" class="category">Tools</a>
+                        <time datetime="2026-01-12">January 12, 2026</time>
+                    </div>
+                    <h1>Top 10 CLI Tools Every Sysadmin Should Know</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/cli-tools-sysadmin.jpg" alt="CLI Tools for Sysadmin" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <div class="affiliate-disclosure">
+                        <p><strong>Affiliate Disclosure:</strong> This article contains affiliate links.</p>
+                    </div>
+
+                    <p>Essential command-line utilities that will boost your productivity and make sysadmin tasks easier.</p>
+
+                    <h2>1. htop - Process Monitor</h2>
+                    <pre><code>sudo apt install htop
+htop</code></pre>
+
+                    <h2>2. tmux - Terminal Multiplexer</h2>
+                    <pre><code>sudo apt install tmux
+tmux new -s mysession</code></pre>
+
+                    <h2>3. rsync - File Synchronization</h2>
+                    <pre><code>rsync -avz /source/ user@remote:/destination/</code></pre>
+
+                    <h2>4. ss - Network Statistics</h2>
+                    <pre><code>ss -tulpn</code></pre>
+
+                    <h2>5. lsof - List Open Files</h2>
+                    <pre><code>lsof -i :80</code></pre>
+
+                    <h2>6. dig - DNS Queries</h2>
+                    <pre><code>dig example.com</code></pre>
+
+                    <h2>7. curl - HTTP Client</h2>
+                    <pre><code>curl -I https://example.com</code></pre>
+
+                    <h2>8. jq - JSON Processor</h2>
+                    <pre><code>curl api.example.com | jq '.results[0].name'</code></pre>
+
+                    <h2>9. find - File Finder</h2>
+                    <pre><code>find /var -name "*.log" -mtime +7</code></pre>
+
+                    <h2>10. awk/sed - Text Processing</h2>
+                    <pre><code>awk -F: '{print $1}' /etc/passwd</code></pre>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#cli</span>
+                        <span class="tag">#sysadmin</span>
+                        <span class="tag">#linux</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>John is a DevOps engineer with over 10 years of experience.</p>
+                    </div>
+
+                    <div class="newsletter-cta">
+                        <h3>Want more sysops tips?</h3>
+                        <p>Join our weekly newsletter.</p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
