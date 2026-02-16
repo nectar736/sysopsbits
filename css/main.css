@@ -507,13 +507,13 @@ a:hover {
     object-fit: cover;
 }
 
-.post-content {
+.post-card .post-content {
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
 }
 
-.post-content p {
+.post-card .post-content p {
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 3;
