@@ -34,6 +34,9 @@ async function loadPartials() {
             newsletterPlaceholder.innerHTML = newsletterHtml;
         }
         
+        // Fix all nav links (header + footer) after all partials loaded
+        fixMainNavLinks(partialsPath);
+        
         // Set active navigation item
         setActiveNav();
         
@@ -82,6 +85,19 @@ function fixCategoryNavLinks(partialsPath) {
     const basePath = partialsPath.replace('partials/', '');
     
     const navLinks = document.querySelectorAll('.category-nav-list a');
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('http') && !href.startsWith('/')) {
+            link.setAttribute('href', basePath + href);
+        }
+    });
+}
+
+function fixMainNavLinks(partialsPath) {
+    // Fix main navigation and footer links using same logic as category nav
+    const basePath = partialsPath.replace('partials/', '');
+    
+    const navLinks = document.querySelectorAll('.nav-menu a, .site-branding a, .footer-section a');
     navLinks.forEach(link => {
         const href = link.getAttribute('href');
         if (href && !href.startsWith('http') && !href.startsWith('/')) {
