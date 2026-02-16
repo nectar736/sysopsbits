@@ -53,30 +53,21 @@ async function loadPartials() {
 function getPartialsPath() {
     const path = window.location.pathname;
     
-    // Check if we're in a subdirectory
-    // For /sysopsbits/comparisons/file.html, we need ../partials/
-    // For /sysopsbits/file.html (root of subfolder), we need partials/
+    // Get the directory containing the current file
+    const lastSlash = Math.max(path.lastIndexOf('/'));
+    const dirPart = lastSlash > 0 ? path.substring(0, lastSlash + 1) : '/';
     
-    const sysopsbitsMatch = path.match(/^\/sysopsbits(\/|$)/);
-    if (sysopsbitsMatch) {
-        // We're in /sysopsbits/ directory
-        const afterSysopsbits = path.slice('/sysopsbits'.length);
-        
-        // Count additional directory levels
-        const remainingPath = afterSysopsbits.replace(/^\//, '').replace(/[^/]/g, '');
-        const depth = (remainingPath.match(/\//g) || []).length;
-        
-        if (depth === 0) {
-            // At /sysopsbits/file.html - partials is at root
-            return 'partials/';
-        } else {
-            // At /sysopsbits/subdir/file.html - need to go up
-            return '../'.repeat(depth) + 'partials/';
-        }
+    // Count directory depth from root
+    // "/" = 0, "/comparisons" = 1, "/comparisons/subdir" = 2
+    const depth = (dirPart.match(/\//g) || []).length - 1;
+    
+    if (depth === 0 || dirPart === '/') {
+        // At root - partials is at root
+        return 'partials/';
+    } else {
+        // In subdirectory - need to go up
+        return '../'.repeat(depth) + 'partials/';
     }
-    
-    // Default for local development or root
-    return 'partials/';
 }
 
 function fixCategoryNavLinks(partialsPath) {
