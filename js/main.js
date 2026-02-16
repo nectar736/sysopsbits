@@ -7,14 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
         navToggle.addEventListener('click', function() {
             navMenu.classList.toggle('active');
         });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!navToggle.contains(event.target) && !navMenu.contains(event.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
     }
-    
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!navToggle.contains(event.target) && !navMenu.contains(event.target)) {
-            navMenu.classList.remove('active');
-        }
-    });
 });
 
 // Smooth scroll for anchor links

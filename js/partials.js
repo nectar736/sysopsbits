@@ -50,23 +50,30 @@ async function loadPartials() {
 function getPartialsPath() {
     const path = window.location.pathname;
     
-    // Extract filename
-    const lastSlash = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
-    const filename = lastSlash >= 0 ? path.substring(lastSlash + 1) : path;
+    // Check if we're in a subdirectory
+    // For /sysopsbits/comparisons/file.html, we need ../partials/
+    // For /sysopsbits/file.html (root of subfolder), we need partials/
     
-    // Directory is everything before filename
-    const dirPart = lastSlash > 0 ? path.substring(0, lastSlash) : '';
+    const sysopsbitsMatch = path.match(/^\/sysopsbits(\/|$)/);
+    if (sysopsbitsMatch) {
+        // We're in /sysopsbits/ directory
+        const afterSysopsbits = path.slice('/sysopsbits'.length);
+        
+        // Count additional directory levels
+        const remainingPath = afterSysopsbits.replace(/^\//, '').replace(/[^/]/g, '');
+        const depth = (remainingPath.match(/\//g) || []).length;
+        
+        if (depth === 0) {
+            // At /sysopsbits/file.html - partials is at root
+            return 'partials/';
+        } else {
+            // At /sysopsbits/subdir/file.html - need to go up
+            return '../'.repeat(depth) + 'partials/';
+        }
+    }
     
-    // Count slashes in directory to determine depth
-    // e.g., "/tutorials" has 0 slashes = depth 0 (root level)
-    // "/repo/tutorials" has 1 slash = depth 1
-    const slashCount = (dirPart.match(/\//g) || []).length;
-    
-    // For root level (0-1 slashes), partials is at ./
-    // For subdirectories, go up accordingly
-    if (slashCount <= 1) return 'partials/';
-    
-    return '../'.repeat(slashCount - 1) + 'partials/';
+    // Default for local development or root
+    return 'partials/';
 }
 
 function fixCategoryNavLinks(partialsPath) {
