@@ -36,11 +36,11 @@
             <div class="categories-hero">
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <span class="stat-number">3</span>
+                        <span class="stat-number" data-count="categories">3</span>
                         <span class="stat-label">Categories</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">7</span>
+                        <span class="stat-number" data-count="pages">7</span>
                         <span class="stat-label">Total Articles</span>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                         <div class="category-info">
                             <h2><a href="tutorials.html">Tutorials</a></h2>
                             <div class="category-meta">
-                                <span class="post-count">2 articles</span>
+                                <span class="post-count" data-category="tutorials">2 articles</span>
                             </div>
                         </div>
                     </div>
@@ -85,7 +85,7 @@
                         <div class="category-info">
                             <h2><a href="comparisons.html">Comparisons</a></h2>
                             <div class="category-meta">
-                                <span class="post-count">4 articles</span>
+                                <span class="post-count" data-category="comparisons">4 articles</span>
                             </div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                         <div class="category-info">
                             <h2><a href="tools.html">Tools</a></h2>
                             <div class="category-meta">
-                                <span class="post-count">1 article</span>
+                                <span class="post-count" data-category="tools">1 article</span>
                             </div>
                         </div>
                     </div>
@@ -144,5 +144,36 @@
 
     <script src="js/main.js" defer></script>
     <script src="js/partials.js" defer></script>
+    <script>
+        const siteData = {
+            categories: [
+                { name: 'Tutorials', path: 'tutorials.html', articlePath: 'tutorials/', articles: ['automated-linux-backups-restic.html', 'secure-linux-smb-server-ubuntu.html'] },
+                { name: 'Comparisons', path: 'comparisons.html', articlePath: 'comparisons/', articles: ['digitalocean-vs-linode-vs-hetzner-2026.html', 'docker-vs-kubernetes-2026.html', 'unifi-vs-pfsense-2026.html', 'virtualbox-vs-hyper-v-2026.html', 'postgresql-vs-mysql-2026.html', 'best-cheap-vps-hosting-2026.html'] },
+                { name: 'Tools', path: 'tools.html', articlePath: 'tools/', articles: ['top-10-cli-tools-sysadmin.html', 'best-performance-monitoring-tools-linux.html', 'best-virtualization-tools-sysadmins-2026.html'] }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const categories = siteData.categories;
+            let totalArticles = 0;
+
+            categories.forEach(function(cat) {
+                const count = cat.articles.length;
+                totalArticles += count;
+
+                const countElements = document.querySelectorAll('.post-count[data-category]');
+                countElements.forEach(function(el) {
+                    if (el.getAttribute('data-category') === cat.name.toLowerCase()) {
+                        el.textContent = count + ' article' + (count !== 1 ? 's' : '');
+                    }
+                });
+            });
+
+            const categoryStat = document.querySelector('[data-count="categories"]');
+            const pagesStat = document.querySelector('[data-count="pages"]');
+            if (categoryStat) categoryStat.textContent = categories.length;
+            if (pagesStat) pagesStat.textContent = totalArticles;
+        });
+    </script>
 </body>
 </html>
