@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure NSG Best Practices: Practical Rules and Patterns - SysOpsBits</title>
+    <meta name="description" content="Learn how to configure Azure Network Security Groups with practical rules and patterns. Cover host vs subnet NSGs, common allow/deny patterns, and troubleshooting.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/azure-nsg-best-practices.html">
+    <meta property="og:title" content="Azure NSG Best Practices: Practical Rules and Patterns">
+    <meta property="og:description" content="Master Azure Network Security Groups with practical rules, web server and database subnet configurations, and troubleshooting guides.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/azure-nsg-best-practices.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/azure-nsg-best-practices.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script>
+</script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-03-05">March 5, 2026</time>
+                    </div>
+                    <h1>Azure NSG Best Practices: Practical Rules and Patterns</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/azure-nsg-best-practices.jpg" alt="Azure NSG Best Practices" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Network Security Groups (NSGs) are fundamental to securing your Azure infrastructure. In this guide, we'll cover practical NSG configurations for real-world scenarios, from web servers to database subnets.</p>
+
+                    <h2>What is an Azure NSG?</h2>
+                    <p>An Azure Network Security Group (NSG) filters network traffic to and from Azure resources in a virtual network. It contains security rules that allow or deny inbound and outbound traffic based on source/destination IP, port, and protocol.</p>
+
+                    <h2>Host-Level vs Subnet-Level NSGs</h2>
+                    <p>Understanding the difference between host and subnet NSGs is crucial for proper security architecture.</p>
+
+                    <h3>Subnet-Level NSGs</h3>
+                    <p>Applied to an entire subnet, affecting all resources within it. This is the recommended approach for most scenarios as it provides centralized security management.</p>
+
+                    <pre><code># Associate NSG with a subnet using Azure CLI
+az network vnet subnet update \
+  --resource-group myResourceGroup \
+  --vnet-name myVnet \
+  --name mySubnet \
+  --network-security-group myNSG</code></pre>
+
+                    <h3>Host-Level (NIC) NSGs</h3>
+                    <p>Applied directly to a network interface. Use this for exceptions or specific VMs requiring unique rules. Note that when both subnet and NIC NSGs exist, traffic must pass both filters.</p>
+
+                    <pre><code># Associate NSG with a network interface
+az network nic update \
+  --resource-group myResourceGroup \
+  --name myNic \
+  --network-security-group myNSG</code></pre>
+
+                    <div class="callout callout-warning">
+                        <strong>Important:</strong> Azure processes NSG rules in a specific order - first subnet NSG, then NIC NSG (for inbound), and vice versa for outbound. Both must allow traffic for communication to succeed.
+                    </div>
+
+                    <h2>Understanding NSG Rule Priorities</h2>
+                    <p>NSG rules are evaluated in priority order (100-4096), with lower numbers processed first. This allows you to create specific rules before catch-all deny rules.</p>
+
+                    <h2>Sample Rule Set: Web Server</h2>
+                    <p>Here's a practical NSG configuration for a web server that needs to serve HTTP/HTTPS traffic and connect to a backend database.</p>
+
+                    <pre><code># Create NSG for web servers
+az network nsg create \
+  --resource-group myResourceGroup \
+  --name webServerNSG
+
+# Allow HTTP (80) - Internet inbound
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name webServerNSG \
+  --name AllowHTTP \
+  --priority 100 \
+  --access Allow \
+  --protocol Tcp \
+  --direction Inbound \
+  --source-address-prefix Internet \
+  --source-port-range 80 \
+  --destination-address-prefix VirtualNetwork \
+  --destination-port-range 80
+
+# Allow HTTPS (443) - Internet inbound
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name webServerNSG \
+  --name AllowHTTPS \
+  --priority 110 \
+  --access Allow \
+  --protocol Tcp \
+  --direction Inbound \
+  --source-address-prefix Internet \
+  --source-port-range 443 \
+  --destination-address-prefix VirtualNetwork \
+  --destination-port-range 443
+
+# Allow SSH from jumpbox/bastion only
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name webServerNSG \
+  --name AllowSSHFromBastion \
+  --priority 120 \
+  --access Allow \
+  --protocol Tcp \
+  --direction Inbound \
+  --source-address-prefix 10.0.1.0/24 \
+  --source-port-range 22 \
+  --destination-address-prefix VirtualNetwork \
+  --destination-port-range 22
+
+# Allow outbound to database subnet
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name webServerNSG \
+  --name AllowDBConnection \
+  --priority 100 \
+  --access Allow \
+  --protocol Tcp \
+  --direction Outbound \
+  --source-address-prefix VirtualNetwork \
+  --source-port-range "*" \
+  --destination-address-prefix 10.0.20.0/24 \
+  --destination-port-range 5432
+
+# Deny all other inbound
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name webServerNSG \
+  --name DenyAllInbound \
+  --priority 4096 \
+  --access Deny \
+  --protocol "*" \
+  --direction Inbound \
+  --source-address-prefix "*" \
+  --source-port-range "*" \
+  --destination-address-prefix "*" \
+  --destination-port-range "*"</code></pre>
+
+                    <h2>Sample Rule Set: Database Subnet</h2>
+                    <p>Database subnets should have stricter rules, allowing connections only from authorized sources.</p>
+
+                    <pre><code># Create NSG for database subnet
+az network nsg create \
+  --resource-group myResourceGroup \
+  --name dbSubnetNSG
+
+# Allow PostgreSQL from web tier
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name dbSubnetNSG \
+  --name AllowPostgresFromWeb \
+  --priority 100 \
+  --access Allow \
+  --protocol Tcp \
+  --direction Inbound \
+  --source-address-prefix 10.0.10.0/24 \
+  --source-port-range "*" \
+  --destination-address-prefix VirtualNetwork \
+  --destination-port-range 5432
+
+# Allow MySQL from web tier
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name dbSubnetNSG \
+  --name AllowMySQLFromWeb \
+  --priority 110 \
+  --access Allow \
+  --protocol Tcp \
+  --direction Inbound \
+  --source-address-prefix 10.0.10.0/24 \
+  --source-port-range "*" \
+  --destination-address-prefix VirtualNetwork \
+  --destination-port-range 3306
+
+# Allow SSH from management subnet
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name dbSubnetNSG \
+  --name AllowSSHFromMgmt \
+  --priority 120 \
+  --access Allow \
+  --protocol Tcp \
+  --direction Inbound \
+  --source-address-prefix 10.0.1.0/24 \
+  --source-port-range 22 \
+  --destination-address-prefix VirtualNetwork \
+  --destination-port-range 22
+
+# Allow outbound for backups to storage
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name dbSubnetNSG \
+  --name AllowBackupToStorage \
+  --priority 100 \
+  --access Allow \
+  --protocol Tcp \
+  --direction Outbound \
+  --source-address-prefix VirtualNetwork \
+  --source-port-range "*" \
+  --destination-address-prefix Storage \
+  --destination-port-range 443
+
+# Deny all other inbound
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name dbSubnetNSG \
+  --name DenyAllInbound \
+  --priority 4096 \
+  --access Deny \
+  --protocol "*" \
+  --direction Inbound \
+  --source-address-prefix "*" \
+  --source-port-range "*" \
+  --destination-address-prefix "*" \
+  --destination-port-range "*"</code></pre>
+
+                    <h2>Azure Portal Configuration</h2>
+                    <p>While CLI is efficient for automation, you can also configure NSGs through the Azure Portal:</p>
+                    <ol>
+                        <li>Navigate to <strong>Network security groups</strong> in the Azure Portal</li>
+                        <li>Click <strong>+ Create</strong> and fill in subscription, resource group, and name</li>
+                        <li>After creation, select your NSG and go to <strong>Inbound security rules</strong></li>
+                        <li>Click <strong>Add</strong> to create new rules with source, destination, port, and priority settings</li>
+                        <li>Associate the NSG with a subnet via <strong>Subnets</strong> in the left menu</li>
+                    </ol>
+
+                    <div class="callout callout-info">
+                        <strong>Pro Tip:</strong> Use service tags instead of IP addresses where possible (e.g., <code>VirtualNetwork</code>, <code>Internet</code>, <code>AzureLoadBalancer</code>) to simplify management.
+                    </div>
+
+                    <h2>Troubleshooting NSG Rules</h2>
+                    <p>When traffic isn't working as expected, use these diagnostic approaches:</p>
+
+                    <h3>Check Effective Security Rules</h3>
+                    <pre><code># View effective NSGs on a VM's network interface
+az network nic show-effective-nsg \
+  --resource-group myResourceGroup \
+  --name myNic
+
+# View effective NSGs for a subnet
+az network vnet subnet show \
+  --resource-group myResourceGroup \
+  --vnet-name myVnet \
+  --name mySubnet \
+  --query networkSecurityGroup</code></pre>
+
+                    <h3>Use NSG Flow Logs</h3>
+                    <pre><code># Enable NSG flow logs
+az network watcher flow-log configure \
+  --resource-group myResourceGroup \
+  --nsg myNSG \
+  --enabled true \
+  --storage-account myStorageAccount
+
+# Analyze flow logs in Azure Portal or Log Analytics</code></pre>
+
+                    <h3>Use Network Watcher Connection Troubleshooter</h3>
+                    <pre><code># Test connectivity between two VMs
+az network watcher test-connectivity \
+  --resource-group myResourceGroup \
+  --source-resource mySourceVM \
+  --dest-resource myDestVM \
+  --dest-port 443</code></pre>
+
+                    <h3>Common Issues</h3>
+                    <ul>
+                        <li><strong>Default rules:</strong> Azure has implicit deny rules (priority 4096) - ensure you have explicit allows</li>
+                        <li><strong>Direction mismatch:</strong> Remember inbound rules control incoming traffic, outbound rules control leaving traffic</li>
+                        <li><strong>Source/destination confusion:</strong> For outbound rules, source is your VM, destination is external</li>
+                        <li><strong>Both NSGs must allow:</strong> When using both subnet and NIC NSGs, both must permit traffic</li>
+                    </ul>
+
+                    <h2>NSG Best Practices Summary</h2>
+                    <ul>
+                        <li>Use subnet-level NSGs as your primary security boundary</li>
+                        <li>Create explicit allow rules for legitimate traffic</li>
+                        <li>Use deny-all rules at priority 4096 for both inbound and outbound</li>
+                        <li>Use service tags and application security groups to simplify rule management</li>
+                        <li>Follow a consistent naming convention (e.g., <code>nsg-{environment}-{purpose}</code>)</li>
+                        <li>Document your rule rationale in rule descriptions</li>
+                        <li>Use NSG flow logs for monitoring and troubleshooting</li>
+                        <li>Review rules regularly and remove unused ones</li>
+                    </ul>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Can an NSG block Azure platform traffic?</h3>
+                                <p>Some Azure platform traffic (like health probes) cannot be blocked by NSGs. However, you can control most customer traffic with NSGs.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What's the difference between NSG and Azure Firewall?</h3>
+                                <p>NSG provides basic network filtering at layer 3/4, while Azure Firewall is a fully managed network security service with more advanced features including threat intelligence, URL filtering, and SNAT.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>How many rules can an NSG have?</h3>
+                                <p>Each NSG supports up to 1,000 rules. For more complex scenarios, consider using Azure Firewall or dividing traffic across multiple subnets.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#nsg</span>
+                        <span class="tag">#network-security</span>
+                        <span class="tag">#cloud</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+
+                    <div class="newsletter-cta">
+                        <h3>Want more sysops tips?</h3>
+                        <p>Join our weekly newsletter for practical infrastructure advice.</p>
+                        <!-- <form class="newsletter-form">
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form> -->
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

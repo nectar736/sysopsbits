@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Point-to-Site VPN for Remote Admins: OpenVPN & Azure AD Auth - SysOpsBits</title>
+    <meta name="description" content="Learn how to configure Azure Point-to-Site VPN for remote developers and admins. Covers certificate-based and Azure AD authentication with client setup for Windows, Linux, and macOS.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/azure-point-to-site-vpn.html">
+    <meta property="og:title" content="Point-to-Site VPN for Remote Admins: OpenVPN & Azure AD Auth">
+    <meta property="og:description" content="Configure Azure P2S VPN with certificate or Azure AD authentication. Step-by-step client setup for all platforms.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/azure-point-to-site-vpn.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/azure-point-to-site-vpn.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script>
+</script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-03-05">March 5, 2026</time>
+                    </div>
+                    <h1>Point-to-Site VPN for Remote Admins: OpenVPN & Azure AD Auth</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/azure-point-to-site-vpn.jpg" alt="Point-to-Site VPN Azure" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Point-to-Site (P2S) VPN allows individual clients to securely connect to your Azure virtual network without a site-to-site VPN connection. This is ideal for remote developers and administrators who need access to Azure resources.</p>
+
+                    <h2>What is Point-to-Site VPN?</h2>
+                    <p>P2S VPN creates a secure connection from a single client computer to Azure virtual networks. It's commonly used for:</p>
+                    <ul>
+                        <li>Remote work access to development environments</li>
+                        <li>Admin access to production resources</li>
+                        <li>Testing connectivity without exposing resources publicly</li>
+                    </ul>
+
+                    <h2>Authentication Methods</h2>
+                    <p>Azure P2S VPN supports two primary authentication methods:</p>
+
+                    <h3>Certificate-Based Authentication</h3>
+                    <p>Uses client certificates issued by a certificate authority. Best for organizations that already have a PKI infrastructure or need machine-level authentication.</p>
+
+                    <h3>Azure AD Authentication</h3>
+                    <p>Integrates with Microsoft Entra ID (formerly Azure AD) for user authentication. Provides conditional access, MFA support, and easier user management.</p>
+
+                    <div class="callout callout-info">
+                        <strong>Recommendation:</strong> Azure AD authentication is easier to manage for most organizations and provides stronger security through conditional access policies.
+                    </div>
+
+                    <h2>Prerequisites</h2>
+                    <ul>
+                        <li>Azure subscription with contributor access</li>
+                        <li>Existing virtual network with a subnet for VPN gateway</li>
+                        <li>For Azure AD auth: Microsoft Entra ID tenant</li>
+                        <li>For certificate auth: OpenSSL for generating certificates</li>
+                    </ul>
+
+                    <h2>Method 1: Azure AD Authentication</h2>
+
+                    <h3>Step 1: Create the Virtual Network Gateway</h3>
+                    <pre><code>az network vnet create \
+  --resource-group myResourceGroup \
+  --name myVnet \
+  --address-prefixes 10.0.0.0/16 \
+  --subnet-name GatewaySubnet \
+  --subnet-prefixes 10.0.255.0/27
+
+az network public-ip create \
+  --resource-group myResourceGroup \
+  --name vpnGatewayIP \
+  --sku Standard
+
+az network vnet-gateway create \
+  --resource-group myResourceGroup \
+  --name vpnGateway \
+  --public-ip-addresses vpnGatewayIP \
+  --vnet myVnet \
+  --gateway-type Vpn \
+  --vpn-type RouteBased \
+  --sku VpnGw1 \
+  --client-protocol OpenVPN</code></pre>
+
+                    <h3>Step 2: Configure Azure AD Authentication</h3>
+                    <pre><code># Get your Azure AD Tenant ID
+az account show --query tenantId -o tsv
+
+# Register the VPN application in Azure AD
+az ad app create \
+  --display-name "Azure VPN" \
+  --identifier-uris "https://azurevpn" \
+  --query appId -o tsv
+
+# Create service principal
+az ad sp create --id <app-id></code></pre>
+
+                    <h3>Step 3: Configure VPN Gateway for Azure AD</h3>
+                    <p>Navigate to your Virtual Network Gateway in Azure Portal:</p>
+                    <ol>
+                        <li>Go to <strong>Point-to-site configuration</strong></li>
+                        <li>Click <strong>Configure now</strong></li>
+                        <li>Select <strong>Authentication type: Azure Active Directory</strong></li>
+                        <li>Enter your Azure AD tenant details:
+                            <ul>
+                                <li>Tenant: <code>https://login.microsoftonline.com/{tenant-id}</code></li>
+                                <li>Audience: <code>{app-id}</code></li>
+                                <li>Issuer: <code>https://sts.windows.net/{tenant-id}</code></li>
+                            </ul>
+                        </li>
+                        <li>Allocate an address pool (e.g., <code>172.16.0.0/24</code>)</li>
+                        <li>Save the configuration</li>
+                    </ol>
+
+                    <h2>Method 2: Certificate-Based Authentication</h2>
+
+                    <h3>Step 1: Generate Root Certificate</h3>
+                    <pre><code># Generate root CA private key
+openssl genrsa -out rootCA.key 4096
+
+# Create self-signed root certificate
+openssl req -x509 -new -nodes -key rootCA.key \
+  -sha256 -days 1024 \
+  -out rootCA.cer \
+  -subj "/CN=AzureVPNRoot"</code></pre>
+
+                    <h3>Step 2: Generate Client Certificate</h3>
+                    <pre><code># Generate client private key
+openssl genrsa -out client.key 4096
+
+# Create client certificate request
+openssl req -new -key client.key \
+  -out client.csr \
+  -subj "/CN=admin-laptop"
+
+# Sign client certificate with root CA
+openssl x509 -req -in client.csr -CA rootCA.cer \
+  -CAkey rootCA.key -CAcreateserial \
+  -out client.cer -days 365 -sha256</code></pre>
+
+                    <h3>Step 3: Export Client Certificate (with private key)</h3>
+                    <pre><code># Convert to PFX format for client import
+openssl pkcs12 -export -out client.pfx \
+  -inkey client.key -in client.cer \
+  -certfile rootCA.cer</code></pre>
+
+                    <h3>Step 4: Upload Root Certificate to Azure</h3>
+                    <pre><code># Get base64 content of root certificate
+certutil -encode rootCA.cer rootCA_base64.cer
+
+# Or using PowerShell
+$cert = Get-Content -Path "rootCA.cer" -Encoding Byte
+[Convert]::ToBase64String($cert)</code></pre>
+
+                    <p>In Azure Portal under your VPN gateway's Point-to-site configuration:</p>
+                    <ol>
+                        <li>Select <strong>Authentication type: Certificate</strong></li>
+                        <li>Under <strong>Root certificates</strong>, click <strong>Configure now</strong></li>
+                        <li>Enter a name and paste the base64 certificate content</li>
+                        <li>Save the configuration</li>
+                    </ol>
+
+                    <h2>Client Setup</h2>
+
+                    <h3>Windows</h3>
+                    <p>Download the Azure VPN Client from the Microsoft Store or Azure Portal:</p>
+                    <ol>
+                        <li>Go to your VPN gateway in Azure Portal</li>
+                        <li>Click <strong>Point-to-site configuration</strong></li>
+                        <li>Click <strong>Download VPN client</strong></li>
+                        <li>Extract and install the client</li>
+                        <li>Import the VPN profile (for cert auth) or sign in with Azure AD</li>
+                        <li>Connect to your virtual network</li>
+                    </ol>
+
+                    <pre><code># For certificate auth, you can also manually configure OpenVPN
+# Download OpenVPN client from https://openvpn.net/client-connect-vpn-for-windows/
+# Import the client.pfx certificate to your Windows certificate store</code></pre>
+
+                    <h3>macOS</h3>
+                    <pre><code># Install OpenVPN Connect from App Store or https://openvpn.net/client-connect-vpn-for-mac/
+
+# Or use Tunnelblick (open source)
+brew install --cask tunnelblick</code></pre>
+
+                    <p>For Azure AD auth on macOS:</p>
+                    <ol>
+                        <li>Download the Azure VPN Client for macOS from Azure Portal</li>
+                        <li>Install and import your VPN profile</li>
+                        <li>Sign in with Azure AD credentials</li>
+                    </ol>
+
+                    <h3>Linux</h3>
+                    <pre><code># Install OpenVPN on Ubuntu/Debian
+sudo apt update
+sudo apt install openvpn network-manager-openvpn
+
+# Install Azure VPN Client for Linux (Ubuntu)
+wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt update
+sudo apt install azure-vpn-client</code></pre>
+
+                    <p>For certificate-based auth on Linux:</p>
+                    <pre><code># Import client certificate
+sudo cp client.pfx /etc/openvpn/
+sudo cp rootCA.cer /etc/openvpn/
+
+# Create OpenVPN client config
+sudo nano /etc/openvpn/client.ovpn</code></pre>
+
+                    <pre><code># Sample OpenVPN client config
+client
+dev tun
+proto tcp
+remote your-gateway-ip 443
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+remote-cert-tls server
+cipher AES-256-GCM
+auth SHA256
+verb 3
+
+&lt;ca&gt;
+# Paste rootCA.cer content here
+&lt;/ca&gt;
+
+&lt;cert&gt;
+# Paste client.cer content here
+&lt;/cert&gt;
+
+&lt;key&gt;
+# Paste client.key content here
+&lt;/key&gt;</code></pre>
+
+                    <h2>Connection Troubleshooting</h2>
+
+                    <h3>Common Issues and Solutions</h3>
+
+                    <h4>1. Cannot download VPN client profile</h4>
+                    <pre><code># Check gateway provisioning status
+az network vnet-gateway show \
+  --resource-group myResourceGroup \
+  --name vpnGateway \
+  --query provisioningState</code></pre>
+
+                    <h4>2. Connection timeout or failure</h4>
+                    <ul>
+                        <li>Check if port 443 (TCP) or 1194 (UDP) is open on your firewall</li>
+                        <li>Verify the gateway public IP is correct in your client config</li>
+                        <li>Ensure the VPN gateway is in "Succeeded" state</li>
+                    </ul>
+
+                    <h4>3. Azure AD authentication fails</h4>
+                    <pre><code># Verify user has VPN permission in Azure AD
+# User must be in the VPN application or have directory read permissions
+
+# Check conditional access policies
+# Ensure MFA or legacy auth controls aren't blocking</code></pre>
+
+                    <h4>4. Can connect but cannot access resources</h4>
+                    <ul>
+                        <li>Verify route tables allow traffic from VPN subnet</li>
+                        <li>Check NSGs on target subnets allow traffic from VPN address space</li>
+                        <li>Ensure DNS resolution works from VPN client</li>
+                    </ul>
+
+                    <pre><code># Test DNS resolution
+nslookup myvm.internal.cloudapp.net
+
+# Check effective routes on VPN NIC
+az network nic show-effective-route-table \
+  --resource-group myResourceGroup \
+  --name vpnGatewayNic</code></pre>
+
+                    <h4>5. Certificate expired or invalid</h4>
+                    <pre><code># Check certificate validity
+openssl x509 -in client.cer -noout -dates
+
+# Renew client certificate
+# Generate new CSR and sign with root CA
+openssl req -new -key client.key -out clientrenewal.csr \
+  -subj "/CN=admin-laptop"
+openssl x509 -req -in clientrenewal.csr -CA rootCA.cer \
+  -CAkey rootCA.key -CAcreateserial \
+  -out clientrenewal.cer -days 365 -sha256</code></pre>
+
+                    <h2>Testing Your Connection</h2>
+                    <pre><code># After connecting, verify your IP address
+ipconfig  # Windows
+ip addr   # Linux/macOS
+
+# You should see an IP from your VPN address pool
+
+# Test connectivity to Azure resources
+ping 10.0.0.4  # Replace with your VM private IP
+
+# Test DNS resolution
+nslookup mydatabase.internal.cloudapp.net</code></pre>
+
+                    <h2>Security Best Practices</h2>
+                    <ul>
+                        <li>Use Azure AD authentication with MFA for stronger security</li>
+                        <li>Implement conditional access policies for VPN access</li>
+                        <li>Use certificate-based auth with short expiration periods</li>
+                        <li>Restrict VPN access to specific user groups in Azure AD</li>
+                        <li>Monitor connection logs for suspicious activity</li>
+                        <li>Use separate address pools for different environments (dev/staging/prod)</li>
+                        <li>Enable VPN gateway diagnostics logs</li>
+                    </ul>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>How many concurrent P2S connections does Azure support?</h3>
+                                <p>It varies by SKU: Basic supports 128 connections, VpnGw1 supports 250, VpnGw2 supports 500, and VpnGw3 supports 1000.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Can I use P2S and S2S VPN simultaneously?</h3>
+                                <p>Yes, you can have both connection types on the same VPN gateway. This is useful for hybrid scenarios.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What's the difference between OpenVPN and SSTP?</h3>
+                                <p>OpenVPN works on all platforms and can traverse most firewalls. SSTP uses port 443 and works well in restrictive network environments but is Windows-only.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Does P2S VPN support split tunneling?</h3>
+                                <p>Yes, by default all traffic routes through the VPN. You can configure split tunneling to only route specific traffic through the tunnel.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#vpn</span>
+                        <span class="tag">#openvpn</span>
+                        <span class="tag">#azure-ad</span>
+                        <span class="tag">#remote-access</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+
+                    <div class="newsletter-cta">
+                        <h3>Want more sysops tips?</h3>
+                        <p>Join our weekly newsletter for practical infrastructure advice.</p>
+                        <!-- <form class="newsletter-form">
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form> -->
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step - SysOpsBits</title>
+    <meta name="description" content="Learn how to deploy a secure Ubuntu VM in Azure VNet with NSG rules, SSH key authentication, and Fail2Ban hardening.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/create-secure-linux-vm-azure.html">
+    <meta property="og:title" content="Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step">
+    <meta property="og:description" content="Deploy and harden an Ubuntu VM in Azure with SSH key authentication, NSG rules, and Fail2Ban.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/create-secure-linux-vm-azure.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/create-secure-linux-vm-azure.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script>
+</script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-03-05">March 5, 2026</time>
+                    </div>
+                    <h1>Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/create-secure-linux-vm-azure.jpg" alt="Secure Linux VM Azure" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Deploying a Linux virtual machine in Azure is straightforward, but securing it properly requires careful planning. This guide covers deploying an Ubuntu VM with SSH key authentication, Network Security Group rules, and Fail2Ban for brute-force protection.</p>
+
+                    <h2>Why Security Matters</h2>
+                    <p>Every publicly accessible SSH server faces constant brute-force attacks. By default, SSH listens on port 22, and attackers use automated scripts to try common usernames and passwords. A single misconfigured VM can be compromised within hours of deployment.</p>
+
+                    <p>The key principles we'll apply are: deny by default, use strong authentication, and add layers of defense.</p>
+
+                    <h2>Understanding Azure Networking</h2>
+                    <p>Before deploying your VM, it's important to understand how Azure networking works. When you create a VM in Azure, it's placed within a Virtual Network (VNet). All network traffic to and from the VM flows through the VNet's subnets.</p>
+
+                    <p>Network Security Groups (NSGs) act as firewalls at the network level. They control what traffic can enter or leave a subnet or network interface. By associating an NSG with your VM's subnet or network interface, you can filter traffic before it reaches your server.</p>
+
+                    <div class="callout callout-info">
+                        <strong>Best Practice:</strong> Always place VMs in a dedicated subnet and apply NSG rules at the subnet level for centralized management.
+                    </div>
+
+                    <h2>Deploy the Virtual Network and Subnet</h2>
+                    <p>First, create the networking infrastructure that will host your VM.</p>
+
+                    <pre><code>az group create --name myResourceGroup --location eastus
+
+az network vnet create \
+  --resource-group myResourceGroup \
+  --name myVnet \
+  --address-prefixes 10.0.0.0/16
+
+az network subnet create \
+  --resource-group myResourceGroup \
+  --vnet-name myVnet \
+  --name mySubnet \
+  --address-prefixes 10.0.1.0/24</code></pre>
+
+                    <p>This creates a VNet with the 10.0.0.0/16 address space and a single subnet using 10.0.1.0/24. The VM will receive an IP in this range.</p>
+
+                    <h2>Create the NSG and Configure SSH Rules</h2>
+                    <p>Now create an NSG with rules that allow SSH only from specific sources while denying everything else.</p>
+
+                    <pre><code>az network nsg create \
+  --resource-group myResourceGroup \
+  --name myVMNSG
+
+# Allow SSH from your specific IP (replace with your IP)
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name myVMNSG \
+  --name AllowSSHFromMyIP \
+  --priority 100 \
+  --access Allow \
+  --protocol Tcp \
+  --direction Inbound \
+  --source-address-prefix your.public.ip.address/32 \
+  --source-port-range "*" \
+  --destination-address-prefix VirtualNetwork \
+  --destination-port-range 22
+
+# Deny all other SSH access
+az network nsg rule create \
+  --resource-group myResourceGroup \
+  --nsg-name myVMNSG \
+  --name DenyAllSSH \
+  --priority 4096 \
+  --access Deny \
+  --protocol Tcp \
+  --direction Inbound \
+  --source-address-prefix "*" \
+  --source-port-range "*" \
+  --destination-address-prefix VirtualNetwork \
+  --destination-port-range 22</code></pre>
+
+                    <p>The first rule allows SSH from your specific IP address—this is much safer than allowing SSH from anywhere. The second rule explicitly denies all other SSH traffic. Azure has an implicit deny rule at priority 4096, but being explicit improves clarity and security.</p>
+
+                    <div class="callout callout-warning">
+                        <strong>Important:</strong> Replace <code>your.public.ip.address</code> with your actual public IP. Find it by visiting <code>whatismyip.com</code>.
+                    </div>
+
+                    <h2>Associate NSG with the Subnet</h2>
+                    <pre><code>az network vnet subnet update \
+  --resource-group myResourceGroup \
+  --vnet-name myVnet \
+  --name mySubnet \
+  --network-security-group myVMNSG</code></pre>
+
+                    <p>Associating the NSG with the subnet means all VMs in that subnet inherit these security rules.</p>
+
+                    <h2>Generate SSH Key Pair</h2>
+                    <p>Password authentication is vulnerable to brute-force attacks. SSH key pairs provide much stronger security through asymmetric cryptography.</p>
+
+                    <pre><code># Generate SSH key pair (Linux/macOS)
+ssh-keygen -t ed25519 -C "azure-vm"
+
+# Or on Windows with PowerShell
+ssh-keygen -t ed25519 -C "azure-vm"</code></pre>
+
+                    <p>This creates two files: a private key (keep this secret, never share it) and a public key (safe to distribute). The public key will be placed on your Azure VM during creation.</p>
+
+                    <h2>Deploy the Ubuntu VM</h2>
+                    <pre><code>az vm create \
+  --resource-group myResourceGroup \
+  --name myUbuntuVM \
+  --image Ubuntu2204 \
+  --size Standard_B1s \
+  --admin-username azureuser \
+  --ssh-key-value ~/.ssh/id_ed25519.pub \
+  --vnet-name myVnet \
+  --subnet mySubnet \
+  --nsg "" \
+  --public-ip-sku Standard</code></pre>
+
+                    <p>This command deploys an Ubuntu 22.04 VM with the following settings:</p>
+                    <ul>
+                        <li><strong>Image:</strong> Ubuntu 22.04 LTS</li>
+                        <li><strong>Size:</strong> Standard_B1s (1 vCPU, 1GB RAM—suitable for testing)</li>
+                        <li><strong>Admin username:</strong> azureuser (avoid using "root")</li>
+                        <li><strong>SSH key:</strong> The public key you generated</li>
+                        <li><strong>NSG:</strong> We're not associating an NSG here since we attached one to the subnet</li>
+                    </ul>
+
+                    <h2>SSH Key Authentication</h2>
+                    <p>Once the VM is deployed, connect using your private key:</p>
+
+                    <pre><code>ssh -i ~/.ssh/id_ed25519 azureuser@your-vm-ip</code></pre>
+
+                    <p>Using key-based authentication eliminates the risk of password brute-force attacks. The private key never leaves your local machine, and the public key is stored on the server.</p>
+
+                    <h2>Ubuntu Hardening: Fail2Ban</h2>
+                    <p>Even with restricted NSG rules, it's wise to add another layer of protection. Fail2Ban monitors failed login attempts and automatically bans IP addresses that show malicious behavior.</p>
+
+                    <h3>Install Fail2Ban</h3>
+                    <pre><code>sudo apt update
+sudo apt install fail2ban</code></pre>
+
+                    <h3>Configure Fail2Ban for SSH</h3>
+                    <pre><code>sudo nano /etc/fail2ban/jail.local</code></pre>
+
+                    <pre><code>[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 3600
+findtime = 600</code></pre>
+
+                    <p>This configuration means: ban an IP after 3 failed attempts, for 1 hour (3600 seconds), if those attempts happen within 10 minutes (600 seconds).</p>
+
+                    <pre><code>sudo systemctl enable fail2ban
+sudo systemctl start fail2ban</code></pre>
+
+                    <h3>Verify Fail2Ban Status</h3>
+                    <pre><code>sudo fail2ban-client status</code></pre>
+
+                    <h2>Additional Security Hardening</h2>
+                    <p>Beyond Fail2Ban, consider these additional hardening steps:</p>
+
+                    <h3>Disable Password Authentication</h3>
+                    <pre><code>sudo nano /etc/ssh/sshd_config</code></pre>
+
+                    <pre><code>PasswordAuthentication no
+ChallengeResponseAuthentication no
+UsePAM no</code></pre>
+
+                    <pre><code>sudo systemctl restart sshd</code></pre>
+
+                    <h3>Change Default SSH Port</h3>
+                    <p>While security through obscurity isn't a complete solution, changing the default SSH port reduces automated attack volume.</p>
+
+                    <pre><code>sudo nano /etc/ssh/sshd_config</code></pre>
+
+                    <pre><code>Port 2222</code></pre>
+
+                    <pre><code>sudo systemctl restart sshd</code></pre>
+
+                    <p>If you change the SSH port, update your NSG rule accordingly.</p>
+
+                    <h3>Configure UFW Firewall</h3>
+                    <pre><code>sudo apt install ufw
+sudo ufw allow 22/tcp
+sudo ufw allow 2222/tcp
+sudo ufw enable
+sudo ufw status verbose</code></pre>
+
+                    <h2>Testing Your Configuration</h2>
+                    <p>After hardening, verify everything works:</p>
+
+                    <pre><code># Test SSH connection
+ssh -i ~/.ssh/id_ed25519 azureuser@your-vm-ip
+
+# Check Fail2Ban is running
+sudo fail2ban-client status
+
+# Check UFW status
+sudo ufw status
+
+# Review SSH daemon configuration
+sudo sshd -t</code></pre>
+
+                    <h2>Summary</h2>
+                    <p>Your Ubuntu VM is now secured with multiple layers of protection:</p>
+                    <ul>
+                        <li><strong>Network level:</strong> NSG allows SSH only from your specific IP</li>
+                        <li><strong>Authentication:</strong> SSH key pairs instead of passwords</li>
+                        <li><strong>Intrusion prevention:</strong> Fail2Ban blocks brute-force attackers</li>
+                        <li><strong>Host firewall:</strong> UFW provides additional filtering</li>
+                    </ul>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Can I use a bastion host instead?</h3>
+                                <p>Yes. A bastion host (jump box) is a dedicated VM in a management subnet that acts as the only entry point for SSH. You would allow SSH to the bastion from your IP, then connect from the bastion to other VMs. This provides an additional security layer.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What if my IP changes?</h3>
+                                <p>If your public IP changes, update the NSG rule with your new IP. Consider using a VPN or bastion host if your IP is dynamic.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Should I use Azure Bastion?</h3>
+                                <p>Azure Bastion is a managed jump box service that eliminates the need for a public IP on your VM. It's more secure than exposing SSH directly and simplifies management. However, it comes with additional costs.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#linux</span>
+                        <span class="tag">#ubuntu</span>
+                        <span class="tag">#ssh</span>
+                        <span class="tag">#security</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+
+                    <div class="newsletter-cta">
+                        <h3>Want more sysops tips?</h3>
+                        <p>Join our weekly newsletter for practical infrastructure advice.</p>
+                        <!-- <form class="newsletter-form">
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit" class="btn btnbtn-primary">Subscribe</button>
+                        </form> -->
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

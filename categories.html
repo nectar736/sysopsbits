@@ -23,6 +23,7 @@
   gtag('js', new Date());
 
   gtag('config', 'G-B67YJF8565');
+</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
      crossorigin="anonymous"></script>
 </script></head>
@@ -56,7 +57,7 @@
                         <div class="category-info">
                             <h2><a href="tutorials.html">Tutorials</a></h2>
                             <div class="category-meta">
-                                <span class="post-count" data-category="tutorials">2 articles</span>
+                                <span class="post-count" data-category="tutorials">5 articles</span>
                             </div>
                         </div>
                     </div>
@@ -65,6 +66,18 @@
                         <div class="recent-posts">
                             <h4>Recent Articles</h4>
                             <ul>
+                                <li>
+                                    <a href="tutorials/create-secure-linux-vm-azure.html">Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step</a>
+                                    <time datetime="2026-03-05">Mar 5</time>
+                                </li>
+                                <li>
+                                    <a href="tutorials/azure-point-to-site-vpn.html">Point-to-Site VPN for Remote Admins: OpenVPN & Azure AD Auth</a>
+                                    <time datetime="2026-03-05">Mar 5</time>
+                                </li>
+                                <li>
+                                    <a href="tutorials/azure-nsg-best-practices.html">Azure NSG Best Practices: Practical Rules and Patterns</a>
+                                    <time datetime="2026-03-05">Mar 5</time>
+                                </li>
                                 <li>
                                     <a href="tutorials/automated-linux-backups-restic.html">How to Set Up Automated Linux Backups with Restic</a>
                                     <time datetime="2026-01-18">Jan 18</time>
@@ -87,7 +100,7 @@
                         <div class="category-info">
                             <h2><a href="comparisons.html">Comparisons</a></h2>
                             <div class="category-meta">
-                                <span class="post-count" data-category="comparisons">4 articles</span>
+                                <span class="post-count" data-category="comparisons">6 articles</span>
                             </div>
                         </div>
                     </div>
@@ -104,6 +117,22 @@
                                     <a href="comparisons/docker-vs-kubernetes-2026.html">Docker vs Kubernetes</a>
                                     <time datetime="2026-01-08">Jan 8</time>
                                 </li>
+                                <li>
+                                    <a href="comparisons/unifi-vs-pfsense-2026.html">UniFi vs pfSense: Network Solutions Compared</a>
+                                    <time datetime="2026-01-05">Jan 5</time>
+                                </li>
+                                <li>
+                                    <a href="comparisons/postgresql-vs-mysql-2026.html">PostgreSQL vs MySQL (2026)</a>
+                                    <time datetime="2026-01-03">Jan 3</time>
+                                </li>
+                                <li>
+                                    <a href="comparisons/virtualbox-vs-hyper-v-2026.html">VirtualBox vs Hyper-V (2026)</a>
+                                    <time datetime="2026-01-02">Jan 2</time>
+                                </li>
+                                <li>
+                                    <a href="comparisons/best-cheap-vps-hosting-2026.html">Best Cheap VPS Hosting (2026)</a>
+                                    <time datetime="2026-01-01">Jan 1</time>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -118,7 +147,7 @@
                         <div class="category-info">
                             <h2><a href="tools.html">Tools</a></h2>
                             <div class="category-meta">
-                                <span class="post-count" data-category="tools">1 article</span>
+                                <span class="post-count" data-category="tools">4 articles</span>
                             </div>
                         </div>
                     </div>
@@ -127,6 +156,18 @@
                         <div class="recent-posts">
                             <h4>Recent Articles</h4>
                             <ul>
+                                <li>
+                                    <a href="tools/best-performance-monitoring-tools-linux.html">Best Performance Monitoring Tools for Linux</a>
+                                    <time datetime="2026-01-12">Jan 12</time>
+                                </li>
+                                <li>
+                                    <a href="tools/best-virtualization-tools-sysadmins-2026.html">Best Virtualization Tools for Sysadmins (2026)</a>
+                                    <time datetime="2026-01-12">Jan 12</time>
+                                </li>
+                                <li>
+                                    <a href="tools/essential-network-troubleshooting-tools.html">Essential Network Troubleshooting Tools</a>
+                                    <time datetime="2026-01-12">Jan 12</time>
+                                </li>
                                 <li>
                                     <a href="tools/top-10-cli-tools-sysadmin.html">Top 10 CLI Tools Every Sysadmin Should Know</a>
                                     <time datetime="2026-01-12">Jan 12</time>
@@ -147,34 +188,23 @@
     <script src="js/main.js" defer></script>
     <script src="js/partials.js" defer></script>
     <script>
-        const siteData = {
-            categories: [
-                { name: 'Tutorials', path: 'tutorials.html', articlePath: 'tutorials/', articles: ['automated-linux-backups-restic.html', 'secure-linux-smb-server-ubuntu.html'] },
-                { name: 'Comparisons', path: 'comparisons.html', articlePath: 'comparisons/', articles: ['digitalocean-vs-linode-vs-hetzner-2026.html', 'docker-vs-kubernetes-2026.html', 'unifi-vs-pfsense-2026.html', 'virtualbox-vs-hyper-v-2026.html', 'postgresql-vs-mysql-2026.html', 'best-cheap-vps-hosting-2026.html'] },
-                { name: 'Tools', path: 'tools.html', articlePath: 'tools/', articles: ['top-10-cli-tools-sysadmin.html', 'best-performance-monitoring-tools-linux.html', 'best-virtualization-tools-sysadmins-2026.html'] }
-            ]
-        };
-
         document.addEventListener('DOMContentLoaded', function() {
-            const categories = siteData.categories;
+            // Count categories from category cards
+            const categoryCards = document.querySelectorAll('.category-card');
+            const categoriesCount = categoryCards.length;
+            
+            // Count all articles listed in the page (all recent posts across categories)
             let totalArticles = 0;
-
-            categories.forEach(function(cat) {
-                const count = cat.articles.length;
-                totalArticles += count;
-
-                const countElements = document.querySelectorAll('.post-count[data-category]');
-                countElements.forEach(function(el) {
-                    if (el.getAttribute('data-category') === cat.name.toLowerCase()) {
-                        el.textContent = count + ' article' + (count !== 1 ? 's' : '');
-                    }
-                });
+            document.querySelectorAll('.category-preview .recent-posts ul li').forEach(() => {
+                totalArticles++;
             });
-
-            const categoryStat = document.querySelector('[data-count="categories"]');
-            const pagesStat = document.querySelector('[data-count="pages"]');
-            if (categoryStat) categoryStat.textContent = categories.length;
-            if (pagesStat) pagesStat.textContent = totalArticles;
+            
+            // Update stat numbers
+            const statNumbers = document.querySelectorAll('.stat-number[data-count="categories"]');
+            statNumbers.forEach(el => el.textContent = categoriesCount);
+            
+            const statPages = document.querySelectorAll('.stat-number[data-count="pages"]');
+            statPages.forEach(el => el.textContent = totalArticles);
         });
     </script>
 </body>
