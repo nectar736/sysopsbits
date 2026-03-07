@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started with Ollama: Run Local LLMs on Your Machine - SysOpsBits</title>
+    <meta name="description" content="Step-by-step guide to installing Ollama, pulling models like DeepSeek-Coder and Qwen2.5-Coder, and running them locally for code generation and multi-modal tasks.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/getting-started-with-ollama.html">
+    <meta property="og:title" content="Getting Started with Ollama: Run Local LLMs on Your Machine">
+    <meta property="og:description" content="Step-by-step guide to installing Ollama and running local LLMs for code generation.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/getting-started-with-ollama.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/cli-tools-sysadmin.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script>
+</script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-03-07">March 7, 2026</time>
+                    </div>
+                    <h1>Getting Started with Ollama: Run Local LLMs on Your Machine</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/cli-tools-sysadmin.jpg" alt="Getting Started with Ollama" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Running large language models locally gives you privacy, no API costs, and full control over your AI workflows. Ollama makes this accessible by bundling model weights and runtime into a simple executable.</p>
+
+                    <p>This guide walks you through installing Ollama, pulling models, and using them for code generation.</p>
+
+                    <h2>What is Ollama?</h2>
+                    <p>Ollama is an open-source framework for running large language models locally. It supports a variety of models optimized for coding, reasoning, and multi-modal tasks. With Ollama, you can run models like Llama 3.1, Qwen 2.5, and DeepSeek-Coder directly on your machine.</p>
+
+                    <h2>Installing Ollama</h2>
+
+                    <h3>macOS</h3>
+                    <pre><code># Download and install from the website
+# https://ollama.com/download/mac
+
+# Or via Homebrew
+brew install ollama</code></pre>
+
+                    <h3>Linux</h3>
+                    <pre><code># Install via the official script
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Verify installation
+ollama --version</code></pre>
+
+                    <h3>Windows</h3>
+                    <p>Windows users have two options:</p>
+                    <ul>
+                        <li><strong>Windows Subsystem for Linux (WSL):</strong> Install Ollama within WSL2 for the best performance</li>
+                        <li><strong>Direct install:</strong> Download the Windows installer from <a href="https://ollama.com/download/windows" target="_blank" rel="noopener">ollama.com/download/windows</a></li>
+                    </ul>
+
+                    <pre><code># If using WSL2, install inside the Linux distribution
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Start the Ollama service
+ollama serve
+
+# In another terminal, verify it works
+ollama --version</code></pre>
+
+                    <h2>Pulling Your First Model</h2>
+
+                    <p>Ollama uses a simple <code>pull</code> command to download models. Let's start with a coding-focused model:</p>
+
+                    <pre><code># Pull Qwen2.5-Coder (optimized for code generation)
+ollama pull qwen2.5-coder:7b
+
+# Or try DeepSeek-Coder
+ollama pull deepseek-coder:6.7b
+
+# List available models
+ollama list</code></pre>
+
+                    <h3>Popular Models for Developers</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Size</th>
+                                <th>Best For</th>
+                                <th>VRAM Needed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>qwen2.5-coder:7b</td>
+                                <td>4.7 GB</td>
+                                <td>General coding</td>
+                                <td>8 GB</td>
+                            </tr>
+                            <tr>
+                                <td>deepseek-coder:6.7b</td>
+                                <td>3.9 GB</td>
+                                <td>Code completion</td>
+                                <td>8 GB</td>
+                            </tr>
+                            <tr>
+                                <td>codestral:7b</td>
+                                <td>4.4 GB</td>
+                                <td>Code generation</td>
+                                <td>8 GB</td>
+                            </tr>
+                            <tr>
+                                <td>llama3.1:8b</td>
+                                <td>4.9 GB</td>
+                                <td>General purpose</td>
+                                <td>8 GB</td>
+                            </tr>
+                            <tr>
+                                <td>phi4:14b</td>
+                                <td>8.3 GB</td>
+                                <td>Reasoning</td>
+                                <td>16 GB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Running Ollama Interactively</h2>
+
+                    <p>The simplest way to use Ollama is in interactive chat mode:</p>
+
+                    <pre><code># Start an interactive session
+ollama run qwen2.5-coder:7b
+
+# You can now chat with the model
+# Try: "Write a Python function to reverse a string"</code></pre>
+
+                    <h2>Using Ollama as a Local API Server</h2>
+
+                    <p>For integration with editors and tools, run Ollama as a server:</p>
+
+                    <pre><code># Start the server (runs on port 11434 by default)
+ollama serve
+
+# In another terminal, make API calls
+curl http://localhost:11434/api/generate -d '{
+  "model": "qwen2.5-coder:7b",
+  "prompt": "Write a Python function that reads a CSV file and returns the average of a column",
+  "stream": false
+}'</code></pre>
+
+                    <h3>JSON Mode</h3>
+                    <p>For structured output, use JSON mode:</p>
+
+                    <pre><code>curl http://localhost:11434/api/generate -d '{
+  "model": "qwen2.5-coder:7b",
+  "prompt": "Return a JSON object with name and email fields",
+  "format": "json"
+}'</code></pre>
+
+                    <h2>Connecting VS Code</h2>
+
+                    <p>You can use Ollama with VS Code through the Continue extension or similar:</p>
+
+                    <h3>Using Continue Extension</h3>
+                    <pre><code># Install the Continue extension in VS Code
+# Then configure it to use your local Ollama server
+
+# In your config.json (Continue):
+{
+  "models": [
+    {
+      "model": "qwen2.5-coder:7b",
+      "provider": "ollama",
+      "api_base": "http://localhost:11434"
+    }
+  ]
+}</code></pre>
+
+                    <h3>Using CodeGPT or Other Extensions</h3>
+                    <p>Most VS Code AI extensions support custom endpoints. Configure them to point to <code>http://localhost:11434</code>.</p>
+
+                    <h2>Connecting OpenCode</h2>
+
+                    <p>To use Ollama with OpenCode or other AI coding assistants:</p>
+
+                    <pre><code># Ensure Ollama is running
+ollama serve
+
+# Configure your tool to use the Ollama API
+# The endpoint is: http://localhost:11434
+
+# For OpenCode, you would configure the model provider:
+{
+  "provider": "ollama",
+  "model": "qwen2.5-coder:7b",
+  "api_base": "http://localhost:11434"
+}</code></pre>
+
+                    <h2>Basic Examples</h2>
+
+                    <h3>Generating a Python Script</h3>
+                    <pre><code>curl http://localhost:11434/api/generate -d '{
+  "model": "qwen2.5-coder:7b",
+  "prompt": "Write a Python script that monitors a directory for new files and logs their names to a file. Include proper error handling.",
+  "stream": false
+}'</code></pre>
+
+                    <h3>Creating a Project Scaffold</h3>
+                    <pre><code>curl http://localhost:11434/api/generate -d '{
+  "model": "qwen2.5-coder:7b",
+  "prompt": "Create a Flask API project structure with routes for CRUD operations on a User model. Include requirements.txt and basic tests.",
+  "stream": false
+}'</code></pre>
+
+                    <h3>Explaining Code</h3>
+                    <pre><code>curl http://localhost:11434/api/generate -d '{
+  "model": "qwen2.5-coder:7b",
+  "prompt": "Explain what this code does:\n\ndef fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n-1) + fibonacci(n-2)",
+  "stream": false
+}'</code></pre>
+
+                    <h2>Multi-Modal: Using Vision Models</h2>
+
+                    <p>Ollama also supports vision models that can analyze images:</p>
+
+                    <pre><code># Pull a vision model
+ollama pull llava:7b
+
+# Analyze an image
+curl http://localhost:11434/api/generate -d '{
+  "model": "llava:7b",
+  "prompt": "Describe what you see in this image",
+  "images": ["$(base64 -w0 /path/to/image.jpg)"]
+}'</code></pre>
+
+                    <h2>Troubleshooting Common Issues</h2>
+
+                    <h3>MIME Type Errors</h3>
+                    <p>If you see MIME type errors when serving files:</p>
+                    <pre><code># Ensure you're using the correct Content-Type header
+curl -H "Content-Type: application/json" http://localhost:11434/api/generate -d '{...}'
+
+# For file uploads, ensure base64 encoding is correct
+base64 -w0 image.png  # Linux/macOS
+base64 image.png       # Windows (PowerShell)</code></pre>
+
+                    <h3>File Path Resolution</h3>
+                    <p>When working with files:</p>
+                    <pre><code># Use absolute paths
+# Wrong: "read file.txt"
+# Correct: "read /home/user/project/file.txt"
+
+# For Windows paths, use forward slashes
+# Correct: "read C:/Users/Project/file.txt"</code></pre>
+
+                    <h3>Token Limit Errors</h3>
+                    <p>If responses are truncated:</p>
+                    <pre><code># Increase the token limit
+curl http://localhost:11434/api/generate -d '{
+  "model": "qwen2.5-coder:7b",
+  "prompt": "Your long prompt here",
+  "options": {
+    "num_ctx": 8192,
+    "num_predict": 2048
+  }
+}'</code></pre>
+
+                    <h3>Out of Memory Errors</h3>
+                    <p>If you run out of VRAM:</p>
+                    <pre><code># Use a smaller model
+ollama pull qwen2.5-coder:3b  # 1.9GB instead of 4.7GB
+
+# Or reduce context size
+curl ... -d '{
+  "options": {
+    "num_ctx": 2048
+  }
+}'</code></pre>
+
+                    <h3>Model Not Found</h3>
+                    <pre><code># Check available models
+ollama list
+
+# Pull the model again if needed
+ollama pull qwen2.5-coder:7b</code></pre>
+
+                    <h2>Creating Custom Models</h2>
+
+                    <p>You can create custom Ollama models using Modelfiles:</p>
+
+                    <pre><code># Create a Modelfile
+cat > MyCoder << 'EOF'
+FROM qwen2.5-coder:7b
+
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+
+SYSTEM You are an expert Python developer. Provide clean, well-documented code.
+EOF
+
+# Create the custom model
+ollama create my-coder -f MyCoder
+
+# Use it
+ollama run my-coder</code></pre>
+
+                    <h2>Next Steps</h2>
+
+                    <p>Now that you have Ollama running locally, you can:</p>
+                    <ul>
+                        <li>Integrate it with your code editor for AI-assisted coding</li>
+                        <li>Build automation scripts that use local LLMs</li>
+                        <li>Experiment with different models for different tasks</li>
+                        <li>Create custom model configurations for specific use cases</li>
+                    </ul>
+
+                    <p>Ollama provides a powerful, private, and cost-effective way to use AI for development workflows without relying on cloud services.</p>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#ollama</span>
+                        <span class="tag">#llm</span>
+                        <span class="tag">#ai</span>
+                        <span class="tag">#local-llm</span>
+                        <span class="tag">#coding</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
