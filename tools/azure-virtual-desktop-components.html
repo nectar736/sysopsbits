@@ -25,22 +25,9 @@
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
          crossorigin="anonymous"></script>
-</script></head>
+</head>
 <body data-page="tools">
-    <header>
-        <div class="container">
-            <a href="/" class="logo">SysOpsBits</a>
-            <nav>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/tools/">Tools</a></li>
-                    <li><a href="/tutorials/">Tutorials</a></li>
-                    <li><a href="/comparisons/">Comparisons</a></li>
-                    <li><a href="/about/">About</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <div id="header-placeholder"></div>
 
     <main class="container">
         <article class="post">
@@ -137,4 +124,113 @@
                 <h4>Key Benefits:</h4>
                 <ul>
                     <li>Simplifies permission management (assign users to workspace instead of individual app groups)</li>
-                    <li>Provides a unified feed in the client applications</
+                    <li>Provides a unified feed in the client applications</p>
+
+                    <h4>Key Considerations:</h4>
+                    <ul>
+                        <li>One workspace can contain application groups from multiple host pools</li>
+                        <li>Users can be assigned directly to application groups or via workspace</li>
+                        <li>Workspace provides single sign-on to published resources</li>
+                    </ul>
+
+                    <h3>5. FSLogix Profile Container</h3>
+                    <p>FSLogix is a solution that manages user profiles in virtual desktop environments. It's essential for non-persistent deployments.</p>
+
+                    <h4>Why FSLogix?</h4>
+                    <ul>
+                        <li>Separates user profile from OS - profiles roam with users</li>
+                        <li>Dramatically reduces storage requirements with profile deduplication</li>
+                        <li>Enables fast logon times even with large profiles</li>
+                        <li>Works with both pooled and personal host pools</li>
+                    </ul>
+
+                    <h4>Storage Options:</h4>
+                    <ul>
+                        <li><strong>Azure Files</strong>: SMB share, simple setup, cost-effective</li>
+                        <li><strong>Azure NetApp Files</strong>: Higher performance, NFS protocol</li>
+                        <li><strong>Storage Spaces Direct</strong>: For on-premises deployments</li>
+                    </ul>
+
+                    <div class="callout callout-info">
+                        <strong>Pro Tip:</strong> Use premium SSD storage for FSLogix to ensure optimal performance. Standard HDD will cause noticeable delays during profile loading.
+                    </div>
+
+                    <h3>6. Session Hosts Management</h3>
+                    <p>Managing session hosts effectively is crucial for maintaining a healthy AVD environment.</p>
+
+                    <h4>Maintenance Strategies:</h4>
+                    <ul>
+                        <li><strong>Drain Mode</strong>: Gracefully disconnect users before maintenance</li>
+                        <li><strong>Scheduled Updates</strong>: Use update rings for controlled patching</li>
+                        <li><strong>VM Scale Sets</strong>: For automated scaling and updates</li>
+                        <li><strong>Custom Images</strong>: Golden images with pre-installed apps</li>
+                    </ul>
+
+                    <h3>7. AVD Client Applications</h3>
+                    <p>Users connect to AVD through various client applications:</p>
+
+                    <ul>
+                        <li><strong>Windows Client</strong>: Full-featured desktop app</li>
+                        <li><strong>Web Client</strong>: Browser-based access (no installation)</li>
+                        <li><strong>macOS Client</strong>: For Apple devices</li>
+                        <li><strong>iOS/iPadOS Client</strong>: Mobile access</li>
+                        <li><strong>Android Client</strong>: Android mobile access</li>
+                        <li><strong>Thin Client</strong>: Partner certified devices</li>
+                    </ul>
+
+                    <h2>Architecture Best Practices</h2>
+                    <ul>
+                        <li>Use separate subnets for management and session host traffic</li>
+                        <li>Implement network security groups at subnet level</li>
+                        <li>Configure load balancing based on user workload patterns</li>
+                        <li>Plan capacity based on concurrent user sessions, not total users</li>
+                        <li>Use Azure Advisor for recommendations</li>
+                        <li>Implement monitoring with Log Analytics</li>
+                    </ul>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>What's the difference between pooled and personal host pools?</h3>
+                                <p>Pooled host pools share session hosts among multiple users, making them cost-effective for task workers. Personal host pools assign dedicated hosts to users, ideal for power users who need persistent desktop experience.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Do I need FSLogix with personal desktops?</h3>
+                                <p>While not strictly required, FSLogix still provides benefits like profile deduplication and simplified backup/restore of user data. It's recommended for most scenarios.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Can I use existing Windows licenses with AVD?</h3>
+                                <p>Yes, if you have Windows Enterprise or Business licenses with Software Assurance, you can use them for AVD session hosts. Azure also offers Windows Virtual Desktop license included in Microsoft 365 plans.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What's the minimum recommended VM size for AVD?</h2>
+                                <p>For light users (email, browsing), D2s_v3 (2 vCPU, 8GB RAM) works well. Power users running multiple applications need D4s_v3 or larger. Always test with representative workloads before full deployment.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#avd</span>
+                        <span class="tag">#virtual-desktop</span>
+                        <span class="tag">#cloud</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
