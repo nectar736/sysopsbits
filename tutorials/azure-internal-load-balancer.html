@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Set Up an Internal Load Balancer in Azure - SysOpsBits</title>
+    <meta name="description" content="Step-by-step guide to setting up Azure Internal Load Balancer. Configure backend pools, health probes, NAT rules for RDP/SSH, and load balancing rules for your VMs.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/azure-internal-load-balancer.html">
+    <meta property="og:title" content="How to Set Up an Internal Load Balancer in Azure">
+    <meta property="og:description" content="Step-by-step guide to Azure Internal Load Balancer. Configure NAT rules, health probes, and backend pools.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/azure-internal-load-balancer.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/azure-nsg-best-practices.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-B67YJF8565');
+</script>
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-04-26">April 26, 2026</time>
+                    </div>
+                    <h1>How to Set Up an Internal Load Balancer in Azure (Step-by-Step)</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/azure-nsg-best-practices.jpg" alt="Azure Internal Load Balancer" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <h2 id="tldr">TL;DR</h2>
+                    <ul>
+                        <li>Azure Internal Load Balancer (ILB) distributes traffic to VMs within your VNet</li>
+                        <li>Use NAT rules to access VMs via RDP/SSH without public IPs</li>
+                        <li>Health probes automatically remove failed instances from rotation</li>
+                        <li>Supports TCP/UDP for any internal application</li>
+                    </ul>
+
+                    <hr>
+
+                    <h2 id="introduction">Introduction</h2>
+                    <p>Azure Internal Load Balancer (ILB) routes traffic to workloads inside your virtual network. Unlike a public Load Balancer, the ILB is only accessible from within your VNet—making it perfect for:</p>
+                    <ul>
+                        <li>Internal applications and microservices</li>
+                        <li>Database high availability</li>
+                        <li>Secure RDP/SSH access to VMs without public IPs</li>
+                        <li>Application tiers that shouldn't be exposed to the internet</li>
+                    </ul>
+                    <p>This guide walks you through setting up an Internal Load Balancer, configuring backend pools, health probes, NAT rules, and load balancing rules.</p>
+
+                    <h2 id="prerequisites">Prerequisites</h2>
+                    <ul>
+                        <li>Azure subscription with contributor access</li>
+                        <li>Virtual network with at least one subnet</li>
+                        <li>Two or more VMs in the same VNet (for load balancing)</li>
+                        <li>Azure Portal access or Azure CLI</li>
+                    </ul>
+
+                    <h2 id="architecture">Architecture Overview</h2>
+                    <p>An Internal Load Balancer sits inside your VNet and distributes traffic to backend VMs:</p>
+                    <ul>
+                        <li><strong>Frontend IP:</strong> Private IP address from your subnet</li>
+                        <li><strong>Backend Pool:</strong> VMs that receive traffic</li>
+                        <li><strong>Health Probes:</strong> Checks VM availability</li>
+                        <li><strong>Load Balancing Rules:</strong> How traffic is distributed</li>
+                        <li><strong>NAT Rules:</strong> Port forwarding (e.g., RDP to specific VMs)</li>
+                    </ul>
+
+                    <h2 id="step1">Step 1: Create the Internal Load Balancer</h2>
+                    <ol>
+                        <li>Go to <strong>Azure Portal</strong> → Search <strong>Load Balancer</strong></li>
+                        <li>Click <strong>Create</strong></li>
+                        <li>Fill in the basics:
+                            <ul>
+                                <li>Resource Group: Select or create</li>
+                                <li>Name: <code>internal-lb</code></li>
+                                <li>Region: Your preferred region</li>
+                                <li>Type: <strong>Internal</strong></li>
+                                <li>SKU: Standard (recommended) or Basic</li>
+                            </ul>
+                        </li>
+                        <li>Under <strong>Frontend IP configuration</strong>:
+                            <ul>
+                                <li>Click "Add a frontend IP"</li>
+                                <li>Name: <code>frontend</code></li>
+                                <li>Virtual Network: Select your VNet</li>
+                                <li>Subnet: Choose your subnet</li>
+                                <li>IP Address: Assign static (e.g., <code>10.0.1.100</code>)</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Review + create</strong> → <strong>Create</strong></li>
+                    </ol>
+
+                    <h2 id="step2">Step 2: Add Backend Pool</h2>
+                    <p>The backend pool defines which VMs receive traffic.</p>
+                    <ol>
+                        <li>Open your Load Balancer → <strong>Backend pools</strong></li>
+                        <li>Click <strong>Add</strong></li>
+                        <li>Name: <code>backend-pool</code></li>
+                        <li><strong>Virtual network:</strong> Select your VNet</li>
+                        <li>Under <strong>Virtual machines</strong>, click <strong>Add</strong></li>
+                        <li>Select your VMs and their IP configurations</li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+
+                    <h2 id="step3">Step 3: Configure Health Probe</h2>
+                    <p>Health probes check if backend VMs are responding. Failed probes remove VMs from rotation.</p>
+                    <ol>
+                        <li>Go to <strong>Health probes</strong> → <strong>Add</strong></li>
+                        <li>Configure:
+                            <ul>
+                                <li>Name: <code>http-probe</code></li>
+                                <li>Protocol: <strong>HTTP</strong> (or TCP for non-HTTP)</li>
+                                <li>Port: <code>80</code> (or your application port)</li>
+                                <li>Path: <code>/</code> (for HTTP)</li>
+                                <li>Interval: <code>5</code> seconds</li>
+                                <li>Unhealthy threshold: <code>2</code> (consecutive failures before removal)</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+
+                    <div class="callout callout-info">
+                        <strong>Tip:</strong> For TCP-only services, use a TCP probe. For web apps, HTTP probe with a specific health endpoint is more reliable.
+                    </div>
+
+                    <h2 id="step4">Step 4: Create Load Balancing Rule</h2>
+                    <p>Load balancing rules define how traffic is distributed.</p>
+                    <ol>
+                        <li>Go to <strong>Load balancing rules</strong> → <strong>Add</strong></li>
+                        <li>Configure:
+                            <ul>
+                                <li>Name: <code>http-rule</code></li>
+                                <li>Frontend IP: Select your frontend</li>
+                                <li>Backend pool: Select your backend pool</li>
+                                <li>Protocol: <strong>TCP</strong> or <strong>UDP</strong></li>
+                                <li>Port: <code>80</code></li>
+                                <li>Backend port: <code>80</code></li>
+                                <li>Health probe: Select your probe</li>
+                                <li>Session persistence: <strong>None</strong> (or Client IP if needed)</li>
+                                <li>Idle timeout: <code>4</code> minutes (default)</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+
+                    <h2 id="step5">Step 5: Configure NAT Rules (Optional)</h2>
+                    <p>NAT rules let you access individual VMs via the Load Balancer frontend IP—useful for RDP or SSH without public IPs.</p>
+                    <ol>
+                        <li>Go to <strong>Inbound NAT rules</strong> → <strong>Add</strong></li>
+                        <li>For RDP access:
+                            <ul>
+                                <li>Name: <code>rdp-vm1</code></li>
+                                <li>Frontend IP: Select your frontend</li>
+                                <li>Protocol: <strong>TCP</strong></li>
+                                <li>Frontend port: <code>3389</code> (or custom, e.g., <code>50001</code>)</li>
+                                <li>Target VM: Select VM1</li>
+                                <li>Target port: <code>3389</code></li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Save</strong></li>
+                        <li>Repeat for additional VMs with different frontend ports</li>
+                    </ol>
+
+                    <h3>Connecting via NAT Rules</h3>
+                    <p>Instead of connecting to a public IP, connect to the Load Balancer frontend IP:</p>
+                    <pre><code># RDP to VM1 via Load Balancer
+mstsc /v:10.0.1.100:50001
+
+# SSH to VM2 via Load Balancer  
+ssh admin@10.0.1.100 -p 50002</code></pre>
+
+                    <h2 id="step6">Step 6: Verify and Test</h2>
+                    <ol>
+                        <li>Check <strong>Insights</strong> in Load Balancer for traffic metrics</li>
+                        <li>Verify backend pool shows VMs as "Healthy"</li>
+                        <li>Test by connecting to the frontend IP or accessing your service</li>
+                    </ol>
+
+                    <h2 id="troubleshooting">Troubleshooting</h2>
+                    <h3>VM not receiving traffic?</h3>
+                    <ul>
+                        <li>Check if NSG allows traffic to the backend port</li>
+                        <li>Verify health probe is passing (check VM firewall)</li>
+                        <li>Ensure VM is listening on the configured port</li>
+                    </ul>
+
+                    <h3>Health probe failing?</h3>
+                    <ul>
+                        <li>Verify the probe port is open on the VM</li>
+                        <li>Check if firewall is blocking the probe</li>
+                        <li>Ensure the probe path returns 200 OK (for HTTP probes)</li>
+                    </ul>
+
+                    <h3>NAT rule not working?</h3>
+                    <ul>
+                        <li>Confirm frontend port isn't already in use</li>
+                        <li>Check NSG on the VM allows inbound to the target port</li>
+                        <li>Verify the target VM is running</li>
+                    </ul>
+
+                    <h2 id="azure-cli">Azure CLI Alternative</h2>
+                    <p>Prefer command-line? Here's how to create the ILB:</p>
+                    <pre><code># Create Internal Load Balancer
+az network lb create \
+  --name internal-lb \
+  --resource-group my-rg \
+  --sku Standard \
+  --vnet-name my-vnet \
+  --subnet my-subnet \
+  --frontend-ip-name frontend \
+  --frontend-ip-address 10.0.1.100
+
+# Add backend pool
+az network lb address-pool create \
+  --lb-name internal-lb \
+  --name backend-pool \
+  --resource-group my-rg
+
+# Add VMs to backend pool
+az network lb address-pool address add \
+  --lb-name internal-lb \
+  --pool-name backend-pool \
+  --resource-group my-rg \
+  --vm vm1 \
+  --nic nic1
+az network lb address-pool address add \
+  --lb-name internal-lb \
+  --pool-name backend-pool \
+  --resource-group my-rg \
+  --vm vm2 \
+  --nic nic2
+
+# Create health probe
+az network lb probe create \
+  --lb-name internal-lb \
+  --name http-probe \
+  --resource-group my-rg \
+  --protocol http \
+  --port 80 \
+  --path /
+
+# Create load balancing rule
+az network lb rule create \
+  --lb-name internal-lb \
+  --name http-rule \
+  --resource-group my-rg \
+  --frontend-ip-name frontend \
+  --backend-pool-name backend-pool \
+  --protocol tcp \
+  --frontend-port 80 \
+  --backend-port 80 \
+  --probe-name http-probe</code></pre>
+
+                    <h2 id="conclusion">Conclusion</h2>
+                    <p>Azure Internal Load Balancer provides secure, scalable traffic distribution for internal workloads. Key takeaways:</p>
+                    <ul>
+                        <li>ILB keeps traffic within your VNet—no public exposure</li>
+                        <li>NAT rules eliminate the need for public IPs on VMs</li>
+                        <li>Health probes ensure only healthy VMs receive traffic</li>
+                        <li>Standard SKU recommended for production (availability zone support)</li>
+                    </ul>
+                    <p>Use this setup for internal applications, database HA, or secure admin access to your Azure VMs.</p>
+
+                    <hr>
+
+                    <h2 id="meta">SEO Metadata</h2>
+                    <p><strong>Meta Title:</strong> How to Set Up an Internal Load Balancer in Azure (Step-by-Step)</p>
+                    <p><strong>Meta Description:</strong> Complete guide to Azure Internal Load Balancer. Configure backend pools, health probes, NAT rules, and load balancing rules.</p>
+                    <p><strong>URL Slug:</strong> <code>/tutorials/azure-internal-load-balancer</code></p>
+
+                    <h3>Internal Link Ideas</h3>
+                    <ol>
+                        <li><a href="azure-point-to-site-vpn.html">Point-to-Site VPN for Remote Admins</a> — Secure Azure access</li>
+                        <li><a href="create-secure-linux-vm-azure.html">Create Secure Linux VM in Azure</a> — VM hardening</li>
+                        <li><a href="azure-nsg-best-practices.html">Azure NSG Best Practices</a> — Network security</li>
+                        <li><a href="fix-vpn-issues-windows-powershell.html">Fix VPN Issues in Windows</a> — Network troubleshooting</li>
+                        <li><a href="reset-active-directory-passwords-powershell.html">Reset AD Passwords with PowerShell</a> — Azure AD management</li>
+                    </ol>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#load-balancer</span>
+                        <span class="tag">#networking</span>
+                        <span class="tag">#azure-vm</span>
+                        <span class="tag">#sysadmin</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
