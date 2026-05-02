@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Private Access: Design & Implement Secure Service Connectivity - SysOpsBits</title>
+    <meta name="description" content="Learn to design and implement private access to Azure services using Private Link, private endpoints, and service endpoints. Includes AZ CLI commands and real-world scenarios for secure cloud networking.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/azure-private-access-azure-services.html">
+    <meta property="og:title" content="Azure Private Access: Design & Implement Secure Service Connectivity">
+    <meta property="og:description" content="Master Azure private access with Private Link, private endpoints, and service endpoints. Step-by-step AZ CLI commands and architecture best practices.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/azure-private-access-azure-services.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/azure-private-access-services.jpg">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@sysopsbits">
+    <meta name="twitter:title" content="Azure Private Access: Design & Implement Secure Service Connectivity">
+    <meta name="twitter:description" content="Learn to secure Azure PaaS/SaaS services with private networking. Includes Private Link, endpoints, and DNS integration with AZ CLI.">
+
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script>
+</script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-05-02">May 2, 2026</time>
+                    </div>
+                    <h1>Azure Private Access: Design & Implement Secure Service Connectivity</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/azure-private-access-services.jpg" alt="Azure Private Access Services" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Public endpoints for Azure services like Storage, SQL Database, and App Services are convenient but introduce attack surfaces. This guide walks you through securing Azure service connectivity using private networking primitives: Virtual Network Service Endpoints and Azure Private Link with private endpoints. We'll cover architecture decisions, implementation with AZ CLI, and DNS integration patterns.</p>
+
+                    <h2>Why Private Access Matters</h2>
+                    <p>By default, most Azure PaaS services expose public endpoints. While protected by Azure's platform security, public endpoints:</p>
+                    <ul>
+                        <li>Traverse the public internet, adding latency and potential eavesdropping risks</li>
+                        <li>Require managing IP firewalls or shared keys for access control</li>
+                        <li>Can't leverage your existing on-premises private connectivity (ExpressRoute/VPN)</li>
+                    </ul>
+                    <p>Private access solutions bring Azure service traffic into your virtual network, enabling:</p>
+                    <ul>
+                        <li>Traffic over Azure's backbone network, not the public internet</li>
+                        <li>Integration with your existing NSG and firewall rules</li>
+                        <li>Simplified access control using VNet private IP addresses</li>
+                    </ul>
+
+                    <h2>Virtual Network Service Endpoints</h2>
+                    <p>Service endpoints extend your VNet private address space to Azure services directly. Traffic from your VNet to the Azure service stays on Azure's backbone network, and service resources gain the VNet's private IP as the source address.</p>
+                    
+                    <h3>How Service Endpoints Work</h3>
+                    <p>When you enable a service endpoint on a subnet:</p>
+                    <ol>
+                        <li>A route is added to direct traffic destined for the service to the Azure backbone</li>
+                        <li>The service's firewall can be configured to allow traffic only from that specific subnet</li>
+                        <li>No public IP is required on the source resources</li>
+                    </ol>
+
+                    <h3>Configure Service Endpoints with AZ CLI</h3>
+                    <pre><code># Enable service endpoint for Azure Storage on a subnet
+az network vnet subnet update \
+  --resource-group myResourceGroup \
+  --vnet-name myVnet \
+  --name mySubnet \
+  --service-endpoints Microsoft.Storage
+
+# Enable service endpoint for Azure SQL Database
+az network vnet subnet update \
+  --resource-group myResourceGroup \
+  --vnet-name myVnet \
+  --name mySubnet \
+  --service-endpoints Microsoft.Sql
+
+# Verify service endpoints on a subnet
+az network vnet subnet show \
+  --resource-group myResourceGroup \
+  --vnet-name myVnet \
+  --name mySubnet \
+  --query "serviceEndpoints"</code></pre>
+
+                    <div class="callout callout-info">
+                        <strong>Note:</strong> Service endpoints work only for traffic originating from the VNet where they're enabled. They don't support cross-tenant access or on-premises traffic over ExpressRoute/VPN without additional configuration.
+                    </div>
+
+                    <h2>Azure Private Link & Private Endpoints</h2>
+                    <p>Private Link is the newer, more capable solution for private access. It provides a private IP address in your VNet for Azure services (or your own services via Private Link Service).</p>
+
+                    <h3>Key Components</h3>
+                    <ul>
+                        <li><strong>Private Endpoint:</strong> A network interface (NIC) in your VNet with a private IP from your subnet, connected to the target service</li>
+                        <li><strong>Private Link Service:</strong> Lets you expose your own services (load balancers) privately to other VNets or tenants</li>
+                        <li><strong>Private DNS Zone:</strong> Maps the service's public DNS name to its private IP address</li>
+                    </ul>
+
+                    <h3>Create a Private Endpoint with AZ CLI</h3>
+                    <p>Let's create a private endpoint for an Azure Storage account:</p>
+                    <pre><code># Create a private endpoint for Azure Storage
+az network private-endpoint create \
+  --resource-group myResourceGroup \
+  --vnet-name myVnet \
+  --subnet myPrivateSubnet \
+  --name storagePrivateEndpoint \
+  --private-connection-resource-id "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount" \
+  --group-id blob \
+  --connection-name storageConnection
+
+# Verify private endpoint creation
+az network private-endpoint show \
+  --resource-group myResourceGroup \
+  --name storagePrivateEndpoint \
+  --query "ipConfigurations[0].privateIPAddress"</code></pre>
+
+                    <h2>Integrate Private Endpoints with DNS</h2>
+                    <p>For private endpoints to work, your applications must resolve the service's public DNS name to its private IP address. Azure Private DNS zones automate this.</p>
+
+                    <h3>Configure Private DNS Integration</h3>
+                    <pre><code># Create a Private DNS zone for Azure Storage
+az network private-dns zone create \
+  --resource-group myResourceGroup \
+  --name "privatelink.blob.core.windows.net"
+
+# Link the Private DNS zone to your VNet
+az network private-dns link vnet create \
+  --resource-group myResourceGroup \
+  --zone-name "privatelink.blob.core.windows.net" \
+  --name storageDnsLink \
+  --virtual-network myVnet \
+  --registration-enabled false
+
+# Create a DNS zone group for the private endpoint
+az network private-endpoint dns-zone-group create \
+  --resource-group myResourceGroup \
+  --endpoint-name storagePrivateEndpoint \
+  --name storageDnsZoneGroup \
+  --private-dns-zone "privatelink.blob.core.windows.net" \
+  --zone-name blob</code></pre>
+
+                    <div class="callout callout-warning">
+                        <strong>Important:</strong> You must use the correct Private DNS zone name for each service. Common ones include:
+                        <ul>
+                            <li>Azure Storage: privatelink.blob.core.windows.net, privatelink.file.core.windows.net</li>
+                            <li>Azure SQL: privatelink.database.windows.net</li>
+                            <li>Azure App Service: privatelink.azurewebsites.net</li>
+                        </ul>
+                    </div>
+
+                    <h2>Design Considerations for Private Endpoints</h2>
+                    <p>When architecting private access, keep these patterns in mind:</p>
+                    <ol>
+                        <li><strong>Hub-and-Spoke:</strong> Centralize private endpoints in a hub VNet, share across spoke VNets via VNet peering</li>
+                        <li><strong>DNS Consistency:</strong> Ensure all VNets using the private endpoint have access to the same Private DNS zones</li>
+                        <li><strong>Scalability:</strong> Each private endpoint has a fixed cost; consolidate when possible</li>
+                        <li><strong>Monitoring:</strong> Enable private endpoint network policies to log traffic</li>
+                    </ol>
+
+                    <h3>Create a Private Endpoint in a Hub VNet</h3>
+                    <pre><code># Create private endpoint in hub VNet
+az network private-endpoint create \
+  --resource-group hubResourceGroup \
+  --vnet-name hubVnet \
+  --subnet hubPrivateSubnet \
+  --name hubStoragePE \
+  --private-connection-resource-id "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/spokeResourceGroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount" \
+  --group-id blob \
+  --connection-name hubStorageConnection
+
+# Peer spoke VNet to hub to access the private endpoint
+az network vnet peering create \
+  --resource-group spokeResourceGroup \
+  --vnet-name spokeVnet \
+  --name spokeToHubPeering \
+  --remote-vnet hubVnetID \
+  --allow-vnet-access
+
+# Link Private DNS zone to spoke VNet as well
+az network private-dns link vnet create \
+  --resource-group hubResourceGroup \
+  --zone-name "privatelink.blob.core.windows.net" \
+  --name spokeDnsLink \
+  --virtual-network spokeVnet \
+  --registration-enabled false</code></pre>
+
+                    <h2>Integrate App Service with Azure VNets</h2>
+                    <p>Azure App Service (Web Apps, API Apps) can be integrated into your VNet to access private endpoints and on-premises resources. This is called VNet Integration.</p>
+
+                    <h3>Configure VNet Integration with AZ CLI</h3>
+                    <pre><code># Enable regional VNet integration for an App Service
+az webapp vnet-integration add \
+  --resource-group myResourceGroup \
+  --name myWebApp \
+  --vnet myVnet \
+  --subnet myIntegrationSubnet
+
+# Verify VNet integration
+az webapp vnet-integration list \
+  --resource-group myResourceGroup \
+  --name myWebApp
+
+# For Linux apps, you can also configure route all traffic through VNet
+az webapp config set \
+  --resource-group myResourceGroup \
+  --name myWebApp \
+  --vnet-route-all-enabled true</code></pre>
+
+                    <div class="callout callout-info">
+                        <strong>Pro Tip:</strong> Use VNet Integration for outbound traffic from your App Service to private resources. For inbound private access to your App Service, use a private endpoint for the App Service instead.
+                    </div>
+
+                    <h2>Service Endpoints vs Private Endpoints: When to Use Which?</h2>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Feature</th>
+                            <th>Service Endpoints</th>
+                            <th>Private Endpoints</th>
+                        </tr>
+                        <tr>
+                            <td>Private IP in VNet</td>
+                            <td>No</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Cross-VNet/VPN/ExpressRoute access</td>
+                            <td>Limited</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>DNS integration required</td>
+                            <td>No</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Supports custom services (Private Link Service)</td>
+                            <td>No</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td>Cost</td>
+                            <td>Free</td>
+                            <td>Hourly + data processed</td>
+                        </tr>
+                    </table>
+
+                    <h2>Best Practices for Private Access</h2>
+                    <ul>
+                        <li>Prefer Private Endpoints for new deployments — they're more flexible and support more scenarios</li>
+                        <li>Use Service Endpoints only for simple, same-VNet access to Azure services</li>
+                        <li>Centralize Private DNS zones in a hub VNet for multi-VNet environments</li>
+                        <li>Combine private endpoints with NSG rules to restrict traffic to specific subnets</li>
+                        <li>Enable diagnostic logs for private endpoints to monitor connections</li>
+                        <li>Test connectivity using az network watcher test-connectivity after configuration</li>
+                    </ul>
+
+                    <h3>Test Private Endpoint Connectivity</h3>
+                    <pre><code># Test connectivity to private endpoint from a VM in the same VNet
+az network watcher test-connectivity \
+  --resource-group myResourceGroup \
+  --source-resource myVmId \
+  --dest-address 10.0.1.5 \
+  --dest-port 443
+
+# Check private endpoint connection status
+az network private-endpoint show \
+  --resource-group myResourceGroup \
+  --name storagePrivateEndpoint \
+  --query "privateLinkServiceConnections[0].privateLinkServiceConnectionState"</code></pre>
+
+                    <h2>Common Troubleshooting Scenarios</h2>
+                    <h3>DNS Resolution Failures</h3>
+                    <p>If your application still resolves the public IP instead of the private IP:</p>
+                    <pre><code># Check DNS resolution from a VM in the VNet
+az vm run-command invoke \
+  --resource-group myResourceGroup \
+  --name myVm \
+  --command-id RunShellScript \
+  --scripts "nslookup mystorageaccount.blob.core.windows.net"</code></pre>
+
+                    <h3>Private Endpoint Connection Failures</h3>
+                    <p>If the private endpoint connection is stuck in Pending:</p>
+                    <pre><code># Manually approve a pending private endpoint connection (for your own services)
+az network private-endpoint-connection approve \
+  --resource-group myResourceGroup \
+  --name storagePrivateEndpoint \
+  --resource-name mystorageaccount \
+  --type Microsoft.Storage/storageAccounts</code></pre>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Can I use private endpoints with Azure Firewall?</h3>
+                                <p>Yes, you can route traffic through Azure Firewall to inspect traffic between your VNet and private endpoints. Configure user-defined routes (UDR) to direct traffic to the firewall.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Do private endpoints work across Azure tenants?</h3>
+                                <p>Yes, Private Link supports cross-tenant access. The private endpoint is created in your tenant, while the service is in another tenant. Approval from the service owner is required.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>How many private endpoints can I create per VNet?</h3>
+                                <p>Each VNet supports up to 1000 private endpoints. For larger deployments, consider consolidating endpoints or using service endpoints for simpler scenarios.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Can I access private endpoints from on-premises via VPN?</h3>
+                                <p>Yes, if you enable gateway transit on the VNet peering between your hub (with VPN gateway) and the VNet hosting the private endpoint.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#private-link</span>
+                        <span class="tag">#private-endpoints</span>
+                        <span class="tag">#networking</span>
+                        <span class="tag">#cloud-security</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
