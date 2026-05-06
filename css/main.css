@@ -1173,3 +1173,92 @@ a:hover {
 .category-link:hover {
     color: #2980b9;
 }
+
+/* Buy Me a Coffee Button */
+.bmc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #ff813f 0%, #ff6b35 100%);
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.bmc-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 127, 63, 0.4);
+    color: #fff;
+}
+
+.bmc-btn svg {
+    flex-shrink: 0;
+}
+
+/* Header support link */
+.support-link .bmc-btn {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #ff813f 0%, #ff6b35 100%);
+}
+
+.support-link .bmc-btn span {
+    display: inline;
+}
+
+@media (max-width: 768px) {
+    .support-link .bmc-btn span {
+        display: none;
+    }
+    .support-link .bmc-btn {
+        padding: 8px 12px;
+    }
+}
+
+/* Footer support section */
+.support-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.support-section p {
+    margin-bottom: 12px;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.bmc-btn-footer {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+}
+
+/* Footer sections grid update */
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 992px) {
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+    }
+    .support-section {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+}
