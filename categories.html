@@ -39,11 +39,11 @@
             <div class="categories-hero">
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <span class="stat-number" data-count="categories">3</span>
+                        <span class="stat-number" data-count="categories">--</span>
                         <span class="stat-label">Categories</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number" data-count="pages">7</span>
+                        <span class="stat-number" data-count="pages">--</span>
                         <span class="stat-label">Total Articles</span>
                     </div>
                 </div>
@@ -51,13 +51,13 @@
             </div>
 
             <div class="terms-grid">
-                <div class="category-card">
+                <div class="category-card" data-category="tutorials" data-count="11">
                     <div class="category-header">
                         <div class="category-icon">Tutorials</div>
                         <div class="category-info">
                             <h2><a href="tutorials.html">Tutorials</a></h2>
                             <div class="category-meta">
-                                <span class="post-count" data-category="tutorials">5 articles</span>
+                                <span class="post-count" data-category="tutorials">-- articles</span>
                             </div>
                         </div>
                     </div>
@@ -66,6 +66,30 @@
                         <div class="recent-posts">
                             <h4>Recent Articles</h4>
                             <ul>
+                                <li>
+                                    <a href="tutorials/azureConditionalAccess.html">Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security</a>
+                                    <time datetime="2026-05-06">May 6</time>
+                                </li>
+                                <li>
+                                    <a href="tutorials/azure-private-access-azure-services.html">Azure Private Access: Design & Implement Secure Service Connectivity</a>
+                                    <time datetime="2026-05-02">May 2</time>
+                                </li>
+                                <li>
+                                    <a href="tutorials/azure-internal-load-balancer.html">How to Set Up an Internal Load Balancer in Azure (Step-by-Step)</a>
+                                    <time datetime="2026-04-26">Apr 26</time>
+                                </li>
+                                <li>
+                                    <a href="tutorials/fix-vpn-issues-windows-powershell.html">Fix 90% of VPN Issues in Windows Using PowerShell (DNS, WAN Miniport, and More)</a>
+                                    <time datetime="2026-04-12">Apr 12</time>
+                                </li>
+                                <li>
+                                    <a href="tutorials/reset-active-directory-passwords-powershell.html">How to Reset Active Directory Passwords with PowerShell</a>
+                                    <time datetime="2026-03-31">Mar 31</time>
+                                </li>
+                                <li>
+                                    <a href="tutorials/getting-started-with-ollama.html">Getting Started with Ollama: Run Local LLMs on Your Machine</a>
+                                    <time datetime="2026-03-07">Mar 7</time>
+                                </li>
                                 <li>
                                     <a href="tutorials/create-secure-linux-vm-azure.html">Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step</a>
                                     <time datetime="2026-03-05">Mar 5</time>
@@ -94,13 +118,13 @@
                     </div>
                 </div>
 
-                <div class="category-card">
+                <div class="category-card" data-category="comparisons" data-count="6">
                     <div class="category-header">
                         <div class="category-icon">Comparisons</div>
                         <div class="category-info">
                             <h2><a href="comparisons.html">Comparisons</a></h2>
                             <div class="category-meta">
-                                <span class="post-count" data-category="comparisons">6 articles</span>
+                                <span class="post-count" data-category="comparisons">-- articles</span>
                             </div>
                         </div>
                     </div>
@@ -141,13 +165,13 @@
                     </div>
                 </div>
 
-                <div class="category-card">
+                <div class="category-card" data-category="tools" data-count="4">
                     <div class="category-header">
                         <div class="category-icon">Tools</div>
                         <div class="category-info">
                             <h2><a href="tools.html">Tools</a></h2>
                             <div class="category-meta">
-                                <span class="post-count" data-category="tools">4 articles</span>
+                                <span class="post-count" data-category="tools">-- articles</span>
                             </div>
                         </div>
                     </div>
@@ -189,19 +213,30 @@
     <script src="js/partials.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Count categories from category cards
-            const categoryCards = document.querySelectorAll('.category-card');
-            const categoriesCount = categoryCards.length;
-            
-            // Count all articles listed in the page (all recent posts across categories)
+            // Count categories from category cards using data-count attribute
+            const categoryCards = document.querySelectorAll('.category-card[data-count]');
             let totalArticles = 0;
-            document.querySelectorAll('.category-preview .recent-posts ul li').forEach(() => {
-                totalArticles++;
+            
+            categoryCards.forEach(card => {
+                const count = parseInt(card.getAttribute('data-count'), 10);
+                const category = card.getAttribute('data-category');
+                
+                if (!isNaN(count) && count > 0) {
+                    totalArticles += count;
+                    
+                    // Update individual category post count
+                    const postCountEl = document.querySelector(`.post-count[data-category="${category}"]`);
+                    if (postCountEl) {
+                        postCountEl.textContent = `${count} article${count !== 1 ? 's' : ''}`;
+                    }
+                }
             });
             
-            // Update stat numbers
-            const statNumbers = document.querySelectorAll('.stat-number[data-count="categories"]');
-            statNumbers.forEach(el => el.textContent = categoriesCount);
+            // Update hero stat numbers
+            const categoriesCount = categoryCards.length;
+            
+            const statCategories = document.querySelectorAll('.stat-number[data-count="categories"]');
+            statCategories.forEach(el => el.textContent = categoriesCount);
             
             const statPages = document.querySelectorAll('.stat-number[data-count="pages"]');
             statPages.forEach(el => el.textContent = totalArticles);
