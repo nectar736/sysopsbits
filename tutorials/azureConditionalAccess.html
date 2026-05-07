@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security - SysOpsBits</title>
+    <meta name="description" content="Learn how to implement Azure AD Conditional Access policies for Zero Trust security. Step-by-step guide covering MFA requirements, blocking legacy auth, named locations, and authentication context.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/azureConditionalAccess.html">
+    <meta property="og:title" content="Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security">
+    <meta property="og:description" content="Master Azure AD Conditional Access with this comprehensive tutorial. Covers MFA policies, legacy auth blocking, named locations, and authentication context.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" href="https://sysopsbits.com/tutorials/azureConditionalAccess.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/load-balancer.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script>
+</script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-05-06">May 6, 2026</time>
+                    </div>
+                    <h1>Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/load-balancer.jpg" alt="Azure AD Conditional Access" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Traditional perimeter-based security is no longer sufficient in today's distributed cloud environments. Zero Trust follows the principle of "never trust, always verify" - every access request is authenticated, authorized, and encrypted regardless of where it originates.</p>
+
+                    <p>Azure AD Conditional Access is Microsoft's implementation of Zero Trust for identity and access management. It allows you to create policies that enforce access decisions based on signals such as user identity, device state, location, and risk level.</p>
+
+                    <div class="callout callout-info">
+                        <strong>What you'll learn:</strong> This guide covers creating Conditional Access policies, testing them safely, and avoiding common implementation mistakes. Perfect preparation for the Microsoft SC-300 Identity and Access Administrator exam.
+                    </div>
+
+                    <h2>Prerequisites</h2>
+                    <p>Before implementing Conditional Access, ensure you have:</p>
+                    <ul>
+                        <li><strong>Azure AD Premium P1 or P2 license</strong> - Most Conditional Access features require P1 (included in Microsoft 365 E3/E5)</li>
+                        <li><strong>Global Administrator or Conditional Access Administrator</strong> role in Azure AD</li>
+                        <li><strong>At least one non-admin user</strong> for testing policies</li>
+                        <li>Azure AD tenant with users already provisioned</li>
+                    </ul>
+
+                    <div class="callout callout-warning">
+                        <strong>Important:</strong> Conditional Access policies affect sign-in flows for all users. Always test new policies with a pilot group before deploying organization-wide. Never lock yourself out - ensure at least one account is excluded from restrictive policies.
+                    </div>
+
+                    <h2>Finding Conditional Access in the Azure Portal</h2>
+                    <p>Navigate to Conditional Access through the Azure portal:</p>
+                    <ol>
+                        <li>Sign in to <a href="https://portal.azure.com">portal.azure.com</a></li>
+                        <li>Search for "Azure Active Directory" in the search bar</li>
+                        <li>Select <strong>Security</strong> from the left navigation</li>
+                        <li>Click <strong>Conditional Access</strong> in the Security overview blade</li>
+                    </ol>
+
+                    <p>[Screenshot: Azure Portal > Azure AD > Security > Conditional Access - showing the Conditional Access policies blade with existing policies listed]</p>
+
+                    <p>The Conditional Access blade shows your existing policies, allows you to create new ones, and provides quick access to the What-If tool for testing policies.</p>
+
+                    <h2>Creating Your First Policy: Require MFA for Admins</h2>
+                    <p>One of the most impactful policies is requiring multi-factor authentication for all administrative users. Here's the step-by-step:</p>
+
+                    <pre><code># For reference: The Azure AD PowerShell module approach
+# But we'll use the portal for this tutorial
+
+Connect-AzureAD
+New-AzureADMSConditionalAccessPolicy -DisplayName "Require MFA for Admin Users"</code></pre>
+
+                    <p>Follow these steps in the Azure portal:</p>
+
+                    <h3>Step 1: Create a New Policy</h3>
+                    <ol>
+                        <li>Click <strong>New policy</strong> from the Conditional Access blade</li>
+                        <li>Give it a descriptive name: "Require MFA for All Admins"</li>
+                    </ol>
+
+                    <h3>Step 2: Assign Users</h3>
+                    <ol>
+                        <li>Under <strong>Users</strong>, select <strong>Directory roles</strong></li>
+                        <li>Choose the admin roles that require MFA:
+                            <ul>
+                                <li>Global Administrator</li>
+                                <li>Exchange Administrator</li>
+                                <li>SharePoint Administrator</li>
+                                <li>User Administrator</li>
+                                <li>Helpdesk Administrator</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <h3>Step 3: Select Cloud Apps</h3>
+                    <ol>
+                        <li>Under <strong>Cloud apps or actions</strong>, select <strong>All cloud apps</strong></li>
+                        <li>This ensures MFA is required for all Azure services accessed by admins</li>
+                    </ol>
+
+                    <h3>Step 4: Configure Conditions</h3>
+                    <ol>
+                        <li>Under <strong>Conditions</strong>, you can add specific conditions:
+                            <ul>
+                                <li><strong>Device platforms</strong> - Block or require MFA from specific OS</li>
+                                <li><strong>Locations</strong> - Require MFA from untrusted locations</li>
+                                <li><strong>Sign-in risk</strong> - Trigger on high/medium risk sign-ins</li>
+                            </ul>
+                        </li>
+                        <li>For now, leave conditions at default (none configured)</li>
+                    </ol>
+
+                    <h3>Step 5: Grant Access</h3>
+                    <ol>
+                        <li>Under <strong>Grant</strong>, select <strong>Grant access</strong></li>
+                        <li>Check <strong>Require multi-factor authentication</strong></li>
+                        <li>Click <strong>Select</strong></li>
+                    </ol>
+
+                    <h3>Step 6: Enable the Policy</h3>
+                    <ol>
+                        <li>Under <strong>Policy settings</strong>, set <strong>Enable policy</strong> to <strong>On</strong></li>
+                        <li>Select <strong>Report-only</strong> if you want to test first (recommended)</li>
+                    </ol>
+
+                    <p>[Screenshot: Conditional Access policy configuration - showing the full policy blade with MFA requirement selected]</p>
+
+                    <div class="callout callout-tip">
+                        <strong>Pro tip:</strong> Always start in Report-only mode to see who the policy would affect without blocking users.
+                    </div>
+
+                    <h2>Blocking Legacy Authentication</h2>
+                    <p>Legacy authentication protocols (IMAP, POP3, SMTP, older Exchange ActiveSync) don't support modern authentication and can bypass Conditional Access policies. Blocking these protocols is critical for Zero Trust.</p>
+
+                    <p>Legacy auth is used by:</p>
+                    <ul>
+                        <li>Older email clients (Outlook 2010, older mobile apps)</li>
+                        <li>Third-party integration using basic auth</li>
+                        <li>Legacy device sync utilities</li>
+                    </ul>
+
+                    <h3>Step-by-Step: Block Legacy Authentication</h3>
+                    <ol>
+                        <li>From Conditional Access, click <strong>New policy</strong></li>
+                        <li>Name: "Block Legacy Authentication"</li>
+                        <li><strong>Users or workload identities:</strong> Select <strong>All users</strong></li>
+                        <li><strong>Cloud apps:</strong> Select <strong>All cloud apps</strong></li>
+                        <li><strong>Conditions:</strong> Configure <strong>Client apps</strong>:
+                            <ul>
+                                <li>Check <strong>Exchange ActiveSync</strong></li>
+                                <li>Check other legacy protocols as needed</li>
+                            </ul>
+                        </li>
+                        <li><strong>Grant:</strong> Select <strong>Block access</strong></li>
+                        <li><strong>Enable:</strong> Turn On (or Report-only to test)</li>
+                    </ol>
+
+                    <p>The sign-in decision flow for legacy authentication:</p>
+
+                    <pre><code>┌─────────────────────────────────────────┐
+│     User Attempts Legacy Auth              │
+└──────────────────┬──────────────────────┘
+                   │
+                   ▼
+┌──────────────────────���─���────────────────┐
+│  CA Policy Evaluates                     │
+│  (Client Apps = Legacy)                  │
+└──────────────────┬──────────────────────┘
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+        ▼                     ▼
+┌───────────────┐    ┌───────────────────┐
+│ Legacy Block │    │ Modern Auth        │
+│ Policy ON?   │    │ Continues to       │
+└──────┬────────┘    │ normal CA         │
+       │             │ evaluation        │
+       ▼             │
+┌───────────────┐    │
+│ BLOCK ACCESS  │    │
+└───────────────┘</code></pre>
+
+                    <div class="callout callout-warning">
+                        <strong>Warning:</strong> Before enabling, notify users who need legacy auth (deprecated equipment, third-party integrations). Create exceptions for specific service accounts that cannot use modern authentication.
+                    </div>
+
+                    <h2>Named Locations</h2>
+                    <p>Named locations let you define trusted IP ranges (public IPs or ranges) and countries/regions that can be used in Conditional Access policies.</p>
+
+                    <h3>Creating a Named Location</h3>
+                    <ol>
+                        <li>In Conditional Access, click <strong>Named locations</strong></li>
+                        <li>Click <strong>New location</strong></li>
+                        <li>Configure:
+                            <ul>
+                                <li><strong>Name:</strong> "Corporate Office IPs"</li>
+                                <li><strong>Type:</strong> IP ranges (or Countries/regions)</li>
+                                <li><strong>IP ranges:</strong> e.g., 203.0.113.0/24 (use your actual public IPs)</li>
+                                <li><strong>Mark as trusted location:</strong> Check this for office IPs</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+
+                    <p>[Screenshot: Named locations configuration showing IP ranges and country/region options]</p>
+
+                    <h3>Using Named Locations in Policies</h3>
+                    <p>You can use named locations as conditions:</p>
+                    <ul>
+                        <li><strong>Include locations:</strong> Target users accessing from specific locations</li>
+                        <li><strong>Exclude locations:</strong> Exempt trusted locations from MFA requirements</li>
+                    </ul>
+
+                    <p>Example policy flow:</p>
+
+                    <pre><code>┌─────────────────────────────────────────┐
+│       User Sign-In Attempt                 │
+└──────────────────┬──────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────┐
+│  Named Location Check                    │
+└──────────────────┬──────────────────────┘
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+        ▼                     ▼
+┌───────────────┐    ┌───────────────────┐
+│ Trusted IP?   │    │ Unknown Location   │
+│ (Skip MFA)    │    │ (Require MFA or    │
+│               │    │  Block)           │
+└───────────────┘    └───────────────────┘</code></pre>
+
+                    <h2>Authentication Context</h2>
+                    <p>Authentication Context (requires Azure AD P2) lets you create more granular access controls by marking sensitive apps and resources, then requiring additional verification when users access them.</p>
+
+                    <p>Unlike standard Conditional Access policies that apply based on user/app, Authentication Context lets applications themselves signal their sensitivity level to Azure AD.</p>
+
+                    <h3>Step 1: Create Sensitivity Labels</h3>
+                    <ol>
+                        <li>Go to <strong>Azure AD > Security > Authentication contexts</strong></li>
+                        <li>Click <strong>New authentication context</strong></li>
+                        <li>Configure:
+                            <ul>
+                                <li><strong>ID:</strong> "SensitiveApps"</li>
+                                <li><strong>Description:</strong> "Apps containing sensitive data"</li>
+                                <li><strong>Name:</strong> "Sensitive data access"</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Save</strong></li>
+                    </ol>
+
+                    <h3>Step 2: Create a Conditional Access Policy for Authentication Context</h3>
+                    <ol>
+                        <li>Create new Conditional Access policy</li>
+                        <li>Name: "Require MFA for Sensitive Apps"</li>
+                        <li><strong>Target resources:</strong> Select <strong>Authentication context</strong></li>
+                        <li>Select your created authentication context(s)</li>
+                        <li><strong>Grant:</strong> Require MFA or other controls</li>
+                        <li>Enable policy</li>
+                    </ol>
+
+                    <h3>Step 3: Apply Authentication Context in Apps</h3>
+                    <p>Apps must be configured to use Authentication Context. Here's how it works with SharePoint Online:</p>
+                    <ol>
+                        <li>SharePoint Online admin center > <strong>Sensitive locations</strong></li>
+                        <li>Create a sensitivity label for the location</li>
+                        <li>Under <strong>Require additional context</strong>, select your Authentication Context</li>
+                        <li>Apply to sites or Teams that contain sensitive data</li>
+                    </ol>
+
+                    <p>Similarly for custom applications using the Microsoft Graph API:</p>
+
+                    <pre><code># MSAL.js example for requesting authentication context
+const config = {
+    auth: {
+        clientId: "your-app-id",
+        authority: "https://login.microsoftonline.com/your-tenant",
+        // Request the authentication context claim
+        claimsChallenge: '{"acrs":{"essential":true}}'
+    }
+};</code></pre>
+
+                    <div class="callout callout-info">
+                        <strong>Note:</strong> Authentication Context is a Premium P2 feature. Your applications or services must also support receiving and enforcing the authentication context claim.
+                    </div>
+
+                    <h2>Testing Your Policies</h2>
+                    <p>Always test Conditional Access policies before enabling them organization-wide. Azure provides two testing approaches:</p>
+
+                    <h3>What-If Tool</h3>
+                    <p>The What-If tool (available in the Conditional Access blade) lets you simulate policy evaluation:</p>
+                    <ol>
+                        <li>Click <strong>What-If</strong> in the Conditional Access toolbar</li>
+                        <li>Select a test user</li>
+                        <li>Configure the scenario:
+                            <ul>
+                                <li>Target app (cloud app)</li>
+                                <li>Device platform</li>
+                                <li>Client app</li>
+                                <li>IP address (simulate location)</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>What-If</strong> to see which policies would apply</li>
+                    </ol>
+
+                    <p>[Screenshot: What-If tool showing policy simulation results]</p>
+
+                    <h3>Report-Only Mode</h3>
+                    <p>When creating or editing a policy, set <strong>Enable policy</strong> to <strong>Report-only</strong>. This lets the policy evaluate and log results without enforcing controls.</p>
+                    <p>View report-only results in the Sign-in logs (Azure AD > Monitoring > Sign-in logs).</p>
+
+                    <h3>Dedicated Test Account</h3>
+                    <p>Create a dedicated test account:</p>
+                    <ul>
+                        <li>Add to pilot groups (not excluded from policies)</li>
+                        <li>Test on a non-admin device</li>
+                        <li>Clear cookies between tests</li>
+                    </ul>
+
+                    <h2>Common Pitfalls</h2>
+                    <p>Avoid these common implementation mistakes:</p>
+
+                    <h3>1. Locking Yourself Out</h3>
+                    <p>The most common mistake is creating a policy that blocks all users including admins.</p>
+                    <p><strong>Prevention:</strong> Always exclude at least one break-glass admin account from new policies.</p>
+
+                    <h3>2. Policy Conflicts</h3>
+                    <p>Multiple policies can conflict, causing unexpected behavior.</p>
+                    <p><strong>Prevention:</strong> Review the <strong>Effective</strong> view for each user to see all policies that would apply.</p>
+
+                    <h3>3. Exclusions Gone Wrong</h3>
+                    <p>Broad exclusions (like "All IT admins") can bypass your security policies.</p>
+                    <p><strong>Prevention:</strong> Be specific with exclusions. Use group membership, not directory roles.</p>
+
+                    <h3>4. User Training Gaps</h3>
+                    <p>New MFA requirements can cause support spikes if users aren't prepared.</p>
+                    <p><strong>Prevention:</strong> Communicate changes in advance. Register users for MFA before enabling policies.</p>
+
+                    <h3>5. Device Compliance</h3>
+                    <p>Device-based policies require Intune enrollment or hybrid Azure AD join.</p>
+                    <p><strong>Prevention:</strong> Ensure your device management is in place before requiring compliant devices.</p>
+
+                    <h3>6. Service Account Failures</h3>
+                    <p>Service accounts without MFA or running automated tasks can be blocked.</p>
+                    <p><strong>Prevention:</strong> Exclude service accounts (managed identities, service principals) explicitly.</p>
+
+                    <h2>Microsoft Recommended Practices</h2>
+                    <p>Microsoft recommends the following for Zero Trust Conditional Access implementation:</p>
+
+                    <ul>
+                        <li><strong>Start with report-only mode</strong> - Always evaluate impact before enforcing</li>
+                        <li><strong>Require MFA for all users</strong> - Especially admins, but eventually all users</li>
+                        <li><strong>Block legacy authentication</strong> - Critical first step after MFA</li>
+                        <li><strong>Require compliant devices</strong> - For sensitive resources</li>
+                        <li><strong>Use session policies</strong> - For session duration limits</li>
+                        <li><strong>Monitor sign-in logs</strong> - Continuous monitoring catches issues</li>
+                    </ul>
+
+                    <p>For the SC-300 Identity and Access Administrator exam, focus on understanding:</p>
+                    <ul>
+                        <li>Policy assignment and targeting</li>
+                        <li>Grant controls (MFA, compliant device, terms of use)</li>
+                        <li>Session and persistence controls</li>
+                        <li>Authentication strength policies</li>
+                    </ul>
+
+                    <p>See <a href="https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/overview">Microsoft Learn: Conditional Access documentation</a> for the official documentation.</p>
+
+                    <h2>Conclusion</h2>
+                    <p>Azure AD Conditional Access is foundational to Zero Trust security. Start with these core policies:</p>
+                    <ol>
+                        <li>Require MFA for all admins</li>
+                        <li>Block legacy authentication</li>
+                        <li>Require MFA from untrusted locations</li>
+                    </ol>
+                    <p>As your implementation matures, add Authentication Context, device compliance requirements, and session controls for sensitive resources.</p>
+
+                    <p>Remember: test in report-only mode, exclude break-glass accounts, and monitor sign-in logs. A phased rollout prevents disruptions while building Zero Trust security.</p>
+
+                    <hr>
+                    <p><em>Last updated: May 6, 2026</em></p>
+                </div>
+
+                <div class="post-footer">
+                    <p>Categories: <a href="../tutorials.html">Tutorials</a>, <a href="../terms.html">Azure AD</a>, <a href="../terms.html">Security</a></p>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/partials.js"></script>
+    <script>
+        loadPartials();
+    </script>
+</body>
+</html>
