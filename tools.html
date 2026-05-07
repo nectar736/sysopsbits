@@ -35,6 +35,7 @@
             <header class="section-header">
                 <h1>Tools</h1>
                 <p>Reviews and recommendations for sysops tools and software.</p>
+                <p class="section-stats"><span class="post-count" data-category="tools">0 articles</span></p>
             </header>
 
             <div class="posts-grid">
@@ -120,5 +121,15 @@
 
     <script src="js/main.js" defer></script>
     <script src="js/partials.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const postCards = document.querySelectorAll('.posts-grid .post-card');
+            const count = postCards.length;
+            
+            document.querySelectorAll('.post-count[data-category="tools"]').forEach(el => {
+                el.textContent = count + ' article' + (count !== 1 ? 's' : '');
+            });
+        });
+    </script>
 </body>
 </html>

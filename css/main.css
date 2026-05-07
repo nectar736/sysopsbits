@@ -577,6 +577,18 @@ a:hover {
     margin-bottom: 3rem;
 }
 
+.section-stats {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: #888;
+    font-weight: 500;
+}
+
+.post-count {
+    color: #2563eb;
+    font-weight: 600;
+}
+
 .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

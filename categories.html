@@ -43,7 +43,7 @@
                         <span class="stat-label">Categories</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number" data-count="pages">7</span>
+                        <span class="stat-number" data-count="pages">0</span>
                         <span class="stat-label">Total Articles</span>
                     </div>
                 </div>
@@ -51,13 +51,13 @@
             </div>
 
             <div class="terms-grid">
-                <div class="category-card">
+                <div class="category-card" data-category="tutorials">
                     <div class="category-header">
                         <div class="category-icon">Tutorials</div>
                         <div class="category-info">
                             <h2><a href="tutorials.html">Tutorials</a></h2>
                             <div class="category-meta">
-                                <span class="post-count" data-category="tutorials">5 articles</span>
+                                <span class="post-count" data-category="tutorials">0 articles</span>
                             </div>
                         </div>
                     </div>
@@ -94,13 +94,13 @@
                     </div>
                 </div>
 
-                <div class="category-card">
+                <div class="category-card" data-category="comparisons">
                     <div class="category-header">
                         <div class="category-icon">Comparisons</div>
                         <div class="category-info">
                             <h2><a href="comparisons.html">Comparisons</a></h2>
                             <div class="category-meta">
-                                <span class="post-count" data-category="comparisons">6 articles</span>
+                                <span class="post-count" data-category="comparisons">0 articles</span>
                             </div>
                         </div>
                     </div>
@@ -141,13 +141,13 @@
                     </div>
                 </div>
 
-                <div class="category-card">
+                <div class="category-card" data-category="tools">
                     <div class="category-header">
                         <div class="category-icon">Tools</div>
                         <div class="category-info">
                             <h2><a href="tools.html">Tools</a></h2>
                             <div class="category-meta">
-                                <span class="post-count" data-category="tools">4 articles</span>
+                                <span class="post-count" data-category="tools">0 articles</span>
                             </div>
                         </div>
                     </div>
@@ -193,10 +193,16 @@
             const categoryCards = document.querySelectorAll('.category-card');
             const categoriesCount = categoryCards.length;
             
-            // Count all articles listed in the page (all recent posts across categories)
+            // Dynamically count total articles by counting all post cards in individual category pages
+            // This is done by looking at the post count spans which will be updated dynamically
+            const postCountSpans = document.querySelectorAll('.post-count');
             let totalArticles = 0;
-            document.querySelectorAll('.category-preview .recent-posts ul li').forEach(() => {
-                totalArticles++;
+            postCountSpans.forEach(span => {
+                const text = span.textContent;
+                const match = text.match(/(\d+)\s*articles?/);
+                if (match) {
+                    totalArticles += parseInt(match[1], 10);
+                }
             });
             
             // Update stat numbers
