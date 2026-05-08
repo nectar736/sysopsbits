@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Entra External ID vs B2B Collaboration: Guest Access, Customers, and Partners Explained - SysOpsBits</title>
+    <meta name="description" content="Learn the differences between Microsoft Entra External ID and B2B Collaboration. Understand guest access, customer identity management (CIAM), workforce vs external tenants, and when to use each solution.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/microsoft-entra-external-id-vs-b2b-collaboration.html">
+    <meta property="og:title" content="Microsoft Entra External ID vs B2B Collaboration: Guest Access, Customers, and Partners Explained">
+    <meta property="og:description" content="Master Microsoft Entra External ID scenarios: B2B collaboration for business partners, CIAM for customers, workforce vs external tenants, and authentication best practices.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/microsoft-entra-external-id-vs-b2b-collaboration.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/microsoft-entra-external-id-b2b.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script>
+</script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category">Tutorials</a>
+                        <time datetime="2026-05-07">May 7, 2026</time>
+                    </div>
+                    <h1>Microsoft Entra External ID vs B2B Collaboration: Guest Access, Customers, and Partners Explained</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/microsoft-entra-external-id-b2b.jpg" alt="Microsoft Entra External ID vs B2B Collaboration" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Microsoft Entra External ID has become the unified solution for managing external identities across business-to-business (B2B) collaboration and customer identity access management (CIAM) scenarios. With the evolution from Azure Active Directory B2C to Microsoft Entra External ID, many organizations are re-evaluating their external identity strategies. This comprehensive guide explains the differences between External ID, B2B collaboration, workforce tenants, and external tenants—helping you choose the right approach for your specific use case.</p>
+
+                    <p>Whether you're enabling secure collaboration with business partners, managing customer access to consumer applications, or migrating from legacy Azure AD B2C, understanding these identity models is crucial for modern cloud security architecture.</p>
+
+                    <h2>What is Microsoft Entra External ID?</h2>
+                    <p>Microsoft Entra External ID is Microsoft's unified platform for managing identities outside your organization. It combines powerful solutions for working with people outside your corporate boundary, including business partners, customers, and guests. With External ID capabilities, you can allow external identities to securely access your apps and resources while maintaining complete control over authentication and authorization policies.</p>
+
+                    <p>External ID supports two primary scenarios, each with distinct tenant configurations:</p>
+                    <ul>
+                        <li><strong>B2B Collaboration</strong>: Enable your workforce to collaborate with external business partners and guests using a workforce tenant configuration</li>
+                        <li><strong>External Tenants (CIAM)</strong>: Publish applications to consumers and business customers using a separate external tenant configuration</li>
+                    </ul>
+
+                    <div class="callout callout-info">
+                        <strong>Key Concept:</strong> External ID is not a separate product—it's the evolution of Azure AD External Identities, now integrated into the Microsoft Entra platform with enhanced security, compliance, and scalability features.
+                    </div>
+
+                    <h2>Understanding Workforce vs External Tenants</h2>
+                    <p>A <strong>tenant</strong> in Microsoft Entra is a dedicated and trusted instance of Microsoft Entra ID containing an organization's resources, registered apps, and directory of users. The configuration type determines how you use the tenant:</p>
+
+                    <h3>Workforce Tenant Configuration</h3>
+                    <p>A workforce tenant is the standard Microsoft Entra tenant containing your employees, internal business apps, and organizational resources. This is the tenant type most organizations are familiar with—it's where your employees authenticate daily.</p>
+
+                    <p>In a workforce tenant, you can:</p>
+                    <ul>
+                        <li>Manage employee accounts and organizational resources</li>
+                        <li>Enable B2B collaboration with business guests</li>
+                        <li>Use Microsoft 365 services (Exchange, SharePoint, Teams)</li>
+                        <li>Apply Conditional Access policies to both employees and guests</li>
+                        <li>Leverage Entitlement Management for scalable external user access</li>
+                    </ul>
+
+                    <h3>External Tenant Configuration</h3>
+                    <p>An external tenant is exclusively designed for applications published to consumers or business customers. This distinct tenant follows the standard Microsoft Entra model but is configured specifically for customer scenarios. It contains your app registrations and a directory of consumer or customer accounts—completely separate from your employee directory.</p>
+
+                    <p>External tenants are ideal for:</p>
+                    <ul>
+                        <li>Customer-facing applications requiring sign-up/sign-in</li>
+                        <li>Business-to-consumer (B2C) scenarios</li>
+                        <li>Custom-branded authentication experiences</li>
+                        <li>Collecting custom user attributes during registration</li>
+                        <li>Scaling to millions of customer identities</li>
+                    </ul>
+
+                    <div class="callout callout-warning">
+                        <strong>Important:</strong> External tenants do NOT support Microsoft 365 services like Exchange Online or SharePoint. They are purpose-built for custom application scenarios only.
+                    </div>
+
+                    <h2>B2B Collaboration Deep Dive</h2>
+                    <p>Microsoft Entra B2B collaboration allows your workforce to collaborate securely with business partners and guests. It's designed for scenarios where external users need access to your corporate resources—not just custom applications, but Microsoft 365 services as well.</p>
+
+                    <h3>How B2B Collaboration Works</h3>
+                    <p>When you invite a business partner using B2B collaboration:</p>
+                    <ol>
+                        <li>The guest user is created in your <strong>workforce tenant</strong> (same directory as employees)</li>
+                        <li>They authenticate using their own credentials from their home organization or identity provider</li>
+                        <li>A user object is created in your directory, typically with user type "Guest" and #EXT# in the UPN</li>
+                        <li>You can assign permissions, add them to groups, and manage them like employee accounts</li>
+                        <li>Guests can access Office 365 apps, SaaS applications, and line-of-business apps</li>
+                    </ol>
+
+                    <h3>Adding Guests to Your Organization</h3>
+                    <p>B2B collaboration offers multiple ways to onboard external partners:</p>
+
+                    <pre><code># Invite a guest user via Azure CLI
+az ad user create \
+  --display-name "External Partner" \
+  --user-principal-name "partner#EXT#@yourtenant.onmicrosoft.com" \
+  --user-type Guest \
+  --mail-nickname "partner"</code></pre>
+
+                    <p>Alternatively, use self-service sign-up user flows to let guests register themselves, or Microsoft Entra Entitlement Management for automated access workflows with approvals.</p>
+
+                    <h3>Cross-Tenant Access Settings</h3>
+                    <p>For B2B collaboration with other Microsoft Entra organizations, use <strong>cross-tenant access settings</strong> to control which users can authenticate with which resources. These settings manage both inbound and outbound B2B collaboration and allow you to:</p>
+                    <ul>
+                        <li>Set default policies for all external organizations</li>
+                        <li>Create organization-specific settings for partners</li>
+                        <li>Trust multifactor authentication (MFA) and device claims from external users' home organizations</li>
+                        <li>Scope access to specific users, groups, and applications</li>
+                    </ul>
+
+                    <pre><code># Configure cross-tenant access policy via Microsoft Graph API
+POST https://graph.microsoft.com/v1.0/policies/crossTenantAccessPolicy/partners
+Content-type: application/json
+
+{
+  "tenantId": "cd3ed3de-93ae-8d09-abc6-5c52d0169643",
+  "b2bCollaborationInbound": {
+    "usersAndGroups": {
+      "accessType": "allowed",
+      "targets": [
+        {
+          "target": "AllUsers",
+          "targetType": "user"
+        }
+      ]
+    }
+  }
+}</code></pre>
+
+                    <h3>External Collaboration Settings</h3>
+                    <p>While cross-tenant access settings control authentication with Microsoft Entra organizations, <strong>external collaboration settings</strong> control who in your organization can invite external users. You can:</p>
+                    <ul>
+                        <li>Allow or block invitations by user role</li>
+                        <li>Allow or block specific email domains</li>
+                        <li>Restrict guest user access to your directory</li>
+                        <li>Control whether guests can invite other guests</li>
+                    </ul>
+
+                    <h2>External Tenants for Customer Identity (CIAM)</h2>
+                    <p>Microsoft Entra External ID in external tenants provides a complete customer identity and access management (CIAM) solution. When publishing applications to consumers and business customers, you create a separate external tenant to manage customer accounts and application registrations.</p>
+
+                    <h3>Key Features of External Tenants</h3>
+                    
+                    <h4>1. Custom-Branded Sign-In Experiences</h4>
+                    <p>Unlike workforce tenants that display Microsoft branding by default, external tenants allow complete customization:</p>
+                    <ul>
+                        <li>Custom background images, colors, and company logos</li>
+                        <li>Localized branding for different languages</li>
+                        <li>Custom text for sign-in and sign-up pages</li>
+                        <li>Per-application branding configurations</li>
+                    </ul>
+
+                    <h4>2. Flexible Sign-In Methods</h4>
+                    <p>External tenants support various authentication methods for customers:</p>
+                    <ul>
+                        <li><strong>Email and password</strong>: Traditional username/password registration</li>
+                        <li><strong>Email one-time passcode</strong>: Passwordless authentication via email</li>
+                        <li><strong>SMS-based authentication</strong>: Second-factor or primary authentication via SMS</li>
+                        <li><strong>Social identity providers</strong>: Google, Facebook, Apple, and custom OIDC providers</li>
+                        <li><strong>Microsoft Entra ID federation</strong>: Allow business customers to sign in with their work accounts</li>
+                    </ul>
+
+                    <h4>3. Self-Service Sign-Up User Flows</h4>
+                    <p>Create customized registration experiences for your customers:</p>
+                    <pre><code># Create a sign-up and sign-in user flow via Microsoft Graph API
+POST https://graph.microsoft.com/beta/identity/authenticationEventsFlows
+Content-type: application/json
+
+{
+  "displayName": "Customer Sign-up and Sign-in",
+  "description": "User flow for customer registration",
+  "events": ["Microsoft.OnAuthenticationMethodLoadStart"],
+  "flowType": "signUpOrSignIn",
+  "tokenIssuance": {
+    "tokenIssuanceUri": "https://your-app.com/token"
+  }
+}</code></pre>
+
+                    <h4>4. Custom Attributes and Extensions</h4>
+                    <p>Collect business-specific information during sign-up:</p>
+                    <ul>
+                        <li>Select from built-in user attributes (name, location, etc.)</li>
+                        <li>Create custom attributes for your business needs</li>
+                        <li>Use custom authentication extensions to integrate with external systems</li>
+                        <li>Add claims from external systems to authentication tokens</li>
+                    </ul>
+
+                    <h4>5. User Activity Analytics</h4>
+                    <p>The Application user activity feature provides data analytics on user engagement:</p>
+                    <ul>
+                        <li>View, query, and analyze user activity data</li>
+                        <li>Uncover insights for strategic decisions</li>
+                        <li>Monitor application usage patterns</li>
+                        <li>Drive business growth through data-driven decisions</li>
+                    </ul>
+
+                    <h2>Feature Comparison: Workforce vs External Tenants</h2>
+                    <p>Understanding the differences between External ID in workforce tenants (B2B) and external tenants (CIAM) is critical for choosing the right approach:</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Workforce Tenants (B2B)</th>
+                                <th>External Tenants (CIAM)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Primary Scenario</strong></td>
+                                <td>Collaborate with business partners and guests</td>
+                                <td>Publish apps to consumers and customers</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Intended Users</strong></td>
+                                <td>Business partners, suppliers, vendors</td>
+                                <td>Consumers, business customers</td>
+                            </tr>
+                            <tr>
+                                <td><strong>User Management</strong></td>
+                                <td>Managed in same tenant as employees</td>
+                                <td>Separate tenant for customers only</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SSO Support</strong></td>
+                                <td>All Microsoft Entra-connected apps, M365, SaaS</td>
+                                <td>Apps registered in external tenant only</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Branding</strong></td>
+                                <td>Microsoft default with company branding option</td>
+                                <td>Fully customizable, neutral by default</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Microsoft 365 Access</strong></td>
+                                <td>Supported (Exchange, SharePoint, Teams)</td>
+                                <td>Not supported</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Entitlement Management</strong></td>
+                                <td>Supported for scalable access workflows</td>
+                                <td>Not applicable</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cross-Tenant Access</strong></td>
+                                <td>Supported for Microsoft clouds</td>
+                                <td>Not applicable</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>B2B Direct Connect for Teams Shared Channels</h2>
+                    <p>B2B direct connect enables two-way trust relationships with other Microsoft Entra organizations specifically for Teams Shared Channels. Unlike B2B collaboration where guests are added to your directory, B2B direct connect users are NOT added as guests—they authenticate in their home organization and receive a token from your resource organization.</p>
+
+                    <p>Key capabilities include:</p>
+                    <ul>
+                        <li>Seamless sign-in to Teams shared channels without switching organizations</li>
+                        <li>Access to files and apps through the shared channel</li>
+                        <li>Managed through cross-tenant access settings</li>
+                        <li>No guest account cleanup required</li>
+                    </ul>
+
+                    <div class="callout callout-info">
+                        <strong>Pro Tip:</strong> Use B2B direct connect specifically for Teams collaboration. For broader resource access (SharePoint, custom apps), continue using standard B2B collaboration.
+                    </div>
+
+                    <h2>Conditional Access for External Identities</h2>
+                    <p>Microsoft Entra Conditional Access brings signals together to make decisions and enforce security policies. External ID supports Conditional Access for both B2B collaboration and external tenant scenarios.</p>
+
+                    <h3>Conditional Access in Workforce Tenants (B2B)</h3>
+                    <p>For B2B collaboration, you can enforce Conditional Access policies for external users identically to employees:</p>
+                    <ul>
+                        <li>Require MFA for guest users</li>
+                        <li>Trust MFA claims from external users' home organizations</li>
+                        <li>Require compliant or Microsoft Entra hybrid-joined devices</li>
+                        <li>Apply location-based policies</li>
+                        <li>Block access based on sign-in risk</li>
+                    </ul>
+
+                    <h3>Conditional Access in External Tenants (CIAM)</h3>
+                    <p>External tenants support Conditional Access for customer scenarios:</p>
+                    <ul>
+                        <li>Enforce MFA through email one-time passcode or SMS</li>
+                        <li>Create policies targeting specific applications</li>
+                        <li>Apply policies to all users or specific user groups</li>
+                        <li>Customize authentication experiences per application</li>
+                    </ul>
+
+                    <pre><code># Create a Conditional Access policy for MFA in external tenant
+POST https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies
+Content-type: application/json
+
+{
+  "displayName": "Require MFA for Customer Apps",
+  "state": "enabled",
+  "conditions": {
+    "users": {
+      "includeUsers": ["All"]
+    },
+    "applications": {
+      "includeApplications": ["your-app-client-id"]
+    }
+  },
+  "grantControls": {
+    "operator": "and",
+    "builtInControls": ["mfa"]
+  }
+}</code></pre>
+
+                    <h2>Migration from Azure AD B2C</h2>
+                    <div class="callout callout-warning">
+                        <strong>Important:</strong> Effective May 1, 2025, Azure Active Directory B2C (Azure AD B2C) is no longer available for new customers to purchase. Microsoft Entra External ID is the next-generation CIAM solution with all new features being built on this platform.
+                    </div>
+
+                    <p>If you're an existing Azure AD B2C customer, consider migrating to Microsoft Entra External ID:</p>
+                    <ul>
+                        <li><strong>Enhanced platform features</strong>: Benefit from Microsoft Entra's security, compliance, and scalability</li>
+                        <li><strong>Unified management</strong>: Manage both workforce and customer identities through Microsoft Entra admin center</li>
+                        <li><strong>Advanced Conditional Access</strong>: Leverage the same policies for both employees and customers</li>
+                        <li><strong>Microsoft Graph API</strong>: Automate CIAM operations with consistent APIs</li>
+                    </ul>
+
+                    <p>Use the <a href="https://learn.microsoft.com/en-us/entra/external-id/customers/plan-your-migration-from-b2c-to-external-id">migration planning guide</a> to transition from Azure AD B2C to External ID.</p>
+
+                    <h2>Best Practices for External Identity Management</h2>
+
+                    <h3>For B2B Collaboration</h3>
+                    <ul>
+                        <li><strong>Use cross-tenant access settings</strong> to control B2B collaboration with Microsoft Entra organizations</li>
+                        <li><strong>Implement least privilege</strong>: Only grant guests access to necessary resources</li>
+                        <li><strong>Regularly review guest access</strong> using Access Reviews</li>
+                        <li><strong>Enable MFA</strong> for all external users through Conditional Access</li>
+                        <li><strong>Use Entitlement Management</strong> for automated, approval-based access workflows</li>
+                        <li><strong>Monitor guest activity</strong> through sign-in logs and Azure Monitor</li>
+                    </ul>
+
+                    <h3>For External Tenants (CIAM)</h3>
+                    <ul>
+                        <li><strong>Separate tenants</strong>: Keep customer identities completely separate from employee directory</li>
+                        <li><strong>Customize branding</strong>: Create professional, on-brand sign-in experiences</li>
+                        <li><strong>Plan user attributes</strong>: Determine what information you need during sign-up</li>
+                        <li><strong>Enable MFA</strong>: Protect customer accounts with multifactor authentication</li>
+                        <li><strong>Use Microsoft Graph APIs</strong>: Automate user lifecycle management</li>
+                        <li><strong>Analyze user activity</strong>: Leverage insights to improve customer experiences</li>
+                        <li><strong>Consider M2M authentication</strong>: For machine-to-machine scenarios, use OAuth 2.0 client credentials flow</li>
+                    </ul>
+
+                    <h3>Licensing and Billing</h3>
+                    <p>External ID uses a monthly active users (MAU) billing model:</p>
+                    <ul>
+                        <li>First 50,000 MAUs per month are free for both B2B and CIAM scenarios</li>
+                        <li>Beyond the free tier, charges apply per MAU</li>
+                        <li>M2M authentication requires the M2M Premium add-on</li>
+                        <li>Review the <a href="https://learn.microsoft.com/en-us/entra/external-id/external-identities-pricing">pricing page</a> for current rates</li>
+                    </ul>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>When should I use B2B collaboration vs external tenants?</h3>
+                                <p>Use B2B collaboration when external users need access to your Microsoft 365 services (Teams, SharePoint) or when collaborating with business partners who have work accounts. Use external tenants when building customer-facing applications that need sign-up/sign-in, custom branding, and scale to thousands/millions of users.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Can B2B guests access my custom applications?</h3>
+                                <p>Yes, B2B guests can access custom applications registered in your workforce tenant, along with SaaS applications like Salesforce or Workday. You can assign permissions to guest users just like employees.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Do I need to create separate external tenants for each application?</h3>
+                                <p>No, you can register multiple applications in a single external tenant. However, consider creating separate external tenants if you want complete isolation between different customer bases or applications.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What happens to existing Azure AD B2C tenants?</h3>
+                                <p>Existing Azure AD B2C tenants continue to function and are supported. However, new features and capabilities are being built exclusively on the Microsoft Entra External ID platform, so planning migration is recommended for long-term viability.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Can I trust MFA from external organizations?</h3>
+                                <p>Yes, with cross-tenant access settings in workforce tenants, you can trust MFA and device compliance claims from external users' home organizations. This enables seamless SSO without requiring guests to re-complete MFA in your tenant.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>How do I manage guest user lifecycle?</h3>
+                                <p>Use Microsoft Entra Entitlement Management to automate guest access workflows with expiration policies. Combine with Access Reviews to regularly validate guest access and remove unnecessary accounts. For external tenants, customers can self-manage their accounts including profile updates and account deletion.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <h2>Conclusion</h2>
+                    <p>Microsoft Entra External ID provides a unified platform for all your external identity needs. By understanding the differences between B2B collaboration in workforce tenants and CIAM in external tenants, you can architect the right solution for each scenario:</p>
+                    <ul>
+                        <li><strong>Choose B2B collaboration</strong> when enabling secure collaboration with business partners who need access to Microsoft 365 and your organizational resources</li>
+                        <li><strong>Choose external tenants</strong> when building customer-facing applications requiring custom branding, self-service registration, and scale to millions of users</li>
+                        <li><strong>Leverage Conditional Access</strong> to enforce consistent security policies across both employees and external identities</li>
+                        <li><strong>Plan your migration</strong> from Azure AD B2C to benefit from the latest Microsoft Entra platform features</li>
+                    </ul>
+
+                    <p>By following the best practices outlined in this guide and leveraging the powerful features of Microsoft Entra External ID, you can build secure, scalable, and user-friendly external identity experiences for both business partners and customers.</p>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#microsoft-entra</span>
+                        <span class="tag">#external-id</span>
+                        <span class="tag">#b2b-collaboration</span>
+                        <span class="tag">#ciam</span>
+                        <span class="tag">#identity-management</span>
+                        <span class="tag">#azure-ad</span>
+                        <span class="tag">#conditional-access</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure, identity management, and system administration. He specializes in Microsoft Entra, Azure security, and automation.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
