@@ -818,7 +818,7 @@ a:hover {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .nav-toggle {
+    .main-nav .nav-toggle {
         display: flex;
     }
     
