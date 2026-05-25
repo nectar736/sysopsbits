@@ -830,7 +830,7 @@ a:hover {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .nav-toggle {
+    .main-nav .nav-toggle {
         display: flex;
     }
     
@@ -1273,4 +1273,24 @@ a:hover {
     .footer-content {
         grid-template-columns: 1fr;
     }
+}
+
+/* Store Product Pricing */
+.product-price {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.75rem 0;
+}
+
+.product-price .original-price {
+    text-decoration: line-through;
+    color: #95a5a6;
+    font-size: 1rem;
+}
+
+.product-price .sale-price {
+    color: #e74c3c;
+    font-size: 1.25rem;
+    font-weight: 700;
 }
