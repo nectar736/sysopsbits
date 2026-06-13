@@ -101,33 +101,28 @@
     <script src="js/partials.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-             // Count categories from category cards using data-count attribute
-             const categoryCards = document.querySelectorAll('.category-card[data-count]');
-             let totalArticles = 0;
-             
-             categoryCards.forEach(card => {
-                 const count = parseInt(card.getAttribute('data-count'), 10);
-                 const category = card.getAttribute('data-category');
-                 
-                 if (!isNaN(count) && count > 0) {
-                     totalArticles += count;
-                     
-                     // Update individual category post count
-                     const postCountEl = document.querySelector(`.post-count[data-category="${category}"]`);
-                     if (postCountEl) {
-                         postCountEl.textContent = `${count} article${count !== 1 ? 's' : ''}`;
-                     }
-                 }
-             });
+            const categoryCards = document.querySelectorAll('.category-card[data-count]');
+            let totalArticles = 0;
+
+            categoryCards.forEach(card => {
+                const count = parseInt(card.getAttribute('data-count'), 10);
+                const category = card.getAttribute('data-category');
+
+                if (!isNaN(count) && count > 0) {
+                    totalArticles += count;
+
+                    const postCountEl = document.querySelector(`.post-count[data-category="${category}"]`);
+                    if (postCountEl) {
+                        postCountEl.textContent = `${count} article${count !== 1 ? 's' : ''}`;
+                    }
                 }
             });
-            
-            // Update hero stat numbers
+
             const categoriesCount = categoryCards.length;
-            
+
             const statCategories = document.querySelectorAll('.stat-number[data-count="categories"]');
             statCategories.forEach(el => el.textContent = categoriesCount);
-            
+
             const statPages = document.querySelectorAll('.stat-number[data-count="pages"]');
             statPages.forEach(el => el.textContent = totalArticles);
         });
