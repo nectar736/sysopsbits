@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMP Practice Test - SysOpsBits</title>
+    <meta name="description" content="Test your knowledge with 20 PMP practice questions covering People, Process, and Business Environment domains.">
+    <link rel="canonical" href="https://sysopsbits.com/project-management/pmp-practice-test.html">
+    <meta property="og:title" content="PMP Practice Test - SysOpsBits">
+    <meta property="og:description" content="Test your knowledge with 20 PMP practice questions covering People, Process, and Business Environment domains.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sysopsbits.com/project-management/pmp-practice-test.html">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+<style>
+    .quiz-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .quiz-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f1f3f4;
+    }
+    .quiz-progress {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+    .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e1e8ed;
+        border-radius: 3px;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 3px;
+        transition: width 0.3s ease;
+    }
+    .domain-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .domain-people { background: #e8f5e9; color: #2e7d32; }
+    .domain-process { background: #e3f2fd; color: #1565c0; }
+    .domain-business { background: #fff3e0; color: #e65100; }
+    .question-text {
+        font-size: 1.125rem;
+        line-height: 1.6;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+    }
+    .options-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2rem 0;
+    }
+    .options-list li {
+        margin-bottom: 0.75rem;
+    }
+    .options-list label {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 1rem;
+        border: 2px solid #e1e8ed;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #2c3e50;
+    }
+    .options-list label:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+    }
+    .options-list label.selected {
+        border-color: #667eea;
+        background: #eef0ff;
+    }
+    .options-list label.correct {
+        border-color: #27ae60;
+        background: #e8f5e9;
+    }
+    .options-list label.incorrect {
+        border-color: #e74c3c;
+        background: #fdecea;
+    }
+    .options-list label.disabled {
+        cursor: default;
+        opacity: 0.85;
+    }
+    .options-list input[type="radio"] {
+        margin-top: 0.25rem;
+        flex-shrink: 0;
+    }
+    .quiz-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary {
+        background: #f1f3f4;
+        color: #2c3e50;
+    }
+    .btn-secondary:hover { background: #e1e8ed; }
+    .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-success {
+        background: #27ae60;
+        color: white;
+    }
+    .btn-success:hover { opacity: 0.9; }
+    .review-box {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid;
+    }
+    .review-box.correct { background: #e8f5e9; border-color: #27ae60; }
+    .review-box.incorrect { background: #fdecea; border-color: #e74c3c; }
+    .review-box h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+    }
+    .review-box .explanation {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #2c3e50;
+    }
+    .results-container {
+        text-align: center;
+    }
+    .results-score {
+        font-size: 4rem;
+        font-weight: 700;
+        margin: 1rem 0;
+    }
+    .results-score.pass { color: #27ae60; }
+    .results-score.fail { color: #e74c3c; }
+    .results-pass-fail {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+    }
+    .results-pass-fail.pass { color: #27ae60; }
+    .results-pass-fail.fail { color: #e74c3c; }
+    .domain-breakdown {
+        text-align: left;
+        max-width: 500px;
+        margin: 2rem auto;
+    }
+    .domain-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f1f3f4;
+    }
+    .domain-row:last-child { border-bottom: none; }
+    .domain-row .domain-name { font-weight: 500; color: #2c3e50; }
+    .domain-row .domain-score { color: #7f8c8d; }
+    .quiz-actions-center { justify-content: center; }
+    .retake-area { margin-top: 2rem; }
+    .section-header {
+        margin-bottom: 1rem;
+    }
+    .section-header h1 { margin-bottom: 0.5rem; }
+</style>
+</head>
+<body data-page="project-management">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <header class="section-header">
+                <h1>PMP Practice Test</h1>
+                <p>20 questions covering the PMP exam's People, Process, and Business Environment domains.</p>
+                <p class="section-stats">Passing score: <strong>60%</strong></p>
+            </header>
+
+            <div class="quiz-container" id="quiz-container">
+                <div class="quiz-header">
+                    <span class="domain-badge" id="domain-badge">People</span>
+                    <span class="quiz-progress" id="quiz-progress">Question 1 of 20</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 5%"></div>
+                </div>
+                <div id="question-area"></div>
+                <div id="review-area"></div>
+                <div id="results-area" style="display:none"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+    <script>
+    const questions = [
+        { id: 1, domain: "People", question: "A project team member from a different cultural background consistently avoids expressing opinions during team meetings. What should the project manager do FIRST?", options: ["Accept the behavior as a cultural difference and move on", "Privately discuss communication preferences and create a psychologically safe environment", "Require the team member to attend communication training", "Assign the member to individual tasks to avoid team meetings"], correct: 1, explanation: "The project manager should first understand the root cause through a private conversation and create a safe environment. This aligns with the 'Be an Accountable Leader' principle and demonstrates emotional intelligence and cultural awareness." },
+        { id: 2, domain: "People", question: "Two senior developers disagree on the technical approach for a critical feature with a tight deadline. Which conflict resolution approach is MOST effective?", options: ["Forcing — impose a decision quickly to save time", "Collaborating — work through the disagreement to find an optimal solution", "Compromising — find a middle ground both can accept", "Smoothing — downplay differences and emphasize areas of agreement"], correct: 1, explanation: "Collaborating/Problem-Solving is the best approach for technical disagreements when the solution quality matters. It addresses root causes and produces the best outcome, though it takes more time upfront." },
+        { id: 3, domain: "People", question: "A project manager notices team morale declining due to an unrealistic schedule. What should the project manager do FIRST?", options: ["Motivate the team to work harder to meet the deadline", "Escalate the schedule concern to the sponsor and negotiate adjustments", "Offer overtime incentives to boost productivity", "Replace underperforming team members"], correct: 1, explanation: "Before motivating or incentivizing the team, the project manager must address the root cause — an unrealistic schedule. Escalating to the sponsor and negotiating adjustments demonstrates responsible leadership and protects the team from burnout." },
+        { id: 4, domain: "People", question: "A team member with critical expertise consistently misses task deadlines, causing downstream delays. What is the BEST approach?", options: ["Issue a formal written warning to document the behavior", "Discuss the issue privately to understand root causes and offer support", "Reassign the tasks to another team member immediately", "Report the behavior to the functional manager"], correct: 1, explanation: "The project manager should first seek to understand the root cause through a private discussion. Performance issues often stem from unclear requirements, resource constraints, or personal challenges — not lack of effort. This aligns with building an empowered culture." },
+        { id: 5, domain: "People", question: "The project sponsor requests detailed weekly status reports, but the team prefers bi-weekly reports to reduce administrative overhead. How should the project manager respond?", options: ["Follow the team's preference to maintain morale", "Comply with the sponsor's request since the sponsor is a key stakeholder", "Propose a compromise — concise weekly summaries with detailed bi-weekly reports", "Delegate the reporting decision to the project team"], correct: 2, explanation: "The project manager balances stakeholder needs with team efficiency. Proposing a compromise addresses the sponsor's need for regular updates while respecting the team's desire to minimize overhead. This demonstrates effective stakeholder engagement." },
+        { id: 6, domain: "People", question: "A remote team member is struggling with a task due to unclear documentation. What should the project manager do?", options: ["Assign a mentor from the onsite team to provide guidance", "Replace the remote team member with someone more experienced", "Extend the schedule for all remote workers", "Escalate the issue to the project sponsor"], correct: 0, explanation: "Assigning a mentor provides targeted support without disrupting the project. It addresses the root cause (lack of clarity) while building team capability and fostering a collaborative environment." },
+        { id: 7, domain: "People", question: "A project manager needs to motivate a virtual team spread across three time zones. Which approach is MOST effective?", options: ["Require all team members to work overlapping core hours", "Schedule regular video check-ins at rotating times and foster informal communication channels", "Send a weekly email update with progress and goals", "Assign all work as individual tasks to avoid coordination overhead"], correct: 1, explanation: "Regular video check-ins with rotating times ensure no region is consistently inconvenienced. Fostering informal communication (virtual coffee chats, chat channels) builds trust and team cohesion, which is critical for distributed teams." },
+        { id: 8, domain: "People", question: "A key stakeholder is actively opposing the project approach in steering committee meetings. What should the project manager do FIRST?", options: ["Request the sponsor to remove the stakeholder from the committee", "Schedule a one-on-one meeting to understand and address the stakeholder's concerns", "Proceed without the stakeholder's support", "Document the opposition and escalate to senior management"], correct: 1, explanation: "The project manager should first engage the stakeholder directly to understand their concerns. Opposition often stems from unmet needs or misunderstood objectives. A private conversation builds trust and may uncover solutions without escalation." },
+        { id: 9, domain: "Process", question: "What is the PRIMARY purpose of a Work Breakdown Structure (WBS)?", options: ["Identify project risks and constraints", "Decompose project scope into manageable deliverables and work packages", "Create the project schedule and task dependencies", "Estimate project costs and budget"], correct: 1, explanation: "The WBS decomposes the total project scope into smaller, manageable deliverables and work packages. It is a scope management tool that provides the foundation for estimating, scheduling, and risk identification." },
+        { id: 10, domain: "Process", question: "Your project has a Cost Performance Index (CPI) of 0.8 and a Schedule Performance Index (SPI) of 0.9. What does this indicate?", options: ["The project is over budget and ahead of schedule", "The project is over budget and behind schedule", "The project is under budget and ahead of schedule", "The project is under budget and behind schedule"], correct: 1, explanation: "CPI < 1 means the project is over budget (earning less value than spent). SPI < 1 means the project is behind schedule (earning less value than planned). A CPI of 0.8 means only $0.80 of value is earned for every $1 spent." },
+        { id: 11, domain: "Process", question: "A critical path activity is delayed by 3 days. What is the impact on the project finish date?", options: ["The project finish date will be delayed by exactly 3 days", "The project finish date may be delayed depending on available float", "There is no impact if non-critical activities have float", "The critical path will automatically re-calculate to absorb the delay"], correct: 0, explanation: "By definition, activities on the critical path have zero total float. Any delay to a critical path activity directly extends the project's finish date by the same amount, unless the critical path changes." },
+        { id: 12, domain: "Process", question: "During risk planning, the team identifies a high-probability, high-impact threat. Which risk response strategy is MOST appropriate?", options: ["Accept — document and monitor the risk", "Mitigate — take proactive steps to reduce probability or impact", "Transfer — shift the risk to a third party", "Enhance — increase the probability of the risk"], correct: 1, explanation: "For high-probability, high-impact threats, mitigation is typically the best response. Mitigation reduces either the probability or the impact of the risk to an acceptable threshold. Avoidance could also be considered, but mitigation is the most common proactive approach." },
+        { id: 13, domain: "Process", question: "What is the key difference between Quality Assurance (QA) and Quality Control (QC)?", options: ["QA is process-focused (prevention); QC is product-focused (inspection)", "QA is performed by external auditors; QC is performed by the project team", "QA is done during planning; QC is done during execution", "There is no meaningful difference between QA and QC"], correct: 0, explanation: "Quality Assurance is a process-focused, preventive approach that ensures the right processes are being used. Quality Control is a product-focused, detective approach that inspects deliverables for defects. QA prevents issues; QC catches them." },
+        { id: 14, domain: "Process", question: "During procurement planning, what document is formally used to invite sellers to submit a proposal?", options: ["Statement of Work (SOW)", "Request for Proposal (RFP)", "Memorandum of Understanding (MOU)", "Procurement Statement of Work"], correct: 1, explanation: "An RFP (Request for Proposal) is the formal procurement document used to solicit proposals from sellers. The SOW describes the work to be done but is included within the RFP, not used to invite sellers directly." },
+        { id: 15, domain: "Process", question: "A stakeholder has high power but low interest in the project. According to the Power/Interest Grid, how should this stakeholder be managed?", options: ["Manage Closely", "Keep Satisfied", "Keep Informed", "Monitor"], correct: 1, explanation: "The Power/Interest Grid categorizes stakeholders: High Power/Low Interest = Keep Satisfied. These stakeholders can exert influence but don't follow details closely, so the project manager should keep them satisfied enough to prevent them from using their power negatively." },
+        { id: 16, domain: "Process", question: "What is a key benefit of rolling wave planning?", options: ["It eliminates the need for a detailed project management plan", "It allows near-term work to be planned in detail while future work is planned at a higher level", "It reduces project costs by approximately 50%", "It guarantees project success by reducing uncertainty"], correct: 1, explanation: "Rolling wave planning is an iterative planning technique where work to be performed in the near term is planned in detail, while work in the future is planned at a higher level. It reflects the progressive elaboration nature of project management." },
+        { id: 17, domain: "Process", question: "During project execution, a team member identifies a potential risk not documented in the risk register. What should happen FIRST?", options: ["The risk should be documented in the issue log as a new risk", "The risk should be ignored since it was not identified during risk planning", "All project work should stop until the risk is analyzed", "The project sponsor must approve the new risk before it is added"], correct: 0, explanation: "New risks can emerge at any time. The team member should document the risk in the risk register (or issue log) and notify the project manager so it can be assessed and a response planned. Risk management is an iterative process." },
+        { id: 18, domain: "Process", question: "What is the PRIMARY purpose of a project charter?", options: ["Define the detailed project budget", "Authorize the project and formally assign the project manager", "Replace the project management plan", "List all project risks and constraints"], correct: 1, explanation: "The project charter formally authorizes the project, assigns the project manager, and provides the authority to apply organizational resources. It links the project to the organization's strategic objectives." },
+        { id: 19, domain: "Business Environment", question: "A new government regulation is enacted that affects the project's compliance requirements. What should the project manager do FIRST?", options: ["Ignore the regulation until it officially takes effect", "Assess the impact on the project and communicate findings to stakeholders", "Immediately stop all project work until compliance is confirmed", "Request the legal department to handle compliance issues independently"], correct: 1, explanation: "The project manager should first assess how the regulation impacts the project's scope, schedule, budget, and risk profile, then communicate those findings to stakeholders. Proactive compliance management protects the organization from legal and financial penalties." },
+        { id: 20, domain: "Business Environment", question: "An organization is undergoing a merger while a project is in execution. What should the project manager consider as the HIGHEST priority?", options: ["Only the technical aspects of the project deliverables", "Potential changes to organizational structure, strategic priorities, and resource availability", "Continue executing exactly as planned since the merger is a business issue", "Immediately close the project pending merger completion"], correct: 1, explanation: "A merger can fundamentally change organizational priorities, structure, funding, and resource availability. The project manager must assess the impact, engage with leadership to understand new priorities, and adjust the project plan accordingly." }
+    ];
+
+    const domainLabels = { "People": "domain-people", "Process": "domain-process", "Business Environment": "domain-business" };
+    let currentQ = 0;
+    let answers = new Array(questions.length).fill(null);
+    let reviewed = new Array(questions.length).fill(false);
+
+    function renderQuestion() {
+        const q = questions[currentQ];
+        const area = document.getElementById("question-area");
+        const reviewArea = document.getElementById("review-area");
+        const resultsArea = document.getElementById("results-area");
+        const actions = document.getElementById("quiz-actions");
+
+        resultsArea.style.display = "none";
+        document.getElementById("domain-badge").textContent = q.domain;
+        document.getElementById("domain-badge").className = "domain-badge " + (domainLabels[q.domain] || "");
+        document.getElementById("quiz-progress").textContent = "Question " + (currentQ + 1) + " of " + questions.length;
+        document.getElementById("progress-fill").style.width = ((currentQ + 1) / questions.length * 100) + "%";
+
+        let optionsHtml = q.options.map((opt, i) => {
+            let labelClass = "";
+            if (reviewed[currentQ]) {
+                if (i === q.correct) labelClass = "correct disabled";
+                else if (i === answers[currentQ] && i !== q.correct) labelClass = "incorrect disabled";
+                else labelClass = "disabled";
+            } else if (answers[currentQ] === i) {
+                labelClass = "selected";
+            }
+            const checked = answers[currentQ] === i ? "checked" : "";
+            const disabled = reviewed[currentQ] ? "disabled" : "";
+            return `<li><label class="${labelClass}"><input type="radio" name="q" value="${i}" ${checked} ${disabled}> ${opt}</label></li>`;
+        }).join("");
+
+        area.innerHTML = `
+            <div class="question-text">${q.question}</div>
+            <ul class="options-list">${optionsHtml}</ul>
+            <div class="quiz-actions" id="quiz-actions">
+                <button class="btn btn-secondary" id="review-btn" ${answers[currentQ] === null ? "disabled" : ""}>Review</button>
+                <button class="btn btn-primary" id="next-btn">${currentQ === questions.length - 1 ? "See Results" : "Next Question"}</button>
+            </div>
+        `;
+
+        reviewArea.innerHTML = "";
+        if (reviewed[currentQ]) {
+            const isCorrect = answers[currentQ] === q.correct;
+            reviewArea.innerHTML = `
+                <div class="review-box ${isCorrect ? 'correct' : 'incorrect'}">
+                    <h4>${isCorrect ? '✓ Correct' : '✗ Incorrect'}</h4>
+                    <div class="explanation"><strong>Correct answer:</strong> ${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}</div>
+                    <div class="explanation" style="margin-top:0.75rem"><strong>Explanation:</strong> ${q.explanation}</div>
+                </div>
+            `;
+        }
+
+        document.querySelectorAll('input[name="q"]').forEach(radio => {
+            radio.addEventListener("change", function() {
+                if (!reviewed[currentQ]) {
+                    answers[currentQ] = parseInt(this.value);
+                    document.getElementById("review-btn").disabled = false;
+                    document.querySelectorAll(".options-list label").forEach(l => l.classList.remove("selected"));
+                    this.closest("label").classList.add("selected");
+                }
+            });
+        });
+
+        document.getElementById("review-btn").addEventListener("click", function() {
+            if (answers[currentQ] === null) return;
+            reviewed[currentQ] = true;
+            renderQuestion();
+        });
+
+        document.getElementById("next-btn").addEventListener("click", function() {
+            if (currentQ === questions.length - 1) {
+                showResults();
+            } else {
+                currentQ++;
+                renderQuestion();
+            }
+        });
+    }
+
+    function showResults() {
+        document.getElementById("question-area").innerHTML = "";
+        document.getElementById("review-area").innerHTML = "";
+        document.getElementById("results-area").style.display = "block";
+
+        const totalCorrect = answers.filter((a, i) => a === questions[i].correct).length;
+        const pct = Math.round(totalCorrect / questions.length * 100);
+        const passed = pct >= 60;
+
+        const domains = {};
+        questions.forEach((q, i) => {
+            if (!domains[q.domain]) domains[q.domain] = { correct: 0, total: 0 };
+            domains[q.domain].total++;
+            if (answers[i] === q.correct) domains[q.domain].correct++;
+        });
+
+        let domainHtml = Object.entries(domains).map(([name, d]) => {
+            const p = Math.round(d.correct / d.total * 100);
+            return `<div class="domain-row"><span class="domain-name">${name}</span><span class="domain-score">${d.correct}/${d.total} (${p}%)</span></div>`;
+        }).join("");
+
+        document.getElementById("results-area").innerHTML = `
+            <div class="results-container">
+                <h2>Practice Test Results</h2>
+                <div class="results-score ${passed ? 'pass' : 'fail'}">${pct}%</div>
+                <div class="results-pass-fail ${passed ? 'pass' : 'fail'}">${passed ? '✓ PASSED' : '✗ NOT PASSED'}</div>
+                <p>You answered <strong>${totalCorrect}</strong> out of <strong>${questions.length}</strong> questions correctly. PMI requires a passing score of approximately 60%.</p>
+                <div class="domain-breakdown">
+                    <h3>Domain Breakdown</h3>
+                    ${domainHtml}
+                </div>
+                <div class="retake-area">
+                    <button class="btn btn-success" onclick="location.reload()">Retake Test</button>
+                </div>
+            </div>
+        `;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderQuestion();
+    });
+    </script>
+</body>
+</html>
