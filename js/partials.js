@@ -102,7 +102,7 @@ function setActiveNav() {
     const navLinks = document.querySelectorAll('.nav-menu a');
     
     navLinks.forEach(link => {
-        const page = link.getAttribute('data-page');
+        const page = link.getAttribute('data-page').replace(/-/g, '');
         if (page === currentPage) {
             link.classList.add('active');
         }

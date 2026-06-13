@@ -207,6 +207,94 @@
         margin-bottom: 1rem;
     }
     .section-header h1 { margin-bottom: 0.5rem; }
+    .quiz-layout {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+    }
+    .quiz-main {
+        flex: 1;
+        min-width: 0;
+    }
+    .quiz-sidebar {
+        width: 220px;
+        flex-shrink: 0;
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.25rem;
+        position: sticky;
+        top: 1rem;
+    }
+    .quiz-sidebar h3 {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #7f8c8d;
+        margin-bottom: 1rem;
+    }
+    .question-nav-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+    }
+    .question-nav-btn {
+        width: 100%;
+        aspect-ratio: 1;
+        border: 2px solid #e1e8ed;
+        border-radius: 8px;
+        background: white;
+        color: #2c3e50;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .question-nav-btn:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+    }
+    .question-nav-btn.active {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+    .question-nav-btn.answered {
+        border-color: #27ae60;
+        background: #e8f5e9;
+        color: #27ae60;
+    }
+    .question-nav-btn.correct {
+        border-color: #27ae60;
+        background: #e8f5e9;
+        color: #27ae60;
+    }
+    .question-nav-btn.incorrect {
+        border-color: #e74c3c;
+        background: #fdecea;
+        color: #e74c3c;
+    }
+    .question-nav-btn.answered.active,
+    .question-nav-btn.correct.active,
+    .question-nav-btn.incorrect.active {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+    @media (max-width: 768px) {
+        .quiz-layout {
+            flex-direction: column;
+        }
+        .quiz-sidebar {
+            width: 100%;
+            position: static;
+        }
+        .question-nav-grid {
+            grid-template-columns: repeat(10, 1fr);
+        }
+    }
 </style>
 </head>
 <body data-page="project-management">
@@ -221,16 +309,24 @@
             </header>
 
             <div class="quiz-container" id="quiz-container">
-                <div class="quiz-header">
-                    <span class="domain-badge" id="domain-badge">People</span>
-                    <span class="quiz-progress" id="quiz-progress">Question 1 of 20</span>
+                <div class="quiz-layout">
+                    <div class="quiz-main">
+                        <div class="quiz-header">
+                            <span class="domain-badge" id="domain-badge">People</span>
+                            <span class="quiz-progress" id="quiz-progress">Question 1 of 20</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 5%"></div>
+                        </div>
+                        <div id="question-area"></div>
+                        <div id="review-area"></div>
+                        <div id="results-area" style="display:none"></div>
+                    </div>
+                    <aside class="quiz-sidebar" id="quiz-sidebar">
+                        <h3>Questions</h3>
+                        <div class="question-nav-grid" id="question-nav-grid"></div>
+                    </aside>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill" style="width: 5%"></div>
-                </div>
-                <div id="question-area"></div>
-                <div id="review-area"></div>
-                <div id="results-area" style="display:none"></div>
             </div>
         </div>
     </main>
@@ -268,12 +364,38 @@
     let answers = new Array(questions.length).fill(null);
     let reviewed = new Array(questions.length).fill(false);
 
+    function renderSidebar() {
+        const grid = document.getElementById("question-nav-grid");
+        grid.innerHTML = questions.map((q, i) => {
+            let cls = "question-nav-btn";
+            if (currentQ === i) cls += " active";
+            if (reviewed[i]) {
+                cls += answers[i] === q.correct ? " correct" : " incorrect";
+            } else if (answers[i] !== null) {
+                cls += " answered";
+            }
+            const label = answers[i] !== null ? "✓" : (i + 1);
+            return `<button class="${cls}" data-idx="${i}">${label}</button>`;
+        }).join("");
+
+        grid.querySelectorAll(".question-nav-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                goToQuestion(parseInt(this.dataset.idx));
+            });
+        });
+    }
+
+    function goToQuestion(idx) {
+        if (idx < 0 || idx >= questions.length) return;
+        currentQ = idx;
+        renderQuestion();
+    }
+
     function renderQuestion() {
         const q = questions[currentQ];
         const area = document.getElementById("question-area");
         const reviewArea = document.getElementById("review-area");
         const resultsArea = document.getElementById("results-area");
-        const actions = document.getElementById("quiz-actions");
 
         resultsArea.style.display = "none";
         document.getElementById("domain-badge").textContent = q.domain;
@@ -299,6 +421,7 @@
             <div class="question-text">${q.question}</div>
             <ul class="options-list">${optionsHtml}</ul>
             <div class="quiz-actions" id="quiz-actions">
+                <button class="btn btn-secondary" id="prev-btn" ${currentQ === 0 ? "disabled" : ""}>← Back</button>
                 <button class="btn btn-secondary" id="review-btn" ${answers[currentQ] === null ? "disabled" : ""}>Review</button>
                 <button class="btn btn-primary" id="next-btn">${currentQ === questions.length - 1 ? "See Results" : "Next Question"}</button>
             </div>
@@ -323,6 +446,7 @@
                     document.getElementById("review-btn").disabled = false;
                     document.querySelectorAll(".options-list label").forEach(l => l.classList.remove("selected"));
                     this.closest("label").classList.add("selected");
+                    renderSidebar();
                 }
             });
         });
@@ -341,11 +465,21 @@
                 renderQuestion();
             }
         });
+
+        document.getElementById("prev-btn").addEventListener("click", function() {
+            if (currentQ > 0) {
+                currentQ--;
+                renderQuestion();
+            }
+        });
+
+        renderSidebar();
     }
 
     function showResults() {
         document.getElementById("question-area").innerHTML = "";
         document.getElementById("review-area").innerHTML = "";
+        document.getElementById("quiz-sidebar").style.display = "none";
         document.getElementById("results-area").style.display = "block";
 
         const totalCorrect = answers.filter((a, i) => a === questions[i].correct).length;
