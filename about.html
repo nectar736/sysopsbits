@@ -3,81 +3,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About SysOpsBits - Practical Sysops Guides & Reviews</title>
-    <meta name="description" content="Learn about our mission to provide practical infrastructure guides and unbiased reviews for sysadmins and DevOps engineers.">
+    <title>About SysOpsBits — PMP-Certified Systems Administrator</title>
+    <meta name="description" content="PMP-certified systems administrator with deep experience in cloud infrastructure, Microsoft 365, Azure networking, Entra ID, Intune, and hybrid enterprise environments.">
     
     <link rel="canonical" href="https://sysopsbits.com/about.html">
-    <meta property="og:title" content="About SysOpsBits">
-    <meta property="og:description" content="Learn about our mission to provide practical infrastructure guides and unbiased reviews.">
-    <meta property="og:type" content="website">
+    <meta property="og:title" content="About SysOpsBits — PMP-Certified Systems Administrator">
+    <meta property="og:description" content="PMP-certified systems administrator with deep experience in cloud infrastructure, Microsoft 365, Azure networking, Entra ID, Intune, and hybrid enterprise environments.">
+    <meta property="og:type" content="profile">
     <meta property="og:url" content="https://sysopsbits.com/about.html">
     
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/syntax.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/shortcodes.css">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-B67YJF8565');
 </script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
      crossorigin="anonymous"></script>
-</script></head>
+<style>
+    .about-page {
+        max-width: 860px;
+        margin: 0 auto;
+    }
+    .about-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .about-card h2 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.35rem;
+        color: #2c3e50;
+    }
+    .about-card p {
+        margin: 0 0 0.75rem 0;
+        line-height: 1.7;
+        color: #444;
+    }
+    .about-card p:last-child {
+        margin-bottom: 0;
+    }
+
+    .hero-card {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, #f8f9ff 0%, #eef0ff 100%);
+    }
+    .hero-card .avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        margin: 0 auto 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.25rem;
+        color: #fff;
+        font-weight: 700;
+    }
+    .hero-card h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.75rem;
+        color: #2c3e50;
+    }
+    .hero-card .subtitle {
+        font-size: 1.05rem;
+        color: #667eea;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .expertise-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .expertise-chip {
+        display: inline-block;
+        padding: 0.35rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        background: #f1f3f4;
+        color: #2c3e50;
+    }
+    .expertise-chip.domain {
+        background: #e8f0fe;
+        color: #1565c0;
+    }
+    .expertise-chip.tool {
+        background: #f3e8ff;
+        color: #7b1fa2;
+    }
+    .expertise-subheading {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #7f8c8d;
+        margin: 1rem 0 0.6rem 0;
+    }
+    .expertise-subheading:first-of-type {
+        margin-top: 0;
+    }
+
+    .cert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+    }
+    .cert-card {
+        background: #fafafa;
+        border: 1px solid #e8e8e8;
+        border-radius: 10px;
+        padding: 1.15rem;
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .cert-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+    }
+    .cert-name {
+        font-weight: 600;
+        font-size: 0.92rem;
+        color: #2c3e50;
+        margin-bottom: 0.35rem;
+        line-height: 1.35;
+    }
+    .cert-meta {
+        font-size: 0.82rem;
+        color: #7f8c8d;
+        margin-bottom: 0.6rem;
+    }
+    .cert-vendor {
+        display: inline-block;
+        padding: 0.15rem 0.55rem;
+        border-radius: 4px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    .cert-vendor.microsoft { background: #e3f2fd; color: #1565c0; }
+    .cert-vendor.comptia { background: #fff3e0; color: #e65100; }
+    .cert-vendor.cisco { background: #e8eaf6; color: #283593; }
+    .cert-vendor.pmi { background: #e8f5e9; color: #2e7d32; }
+    .cert-verify {
+        display: inline-block;
+        font-size: 0.8rem;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .cert-verify:hover {
+        text-decoration: underline;
+    }
+    .cert-group-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #7f8c8d;
+        margin: 1.5rem 0 0.75rem 0;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid #eee;
+    }
+    .cert-group-label:first-of-type {
+        margin-top: 0;
+    }
+
+    .values-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .values-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f1f3f4;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #444;
+    }
+    .values-list li:last-child {
+        border-bottom: none;
+    }
+    .values-list li strong {
+        color: #2c3e50;
+    }
+
+    .disclosure-box {
+        background: #fffce7;
+        border: 1px solid #f9e9b3;
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        font-size: 0.9rem;
+        color: #6b5900;
+        margin-bottom: 1rem;
+    }
+    .disclosure-box strong {
+        color: #5c4a00;
+    }
+</style>
+</head>
 <body data-page="about">
     <div id="header-placeholder"></div>
 
     <main>
-        <article class="post">
-            <div class="container">
-                <header class="post-header">
-                    <h1>About SysOpsBits</h1>
-                </header>
+        <div class="container about-page">
 
-                <div class="post-content">
-                    <p>Welcome to SysOpsBits - your trusted resource for practical infrastructure knowledge and honest product reviews.</p>
+            <div class="about-card hero-card">
+                <div class="avatar">MH</div>
+                <h1>PMP-Certified Systems Administrator</h1>
+                <p class="subtitle">Cloud Infrastructure &middot; Microsoft 365 &middot; Azure Networking &middot; Identity &amp; Endpoint Management</p>
+            </div>
 
-                    <h2>Our Mission</h2>
-                    <p>SysOpsBits was created with a simple goal: provide clear, actionable, and unbiased information to help sysadmins and DevOps engineers make better decisions about their infrastructure.</p>
+            <div class="about-card">
+                <h2>About Me</h2>
+                <p>I'm a PMP-certified Systems Administrator with deep experience in cloud infrastructure, Microsoft 365, Azure networking, Entra ID, Intune, and hybrid enterprise environments. Backed by Microsoft, CompTIA, Cisco, and project management certifications, I focus on delivering secure, scalable, and efficient solutions that align technology with business goals, improve operations, and support successful project outcomes.</p>
+                <p>My background includes Windows Server, SCCM, Meraki, PowerShell, and Microsoft Graph automation, with a strong emphasis on identity, compliance, and endpoint management.</p>
+                <p>Results-driven PMP-certified Systems Administrator seeking to leverage expertise in cloud infrastructure, Microsoft 365, Azure networking, Entra ID, Intune, and hybrid enterprise environments to deliver secure, scalable, and efficient technology solutions. Committed to aligning IT operations with business objectives through strong technical leadership, automation, identity and endpoint management, and project-driven execution that improves operational performance, security, and organizational efficiency.</p>
+            </div>
 
-                    <h2>What We Cover</h2>
-                    <h3>In-Depth Tutorials</h3>
-                    <p>Step-by-step guides you can implement immediately in your environment.</p>
-                    <h3>Honest Comparisons</h3>
-                    <p>Real-world testing and cost breakdowns to help you choose the right tools.</p>
-                    <h3>Tool Reviews</h3>
-                    <p>Hands-on testing of the latest DevOps and sysadmin tools.</p>
-                    <h3>Cost Optimization</h3>
-                    <p>Find the most cost-effective solutions without sacrificing performance.</p>
-
-                    <h2>Our Values</h2>
-                    <ul>
-                        <li><strong>Practical over theoretical:</strong> We focus on what works in real environments</li>
-                        <li><strong>Honest recommendations:</strong> We only recommend what we've actually tested</li>
-                        <li><strong>Transparent affiliations:</strong> We clearly disclose when content contains affiliate links</li>
-                        <li><strong>Community-driven:</strong> We welcome feedback and suggestions from our readers</li>
-                    </ul>
-
-                    <h2>About the Author</h2>
-                    <p>I'm a PMP-certified Systems Administrator with deep experience in cloud infrastructure, Microsoft 365, Azure networking, Entra ID, Intune, and hybrid enterprise environments.</p>
-                    <p>Backed by Microsoft, CompTIA, Cisco, and project management certifications, I focus on delivering secure, scalable, and efficient solutions that align technology with business goals, improve operations, and support successful project outcomes.</p>
-                    <p>My background includes Windows Server, SCCM, Meraki, PowerShell, and Microsoft Graph automation, with a strong emphasis on identity, compliance, and endpoint management.</p>
-                    <!-- <p>I started SysOpsBits because I was frustrated with the amount of fluff and misinformation in the tech industry.</p> -->
-
-                    <h2>Affiliate Disclosure</h2>
-                    <div class="affiliate-disclosure">
-                        <p><strong>Affiliate Disclosure:</strong> This site uses affiliate links. If you purchase through these links, we may earn a commission at no additional cost to you.</p>
-                    </div>
-
-                    <h2>Get in Touch</h2>
-                    <p>Have questions, suggestions, or want to collaborate? <a href="contact.html">Contact us here</a>.</p>
-                    <p>Connect on <a href="https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395" target="_blank" rel="noopener">LinkedIn</a>.</p>
+            <div class="about-card">
+                <h2>Areas of Expertise</h2>
+                <p class="expertise-subheading">Domains</p>
+                <div class="expertise-grid">
+                    <span class="expertise-chip domain">Cloud Infrastructure</span>
+                    <span class="expertise-chip domain">Microsoft 365</span>
+                    <span class="expertise-chip domain">Azure Networking</span>
+                    <span class="expertise-chip domain">Entra ID</span>
+                    <span class="expertise-chip domain">Intune</span>
+                    <span class="expertise-chip domain">Hybrid Enterprise</span>
+                    <span class="expertise-chip domain">Identity &amp; Compliance</span>
+                    <span class="expertise-chip domain">Endpoint Management</span>
+                </div>
+                <p class="expertise-subheading">Tools &amp; Technologies</p>
+                <div class="expertise-grid">
+                    <span class="expertise-chip tool">Windows Server</span>
+                    <span class="expertise-chip tool">SCCM</span>
+                    <span class="expertise-chip tool">Meraki</span>
+                    <span class="expertise-chip tool">PowerShell</span>
+                    <span class="expertise-chip tool">Microsoft Graph</span>
                 </div>
             </div>
-        </article>
+
+            <div class="about-card">
+                <h2>Certifications</h2>
+
+                <p class="cert-group-label">Microsoft</p>
+                <div class="cert-grid">
+                    <div class="cert-card">
+                        <div class="cert-name">Microsoft 365 Certified: Administrator Expert</div>
+                        <div class="cert-meta"><span class="cert-vendor microsoft">Microsoft</span> &mdash; 2024</div>
+                        <a class="cert-verify" href="https://learn.microsoft.com/en-us/users/mattyhip/transcript/vn4wzi0qlq3o6np?tab=credentials-tab" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                    <div class="cert-card">
+                        <div class="cert-name">Microsoft 365 Certified: Endpoint Administrator Associate</div>
+                        <div class="cert-meta"><span class="cert-vendor microsoft">Microsoft</span> &mdash; 2024</div>
+                        <a class="cert-verify" href="https://learn.microsoft.com/en-us/users/mattyhip/transcript/vn4wzi0qlq3o6np?tab=credentials-tab" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                    <div class="cert-card">
+                        <div class="cert-name">Microsoft Azure Fundamentals</div>
+                        <div class="cert-meta"><span class="cert-vendor microsoft">Microsoft</span> &mdash; 2024</div>
+                        <a class="cert-verify" href="https://learn.microsoft.com/en-us/users/mattyhip/transcript/vn4wzi0qlq3o6np?tab=credentials-tab" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                    <div class="cert-card">
+                        <div class="cert-name">Azure Administrator Associate</div>
+                        <div class="cert-meta"><span class="cert-vendor microsoft">Microsoft</span> &mdash; 2025</div>
+                        <a class="cert-verify" href="https://learn.microsoft.com/en-us/users/mattyhip/transcript/vn4wzi0qlq3o6np?tab=credentials-tab" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                    <div class="cert-card">
+                        <div class="cert-name">Azure Network Engineer Associate</div>
+                        <div class="cert-meta"><span class="cert-vendor microsoft">Microsoft</span> &mdash; 2025</div>
+                        <a class="cert-verify" href="https://learn.microsoft.com/en-us/users/mattyhip/transcript/vn4wzi0qlq3o6np?tab=credentials-tab" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                    <div class="cert-card">
+                        <div class="cert-name">Identity and Access Administrator Associate</div>
+                        <div class="cert-meta"><span class="cert-vendor microsoft">Microsoft</span> &mdash; 2025</div>
+                        <a class="cert-verify" href="https://learn.microsoft.com/en-us/users/mattyhip/transcript/vn4wzi0qlq3o6np?tab=credentials-tab" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                </div>
+
+                <p class="cert-group-label">CompTIA</p>
+                <div class="cert-grid">
+                    <div class="cert-card">
+                        <div class="cert-name">A+</div>
+                        <div class="cert-meta"><span class="cert-vendor comptia">CompTIA</span> &mdash; 2018</div>
+                        <a class="cert-verify" href="https://www.certmetrics.com/comptia/public/verification.aspx?code=HP4GMCNFND1E1Y99" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                    <div class="cert-card">
+                        <div class="cert-name">Project+</div>
+                        <div class="cert-meta"><span class="cert-vendor comptia">CompTIA</span> &mdash; 2025</div>
+                        <a class="cert-verify" href="https://www.certmetrics.com/comptia/public/verification.aspx?code=SKD99G1YXBBESC9J" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                    <div class="cert-card">
+                        <div class="cert-name">Security+</div>
+                        <div class="cert-meta"><span class="cert-vendor comptia">CompTIA</span> &mdash; 2021</div>
+                        <a class="cert-verify" href="https://www.certmetrics.com/comptia/public/verification.aspx?code=MH3CR3SP0LV11K5Y" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                </div>
+
+                <p class="cert-group-label">Cisco</p>
+                <div class="cert-grid">
+                    <div class="cert-card">
+                        <div class="cert-name">Cisco Certified Network Associate</div>
+                        <div class="cert-meta"><span class="cert-vendor cisco">Cisco</span> &mdash; 2019</div>
+                        <a class="cert-verify" href="https://www.certmetrics.com/cisco/public/verification.aspx?code=436344170952HKWL" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                </div>
+
+                <p class="cert-group-label">Project Management</p>
+                <div class="cert-grid">
+                    <div class="cert-card">
+                        <div class="cert-name">Project Management Professional (PMP)</div>
+                        <div class="cert-meta"><span class="cert-vendor pmi">PMI</span> &mdash; 2026</div>
+                        <a class="cert-verify" href="https://www.credly.com/badges/1415a863-86e8-4148-bdbd-5e9f14f23e28" target="_blank" rel="noopener">Verify →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-card">
+                <h2>About SysOpsBits</h2>
+                <p>SysOpsBits was created with a simple goal: provide clear, actionable, and unbiased information to help sysadmins and DevOps engineers make better decisions about their infrastructure.</p>
+                <p>Here&rsquo;s what we cover:</p>
+                <ul>
+                    <li><strong>In-depth tutorials</strong> — Step-by-step guides you can implement immediately.</li>
+                    <li><strong>Honest comparisons</strong> — Real-world testing and cost breakdowns to help you choose the right tools.</li>
+                    <li><strong>Tool reviews</strong> — Hands-on testing of the latest DevOps and sysadmin tools.</li>
+                    <li><strong>Cost optimization</strong> — Find the most cost-effective solutions without sacrificing performance.</li>
+                </ul>
+                <h3 style="font-size:1rem; margin:1.5rem 0 0.75rem 0;">Our Values</h3>
+                <ul class="values-list">
+                    <li><strong>Practical over theoretical:</strong> We focus on what works in real environments.</li>
+                    <li><strong>Honest recommendations:</strong> We only recommend what we've actually tested.</li>
+                    <li><strong>Transparent affiliations:</strong> We clearly disclose when content contains affiliate links.</li>
+                    <li><strong>Community-driven:</strong> We welcome feedback and suggestions from our readers.</li>
+                </ul>
+            </div>
+
+            <div class="about-card">
+                <h2>Affiliate Disclosure</h2>
+                <div class="disclosure-box">
+                    <strong>Affiliate Disclosure:</strong> This site uses affiliate links. If you purchase through these links, we may earn a commission at no additional cost to you.
+                </div>
+
+                <h2>Get in Touch</h2>
+                <p>Have questions, suggestions, or want to collaborate? <a href="contact.html">Contact us here</a>.</p>
+                <p>Connect on <a href="https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395" target="_blank" rel="noopener">LinkedIn</a>.</p>
+            </div>
+
+        </div>
     </main>
 
     <div id="footer-placeholder"></div>
