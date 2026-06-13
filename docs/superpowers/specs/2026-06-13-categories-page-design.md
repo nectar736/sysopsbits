@@ -15,7 +15,7 @@ Fix and beautify `categories.html` to display all 3 site categories with live ar
 
 | Category | File | Articles | Description |
 |---|---|---|---|
-| Tutorials | tutorials.html | 14 | Step-by-step guides for DevOps and sysadmin |
+| Tutorials | tutorials.html | 13 | Step-by-step guides for DevOps and sysadmin |
 | Comparisons | comparisons.html | 12 | Side-by-side tool and service comparisons |
 | Tools | tools.html | 5 | Reviews and recommendations |
 
@@ -58,6 +58,6 @@ No new CSS needed — all styles exist in `main.css` for `.hero-stats`, `.terms-
 ## Verification
 - Open `categories.html` in browser — no console errors
 - All 3 category cards render correctly
-- Hero shows: Categories 3, Total Articles 31
+- Hero shows: Categories 3, Total Articles 30
 - Each card shows correct article count
 - Recent post links are correct and point to existing files
