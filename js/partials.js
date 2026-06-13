@@ -102,7 +102,9 @@ function setActiveNav() {
     const navLinks = document.querySelectorAll('.nav-menu a');
     
     navLinks.forEach(link => {
-        const page = link.getAttribute('data-page').replace(/-/g, '');
+        const pageAttr = link.getAttribute('data-page');
+        if (!pageAttr) return;
+        const page = pageAttr.replace(/-/g, '');
         if (page === currentPage) {
             link.classList.add('active');
         }
@@ -176,6 +178,8 @@ function loadPartialsFallback() {
         }
     }
     
+    fixMainNavLinks(partialsPath);
+    fixCategoryNavLinks(partialsPath);
     setActiveNav();
     initNavToggle();
 }
