@@ -26,6 +26,28 @@
 </script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
      crossorigin="anonymous"></script>
+<style>
+  .coming-soon-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-radius: 100px;
+    background: rgba(107, 107, 128, 0.15);
+    color: var(--text-muted);
+    border: 1px solid rgba(107, 107, 128, 0.2);
+  }
+  .content-note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 0.75rem 0;
+  }
+</style>
 </head>
 <body data-page="categories">
     <div id="header-placeholder"></div>
@@ -53,45 +75,83 @@
 
               <div class="terms-grid">
 
-                    <div class="category-card" data-category="tutorials" data-count="13">
-                        <div class="category-header">
+                    <div class="category-card" data-category="microsoft" data-count="14">
+                        <div class="category-header" style="border-left: 3px solid var(--accent-secondary);">
                             <div class="category-info">
-                                <h2><a href="tutorials.html">Tutorials</a></h2>
+                                <h2><a href="microsoft.html">Microsoft</a></h2>
                                 <div class="category-meta">
-                                    <span class="post-count" data-category="tutorials"></span>
+                                    <span class="post-count" data-category="microsoft"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="category-preview">
-                            <p class="category-description">Step-by-step guides to help you master sysops skills.</p>
+                            <p class="category-description">Azure, Entra ID, Windows administration, and Microsoft ecosystem guides.</p>
                             <div class="recent-posts">
                                 <h4>Recent Articles</h4>
                                 <ul>
                                     <li>
-                                        <a href="tutorials/sc-900-exam-overview.html">SC-900 Microsoft Security, Compliance, and Identity Fundamentals Exam Complete Guide</a>
+                                        <a href="microsoft/sc-900-exam-overview.html">SC-900 Microsoft Security, Compliance, and Identity Fundamentals Exam Complete Guide</a>
                                         <time datetime="2026-05-24">May 24</time>
                                     </li>
                                     <li>
-                                        <a href="tutorials/microsoft-entra-external-id-vs-b2b-collaboration.html">Microsoft Entra External ID vs B2B Collaboration</a>
+                                        <a href="microsoft/microsoft-entra-external-id-vs-b2b-collaboration.html">Microsoft Entra External ID vs B2B Collaboration</a>
                                         <time datetime="2026-05-07">May 7</time>
                                     </li>
                                     <li>
-                                        <a href="tutorials/azureConditionalAccess.html">Implement Azure AD Conditional Access for Zero Trust Security</a>
+                                        <a href="microsoft/azure-conditional-access.html">Implement Azure AD Conditional Access for Zero Trust Security</a>
                                         <time datetime="2026-05-06">May 6</time>
                                     </li>
                                     <li>
-                                        <a href="tutorials/azure-private-access-azure-services.html">Azure Private Access: Design & Implement Secure Service Connectivity</a>
+                                        <a href="microsoft/azure-private-access-azure-services.html">Azure Private Access: Design & Implement Secure Service Connectivity</a>
                                         <time datetime="2026-05-02">May 2</time>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="category-footer">
-                            <a href="tutorials.html" class="category-link">Browse All Tutorials →</a>
+                            <a href="microsoft.html" class="category-link">Browse All Microsoft Articles →</a>
                         </div>
                     </div>
 
-                    <div class="category-card" data-category="comparisons" data-count="12">
+                    <div class="category-card" data-category="guided-labs" data-count="7">
+                        <div class="category-header" style="border-left: 3px solid var(--accent);">
+                            <div class="category-info">
+                                <h2><a href="guided-labs.html">Guided Labs</a></h2>
+                                <div class="category-meta">
+                                    <span class="post-count" data-category="guided-labs"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="category-preview">
+                            <p class="category-description">Hands-on Linux, open-source, and general sysops lab guides.</p>
+                            <div class="recent-posts">
+                                <h4>Recent Articles</h4>
+                                <ul>
+                                    <li>
+                                        <a href="guided-labs/automated-linux-backups.html">Automated Linux Backups with rsync and cron</a>
+                                        <time datetime="2026-06-10">Jun 10</time>
+                                    </li>
+                                    <li>
+                                        <a href="guided-labs/secure-linux-smb-server.html">Set Up a Secure Linux SMB File Server</a>
+                                        <time datetime="2026-06-05">Jun 5</time>
+                                    </li>
+                                    <li>
+                                        <a href="guided-labs/getting-started-with-ollama.html">Getting Started with Ollama: Run LLMs Locally</a>
+                                        <time datetime="2026-05-28">May 28</time>
+                                    </li>
+                                    <li>
+                                        <a href="guided-labs/essential-network-troubleshooting-tools.html">Essential Network Troubleshooting Tools for Sysadmins</a>
+                                        <time datetime="2026-05-20">May 20</time>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="guided-labs.html" class="category-link">Browse All Guided Labs →</a>
+                        </div>
+                    </div>
+
+                    <div class="category-card" data-category="comparisons" data-count="10">
                         <div class="category-header">
                             <div class="category-info">
                                 <h2><a href="comparisons.html">Comparisons</a></h2>
@@ -106,14 +166,6 @@
                                 <h4>Recent Articles</h4>
                                 <ul>
                                     <li>
-                                        <a href="comparisons/cmd-vs-powershell-2026.html">CMD vs PowerShell in 2026: Why SysAdmins Must Switch</a>
-                                        <time datetime="2026-04-12">Apr 12</time>
-                                    </li>
-                                    <li>
-                                        <a href="comparisons/event-viewer-vs-powershell-logging.html">Event Viewer vs PowerShell Logging: Which Should You Use?</a>
-                                        <time datetime="2026-03-22">Mar 22</time>
-                                    </li>
-                                    <li>
                                         <a href="comparisons/best-desk-setup-under-100-2026.html">Best Desk Setup Under $100 (Amazon Edition)</a>
                                         <time datetime="2026-03-19">Mar 19</time>
                                     </li>
@@ -121,49 +173,19 @@
                                         <a href="comparisons/best-budget-keyboard-mouse-combos-2026.html">Best Budget Keyboard & Mouse Combos (2026)</a>
                                         <time datetime="2026-03-19">Mar 19</time>
                                     </li>
+                                    <li>
+                                        <a href="comparisons/best-wfh-gear-2026.html">Best WFH Gear for SysAdmins (2026)</a>
+                                        <time datetime="2026-03-12">Mar 12</time>
+                                    </li>
+                                    <li>
+                                        <a href="comparisons/ollama-vs-localai-vs-gpt4all.html">Ollama vs LocalAI vs GPT4All: Local LLM Platform Comparison</a>
+                                        <time datetime="2026-03-08">Mar 8</time>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="category-footer">
                             <a href="comparisons.html" class="category-link">Browse All Comparisons →</a>
-                        </div>
-                    </div>
-
-                    <div class="category-card" data-category="tools" data-count="5">
-                        <div class="category-header">
-                            <div class="category-info">
-                                <h2><a href="tools.html">Tools</a></h2>
-                                <div class="category-meta">
-                                    <span class="post-count" data-category="tools"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="category-preview">
-                            <p class="category-description">Reviews and recommendations for sysops tools and software.</p>
-                            <div class="recent-posts">
-                                <h4>Recent Articles</h4>
-                                <ul>
-                                    <li>
-                                        <a href="tools/azure-virtual-desktop-components.html">Azure Virtual Desktop Components: A Complete Guide</a>
-                                        <time datetime="2026-04-01">Apr 1</time>
-                                    </li>
-                                    <li>
-                                        <a href="tools/essential-network-troubleshooting-tools.html">Essential Network Troubleshooting Tools for Sysadmins</a>
-                                        <time datetime="2026-02-28">Feb 28</time>
-                                    </li>
-                                    <li>
-                                        <a href="tools/best-virtualization-tools-sysadmins-2026.html">Best Virtualization Tools for Sysadmins in 2026</a>
-                                        <time datetime="2026-02-21">Feb 21</time>
-                                    </li>
-                                    <li>
-                                        <a href="tools/best-performance-monitoring-tools-linux.html">Best Performance Monitoring Tools for Linux Systems</a>
-                                        <time datetime="2026-02-21">Feb 21</time>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="category-footer">
-                            <a href="tools.html" class="category-link">Browse All Tools →</a>
                         </div>
                     </div>
 
@@ -202,6 +224,46 @@
                         </div>
                         <div class="category-footer">
                             <a href="project-management.html" class="category-link">Browse All Project Management →</a>
+                        </div>
+                    </div>
+
+                    <div class="category-card" data-category="tutorials" data-count="0" style="opacity: 0.55;">
+                        <div class="category-header">
+                            <div class="category-info">
+                                <h2><a href="tutorials.html">Tutorials</a></h2>
+                                <div class="category-meta">
+                                    <span class="coming-soon-badge">Coming Soon</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="category-preview">
+                            <p class="category-description">Step-by-step sysops tutorials. <span style="color: var(--text-muted); font-size: 0.85rem;">(content reorganized)</span></p>
+                            <div class="recent-posts">
+                                <p class="content-note">Content has been reorganized into more specific categories.</p>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="tutorials.html" class="category-link">Browse All Tutorials →</a>
+                        </div>
+                    </div>
+
+                    <div class="category-card" data-category="tools" data-count="0" style="opacity: 0.55;">
+                        <div class="category-header">
+                            <div class="category-info">
+                                <h2><a href="tools.html">Tools</a></h2>
+                                <div class="category-meta">
+                                    <span class="coming-soon-badge">Coming Soon</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="category-preview">
+                            <p class="category-description">Tool reviews and recommendations.</p>
+                            <div class="recent-posts">
+                                <p class="content-note">Content has been reorganized into more specific categories.</p>
+                            </div>
+                        </div>
+                        <div class="category-footer">
+                            <a href="tools.html" class="category-link">Browse All Tools →</a>
                         </div>
                     </div>
 
