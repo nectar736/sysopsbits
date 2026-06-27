@@ -43,6 +43,9 @@ async function loadPartials() {
         // Re-initialize navigation toggle
         initNavToggle();
         
+        // Initialize theme toggle
+        initThemeToggle();
+        
     } catch (error) {
         console.error('Error loading partials:', error);
         // Fallback: load via synchronous method if fetch fails
@@ -200,4 +203,29 @@ function loadPartialsFallback() {
     fixCategoryNavLinks(partialsPath);
     setActiveNav();
     initNavToggle();
+    initThemeToggle();
+}
+
+function initThemeToggle() {
+    const toggle = document.querySelector('.theme-toggle');
+    if (!toggle) return;
+
+    const darkLabel = document.getElementById('theme-label-dark');
+    const lightLabel = document.getElementById('theme-label-light');
+
+    const stored = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (stored === 'light' || (!stored && !prefersDark)) {
+        document.body.classList.add('light-mode');
+        if (darkLabel) darkLabel.dataset.active = 'false';
+        if (lightLabel) lightLabel.dataset.active = 'true';
+    }
+
+    toggle.addEventListener('click', function() {
+        const isLight = document.body.classList.toggle('light-mode');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        if (darkLabel) darkLabel.dataset.active = isLight ? 'false' : 'true';
+        if (lightLabel) lightLabel.dataset.active = isLight ? 'true' : 'false';
+    });
 }
