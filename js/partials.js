@@ -133,6 +133,24 @@ function initNavToggle() {
             }
         });
     }
+
+    // Dropdown toggle click handler
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = this.closest('.nav-dropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('active');
+            }
+        });
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.nav-dropdown.active').forEach(dd => {
+            dd.classList.remove('active');
+        });
+    });
 }
 
 // Fallback using XMLHttpRequest for older browsers
