@@ -1603,6 +1603,8 @@ a:hover {
     padding: 0.7rem 1rem;
     width: 100%;
     font-size: 0.95rem;
+    text-align: center;
+    justify-content: center;
   }
 
   .nav-dropdown {
