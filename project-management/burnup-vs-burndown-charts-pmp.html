@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burnup vs Burndown Charts: What Every PMP Should Know</title>
+    <meta name="description" content="Burnup or burndown: which agile chart do you need? Learn the differences, pros/cons, and how to interpret each for PMP projects.">
+
+    <link rel="canonical" href="https://sysopsbits.com/project-management/burnup-vs-burndown-charts-pmp.html">
+    <meta property="og:title" content="Burnup vs Burndown Charts: What Every PMP Should Know">
+    <meta property="og:description" content="Burnup or burndown: which agile chart do you need? Learn the differences, pros/cons, and how to interpret each for PMP projects.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/project-management/burnup-vs-burndown-charts-pmp.html">
+
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-B67YJF8565');
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="project-management">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <a href="../project-management.html" class="category">Project Management</a>
+                    <time datetime="2026-06-26">June 26, 2026</time>
+                </div>
+                <h1>Burnup vs Burndown Charts: What Every PMP Should Know</h1>
+                <div class="post-featured-image">
+                    <img src="../images/pmp_practice_test_thumbnail.jpg" alt="Burnup vs burndown chart comparison" loading="lazy">
+                </div>
+            </header>
+
+            <div class="post-content">
+
+                <p>Burndown and burnup charts look similar. Both track work over time. Both use a diagonal line to show progress. Pick the wrong one for your context and you introduce confusion instead of clarity. Pick the right one and your sprint or release status becomes obvious at a glance.</p>
+
+                <p>The difference comes down to one question: do you need to see scope changes?</p>
+
+                <h2>What Is a Burndown Chart?</h2>
+
+                <p>A burndown chart tracks remaining work over time. Time runs along the x-axis. The amount of work left runs up the y-axis. The chart starts at the total estimated effort on day one and trends downward to zero.</p>
+
+                <p>It includes two lines:</p>
+                <ul>
+                    <li><strong>Ideal trend</strong> (dashed) — the straight line from total effort to zero. This is the theoretical path if the team burned work at a constant rate.</li>
+                    <li><strong>Actual trend</strong> (solid) — what the team actually completed each day.</li>
+                </ul>
+
+                <p>If the actual line sits above the ideal line, the team is behind. If it dips below, the team is ahead. The gap between the two lines tells you whether you will finish on time at the current pace.</p>
+
+                <figure class="chart-figure">
+                    <div class="chart-diagram">
+                        <svg viewBox="0 0 420 360" role="img" aria-label="Example burndown chart showing ideal trend line and actual progress">
+                            <defs>
+                                <marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                                    <path d="M0,0 L8,4 L0,8 Z" fill="var(--text-muted)"/>
+                                </marker>
+                            </defs>
+
+                            <!-- Background -->
+                            <rect x="50" y="20" width="340" height="260" fill="none" stroke="var(--border-color)" stroke-width="1"/>
+
+                            <!-- Y axis -->
+                            <line x1="50" y1="20" x2="50" y2="280" stroke="var(--text-muted)" stroke-width="1.5"/>
+                            <line x1="50" y1="280" x2="390" y2="280" stroke="var(--text-muted)" stroke-width="1.5"/>
+
+                            <!-- Grid lines -->
+                            <line x1="50" y1="85" x2="390" y2="85" stroke="var(--border-color)" stroke-width="0.5" stroke-dasharray="4,3"/>
+                            <line x1="50" y1="150" x2="390" y2="150" stroke="var(--border-color)" stroke-width="0.5" stroke-dasharray="4,3"/>
+                            <line x1="50" y1="215" x2="390" y2="215" stroke="var(--border-color)" stroke-width="0.5" stroke-dasharray="4,3"/>
+
+                            <!-- Y axis labels -->
+                            <text x="42" y="284" text-anchor="end" fill="var(--text-muted)" font-size="11">0</text>
+                            <text x="42" y="154" text-anchor="end" fill="var(--text-muted)" font-size="11">50</text>
+                            <text x="42" y="24" text-anchor="end" fill="var(--text-muted)" font-size="11">100</text>
+
+                            <!-- X axis labels -->
+                            <text x="50" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S1</text>
+                            <text x="135" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S2</text>
+                            <text x="220" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S3</text>
+                            <text x="305" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S4</text>
+                            <text x="390" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S5</text>
+
+                            <!-- Ideal line (dashed) -->
+                            <line x1="50" y1="50" x2="390" y2="280" stroke="var(--text-secondary)" stroke-width="2" stroke-dasharray="6,4"/>
+
+                            <!-- Actual line -->
+                            <polyline points="50,50 118,75 186,85 254,140 322,180 390,230" fill="none" stroke="#e74c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+                            <!-- Data points -->
+                            <circle cx="50" cy="50" r="4" fill="#e74c3c"/>
+                            <circle cx="118" cy="75" r="4" fill="#e74c3c"/>
+                            <circle cx="186" cy="85" r="4" fill="#e74c3c"/>
+                            <circle cx="254" cy="140" r="4" fill="#e74c3c"/>
+                            <circle cx="322" cy="180" r="4" fill="#e74c3c"/>
+                            <circle cx="390" cy="230" r="4" fill="#e74c3c"/>
+
+                            <!-- Axis labels -->
+                            <text x="220" y="330" text-anchor="middle" fill="var(--text-muted)" font-size="12">Sprint Day</text>
+                            <text x="18" y="150" text-anchor="middle" fill="var(--text-muted)" font-size="12" transform="rotate(-90, 18, 150)">Work Remaining</text>
+
+                            <!-- Legend -->
+                            <rect x="160" y="340" width="12" height="3" fill="var(--text-secondary)" stroke-dasharray="6,4"/>
+                            <text x="178" y="344" fill="var(--text-muted)" font-size="11">Ideal</text>
+                            <rect x="240" y="340" width="12" height="3" fill="#e74c3c"/>
+                            <text x="258" y="344" fill="var(--text-muted)" font-size="11">Actual</text>
+                        </svg>
+                    </div>
+                    <figcaption>Figure: Burndown chart showing a team falling behind mid-sprint. The gap between the ideal line and actual line signals a forecast miss.</figcaption>
+                </figure>
+
+                <p>Burndowns work well for sprint-level tracking where the scope is fixed for the iteration. The team commits to a set of stories, and the chart shows whether they are burning through that work fast enough.</p>
+
+                <h2>What Is a Burnup Chart?</h2>
+
+                <p>A burnup chart tracks completed work over time. Instead of starting at the total and trending down, a burnup starts at zero and trends up. It has two lines:</p>
+                <ul>
+                    <li><strong>Total scope line</strong> — the full amount of work planned. This line can move upward if the team adds scope.</li>
+                    <li><strong>Completed work line</strong> — what the team has actually finished so far.</li>
+                </ul>
+
+                <p>When the completed line reaches the scope line, the work is done. The gap between them is what remains.</p>
+
+                <figure class="chart-figure">
+                    <div class="chart-diagram">
+                        <svg viewBox="0 0 420 360" role="img" aria-label="Example burnup chart showing scope line and completed work">
+                            <defs>
+                                <marker id="arrow-bu" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                                    <path d="M0,0 L8,4 L0,8 Z" fill="var(--text-muted)"/>
+                                </marker>
+                            </defs>
+
+                            <!-- Background -->
+                            <rect x="50" y="20" width="340" height="260" fill="none" stroke="var(--border-color)" stroke-width="1"/>
+
+                            <!-- Y axis -->
+                            <line x1="50" y1="280" x2="50" y2="20" stroke="var(--text-muted)" stroke-width="1.5"/>
+                            <line x1="50" y1="280" x2="390" y2="280" stroke="var(--text-muted)" stroke-width="1.5"/>
+
+                            <!-- Grid lines -->
+                            <line x1="50" y1="85" x2="390" y2="85" stroke="var(--border-color)" stroke-width="0.5" stroke-dasharray="4,3"/>
+                            <line x1="50" y1="150" x2="390" y2="150" stroke="var(--border-color)" stroke-width="0.5" stroke-dasharray="4,3"/>
+                            <line x1="50" y1="215" x2="390" y2="215" stroke="var(--border-color)" stroke-width="0.5" stroke-dasharray="4,3"/>
+
+                            <!-- Y axis labels -->
+                            <text x="42" y="284" text-anchor="end" fill="var(--text-muted)" font-size="11">0</text>
+                            <text x="42" y="154" text-anchor="end" fill="var(--text-muted)" font-size="11">50</text>
+                            <text x="42" y="24" text-anchor="end" fill="var(--text-muted)" font-size="11">100</text>
+
+                            <!-- X axis labels -->
+                            <text x="50" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S1</text>
+                            <text x="135" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S2</text>
+                            <text x="220" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S3</text>
+                            <text x="305" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S4</text>
+                            <text x="390" y="298" text-anchor="middle" fill="var(--text-muted)" font-size="11">S5</text>
+
+                            <!-- Scope line (horizontal - flat scope) -->
+                            <line x1="50" y1="50" x2="390" y2="50" stroke="#2ecc71" stroke-width="2.5"/>
+
+                            <!-- Completed work line (upward) -->
+                            <polyline points="50,280 118,255 186,235 254,190 322,150 390,130" fill="none" stroke="#3498db" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+                            <!-- Data points -->
+                            <circle cx="50" cy="280" r="4" fill="#3498db"/>
+                            <circle cx="118" cy="255" r="4" fill="#3498db"/>
+                            <circle cx="186" cy="235" r="4" fill="#3498db"/>
+                            <circle cx="254" cy="190" r="4" fill="#3498db"/>
+                            <circle cx="322" cy="150" r="4" fill="#3498db"/>
+                            <circle cx="390" cy="130" r="4" fill="#3498db"/>
+
+                            <!-- Axis labels -->
+                            <text x="220" y="330" text-anchor="middle" fill="var(--text-muted)" font-size="12">Sprint Day</text>
+                            <text x="18" y="150" text-anchor="middle" fill="var(--text-muted)" font-size="12" transform="rotate(-90, 18, 150)">Work Completed</text>
+
+                            <!-- Legend -->
+                            <rect x="135" y="340" width="12" height="3" fill="#2ecc71"/>
+                            <text x="153" y="344" fill="var(--text-muted)" font-size="11">Scope</text>
+                            <rect x="215" y="340" width="12" height="3" fill="#3498db"/>
+                            <text x="233" y="344" fill="var(--text-muted)" font-size="11">Completed</text>
+                        </svg>
+                    </div>
+                    <figcaption>Figure: Burnup chart tracking progress toward a fixed scope. The vertical gap between the two lines shows remaining work.</figcaption>
+                </figure>
+
+                <p>Burnups excel at release-level tracking where scope can shift. When stakeholders add features, the scope line rises. The completed line may not catch up. Everyone sees the impact of the change immediately.</p>
+
+                <h2>Key Differences</h2>
+
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dimension</th>
+                                <th>Burndown</th>
+                                <th>Burnup</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Direction</td>
+                                <td>Lines go down</td>
+                                <td>Lines go up</td>
+                            </tr>
+                            <tr>
+                                <td>What it tracks</td>
+                                <td>Work remaining</td>
+                                <td>Work completed</td>
+                            </tr>
+                            <tr>
+                                <td>Scope visibility</td>
+                                <td>Hidden (scope changes distort the line)</td>
+                                <td>Visible (scope line moves independently)</td>
+                            </tr>
+                            <tr>
+                                <td>Best for</td>
+                                <td>Sprint-level, fixed scope</td>
+                                <td>Release-level, changing scope</td>
+                            </tr>
+                            <tr>
+                                <td>Newcomer clarity</td>
+                                <td>Moderate (line going up = bad)</td>
+                                <td>Higher (line going up = good)</td>
+                            </tr>
+                            <tr>
+                                <td>Scope creep signal</td>
+                                <td>None (looks like slow progress)</td>
+                                <td>Clear (scope line rises)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The critical difference: a burndown chart cannot distinguish between "we are working slowly" and "we added more work." Both cases make the actual line stay above the ideal line. A burnup chart shows the scope line rising, so you know when scope changed versus when the team underperformed.</p>
+
+                <p>Atlassian sums it up: if scope stays fixed, both charts work. If scope changes, burnup is clearer.</p>
+
+                <h2>When to Use Each</h2>
+
+                <p><strong>Use a burndown chart for sprints.</strong> A two-week sprint with a fixed backlog is the natural home for burndowns. The team commits to stories, and the chart tracks whether they will finish by the sprint end. Sprint burndowns are the default in Scrum for a reason: sprint scope should not change.</p>
+
+                <p><strong>Use a burnup chart for releases and roadmaps.</strong> A release spans multiple sprints. Stakeholders will request changes. The burnup makes those changes visible. When the scope line jumps up at week 4, everyone sees the impact. PMI recommends burnups at the release level specifically because scope changes are expected and should be transparent.</p>
+
+                <p><strong>Use a burnup when stakeholders distrust status reports.</strong> A burndown chart with a flattening trend looks like the team stopped working. A burnup shows the team steadily completing work while scope keeps growing. That distinction matters when you need to explain why the release date moved.</p>
+
+                <div class="cta-inline">
+                    <p><strong>Test your knowledge of agile metrics.</strong> Download our <a href="pmp-practice-test.html">FREE PMP Practice Test</a> for a question on burndown vs burnup charts.</p>
+                </div>
+
+                <h2>Example: Spot the Problem</h2>
+
+                <p>Your team runs two-week sprints. At sprint planning, you commit to 80 story points. The burndown chart shows the actual line hovering above the ideal line for the entire sprint. At the sprint review, you delivered 60 points.</p>
+
+                <p>Was the team slow, or did scope increase? The burndown cannot answer that. You need to look at the backlog changes.</p>
+
+                <p>Now imagine the same situation on a burnup chart. You set the scope line at 80 points. On day three, the product owner added a 15-point story. The scope line jumps to 95. Now the gap between completed work and scope is 35 points instead of 20. Anyone looking at the chart sees a scope increase, not a performance drop.</p>
+
+                <p>This matters on the PMP exam. Questions about agile metrics often present a scenario where scope creep happened. The correct answer for tracking overall release progress in a changing environment is the burnup chart, not the burndown.</p>
+
+                <h2>Agile and PMP Context</h2>
+
+                <p>The PMP exam covers agile charts in the "Agile Frameworks and Methodologies" domain. You may see a question that describes a chart with a scope line and a completed line, or a chart that tracks remaining work over time. Recognizing the names and the use case is the baseline.</p>
+
+                <p>The harder questions test judgment. For example: "A project is in its third release. The scope has changed twice. Which chart should the project manager use for tracking progress?" The answer is burnup, because it handles scope changes transparently.</p>
+
+                <p>Another pattern: "The team is halfway through a sprint and the burndown chart shows the actual line above the ideal line. What does this mean?" It means the team is behind, not that scope changed. Sprint scope is supposed to be fixed.</p>
+
+                <div class="callout callout-tip">
+                    <strong>Exam tip:</strong> When a PMP question mentions "total scope line" and "completed work line," the answer is burnup. When it mentions "work remaining" and "ideal trend," the answer is burndown. The question often gives you the description, not the name, and expects you to match the right chart type.
+                </div>
+
+                <hr>
+
+                <p><em>Last updated: June 26, 2026</em></p>
+            </div>
+
+            <div class="post-footer">
+                <p>Categories: <a href="../project-management.html">Project Management</a>, <a href="../terms.html">PMP</a>, <a href="../terms.html">Agile</a>, <a href="../terms.html">Scrum</a></p>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/partials.js"></script>
+    <script>
+        loadPartials();
+    </script>
+</body>
+</html>
