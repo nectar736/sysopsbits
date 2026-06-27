@@ -1,5 +1,80 @@
 /* Additional styles for shortcodes */
 
+/* Callout Boxes */
+.callout {
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: var(--radius-md, 8px);
+    border-left: 4px solid var(--accent, #3498db);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.callout-info {
+    border-left-color: #3498db;
+    background: rgba(52, 152, 219, 0.06);
+}
+
+.callout-tip {
+    border-left-color: #2ecc71;
+    background: rgba(46, 204, 113, 0.06);
+}
+
+.callout-trap {
+    border-left-color: #e74c3c;
+    background: rgba(231, 76, 60, 0.06);
+}
+
+.callout-question {
+    border-left-color: #f39c12;
+    background: rgba(243, 156, 18, 0.06);
+}
+
+.callout strong:first-child {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.callout p {
+    margin: 0;
+}
+
+.callout p + p {
+    margin-top: 0.5rem;
+}
+
+/* Inline CTA */
+.cta-inline {
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border: 1px solid var(--border-color, #e1e8ed);
+    border-radius: var(--radius-md, 8px);
+    background: rgba(255, 255, 255, 0.04);
+    text-align: center;
+}
+
+.cta-inline p {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.cta-inline a {
+    font-weight: 600;
+    color: var(--accent, #3498db);
+}
+
+/* Matrix Diagram */
+.matrix-diagram {
+    max-width: 440px;
+    margin: 2rem auto;
+    padding: 0.5rem;
+}
+
+.matrix-diagram svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* Product Cards */
 .product-card {
     background: #f8f9fa;
