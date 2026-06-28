@@ -1,9 +1,9 @@
 // Partial Loader - Loads header and footer dynamically
-document.addEventListener('DOMContentLoaded', function() {
-    loadPartials();
-});
+let _partialsLoaded = false;
 
 async function loadPartials() {
+    if (_partialsLoaded) return;
+    _partialsLoaded = true;
     const partialsPath = getPartialsPath();
     
     try {
@@ -229,3 +229,6 @@ function initThemeToggle() {
         if (lightLabel) lightLabel.dataset.active = isLight ? 'true' : 'false';
     });
 }
+
+// Self-initializing for defer/async loading; guard prevents double-run
+loadPartials();
