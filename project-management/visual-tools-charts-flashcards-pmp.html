@@ -26,7 +26,7 @@
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
     <style>
-        /* ── Flashcards ── */
+        /* ── Flip Cards ── */
         .flashcards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -34,77 +34,77 @@
             margin: 2rem 0;
         }
         .flashcard {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
             position: relative;
-            transition: all var(--transition);
+            perspective: 1000px;
+            height: 260px;
+            cursor: default;
         }
-        .flashcard:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            border-color: var(--accent);
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            border-radius: var(--radius-lg);
         }
-        .flashcard-number {
+        .flashcard:hover .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
             position: absolute;
-            top: -0.6rem;
-            left: -0.6rem;
-            width: 2rem;
-            height: 2rem;
-            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-            color: #000;
-            font-size: 0.8rem;
-            font-weight: 700;
-            border-radius: 50%;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: var(--radius-lg);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 1.5rem;
+            text-align: center;
         }
-        .flashcard h3 {
-            font-size: 1.1rem;
-            margin: 0 0 0.15rem 0;
-            color: var(--text-primary);
+        .flashcard-front {
+            background: linear-gradient(135deg, var(--card-color), color-mix(in srgb, var(--card-color) 60%, #000));
+            border: 1px solid var(--border-color);
         }
-        .flashcard .chart-name {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--accent);
-            font-weight: 600;
-            margin-bottom: 0.75rem;
+        .flashcard-front .chart-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.35);
         }
-        .flashcard .track-label {
-            font-size: 0.8rem;
+        .flashcard-back {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+        .flashcard-back .track-label {
+            font-size: 0.78rem;
             color: var(--text-muted);
-            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.4rem;
         }
-        .flashcard .definition {
-            font-size: 0.9rem;
-            line-height: 1.6;
+        .flashcard-back .definition {
+            font-size: 0.85rem;
+            line-height: 1.55;
             color: var(--text-secondary);
             margin-bottom: 0.75rem;
         }
-        .flashcard .exam-tip {
-            font-size: 0.82rem;
+        .flashcard-back .exam-tip {
+            font-size: 0.78rem;
             padding: 0.5rem 0.75rem;
             background: rgba(245, 158, 11, 0.08);
             border-left: 3px solid var(--accent);
             border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
             color: var(--text-secondary);
+            text-align: left;
+            width: 100%;
+            flex-shrink: 0;
         }
-        .flashcard .exam-tip strong {
+        .flashcard-back .exam-tip strong {
             color: var(--accent);
-        }
-        .flashcard .use-case {
-            display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            background: rgba(6, 182, 212, 0.12);
-            color: var(--accent-secondary);
-            margin-bottom: 0.75rem;
         }
 
         /* ── Quiz ── */
@@ -113,13 +113,77 @@
             padding-top: 2rem;
             border-top: 2px solid var(--border-color);
         }
+        .quiz-layout {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            margin: 2rem 0;
+        }
+        .quiz-main {
+            flex: 1;
+            min-width: 0;
+        }
         .quiz-container {
-            max-width: 800px;
-            margin: 2rem auto;
+            width: 100%;
             padding: 2rem;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
+        }
+        .quiz-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 2rem;
+        }
+        .quiz-sidebar h3 {
+            font-size: 0.95rem;
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+        }
+        .question-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        .question-nav-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .question-nav-btn:hover {
+            border-color: var(--accent);
+            background: var(--bg-elevated);
+        }
+        .question-nav-btn.active {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: #000;
+        }
+        .question-nav-btn.answered {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+            color: var(--accent);
+        }
+        .question-nav-btn.correct {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+        .question-nav-btn.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
         }
         .quiz-header {
             display: flex;
@@ -231,6 +295,16 @@
         }
         .btn-secondary:hover { background: var(--bg-card-hover); }
         .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            padding: 0.85rem 2rem;
+            font-size: 1rem;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+        }
         .review-box {
             margin-top: 1.5rem;
             padding: 1.5rem;
@@ -267,16 +341,23 @@
         .results-pass-fail.fail { color: #ef4444; }
         .quiz-actions-center { justify-content: center; }
         .retake-area { margin-top: 2rem; }
-        .section-header h1 { margin-bottom: 0.5rem; }
 
         @media (max-width: 768px) {
             .flashcards-grid {
                 grid-template-columns: 1fr;
             }
-            .quiz-container {
-                margin: 1rem;
-                padding: 1.5rem;
+            .quiz-layout {
+                flex-direction: column;
             }
+            .quiz-sidebar {
+                width: 100%;
+                position: static;
+            }
+            .question-nav-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            .btn { width: 100%; text-align: center; }
+            .btn-success { width: auto; }
         }
     </style>
 </head>
@@ -304,96 +385,138 @@
 
                 <h2>10 Chart Flashcards</h2>
 
+                <p>Hover each card to flip it and reveal the full definition.</p>
+
                 <div class="flashcards-grid">
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">1</div>
-                        <span class="use-case">Sprint Tracking</span>
-                        <h3>Burndown Chart</h3>
-                        <div class="track-label">Tracks: Work remaining vs. time left in a timebox</div>
-                        <div class="definition">"A burndown chart is a graphical representation of the work remaining versus the time left in a timebox." — PMBOK 8 Glossary. A diagonal ideal line runs from total effort to zero. The actual line tracks daily remaining work. The gap between them shows whether you will finish on time.</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "Work remaining" + "ideal trend line" = burndown. Sprint scope is fixed, so scope changes should not happen. If the question mentions scope creep, burndown is the wrong answer.</div>
+                    <div class="flashcard" style="--card-color: #3b82f6">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">Burndown Chart</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Sprint Tracking — Work remaining vs. time left</span>
+                                <div class="definition">"A burndown chart is a graphical representation of the work remaining versus the time left in a timebox." — PMBOK 8 Glossary. A diagonal ideal line runs from total effort to zero. The actual line tracks daily remaining work. The gap between them shows whether you will finish on time.</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "Work remaining" + "ideal trend line" = burndown. Sprint scope is fixed, so scope changes should not happen.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">2</div>
-                        <span class="use-case">Release Tracking</span>
-                        <h3>Burnup Chart</h3>
-                        <div class="track-label">Tracks: Work completed toward a milestone</div>
-                        <div class="definition">"A burnup chart is a graphical representation of the work completed toward a milestone. Burnup charts are used mostly within adaptive development approaches to show project progress over time." — PMBOK 8 Glossary. The scope line (total work) sits at the top. The completed line rises from zero toward it. When the scope line moves up, everyone sees the impact.</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "Total scope line" + "completed work line" = burnup. Pick this when the question describes scope changes, release-level tracking, or stakeholders who need transparency.</div>
+                    <div class="flashcard" style="--card-color: #8b5cf6">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">Burnup Chart</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Release Tracking — Work completed toward a milestone</span>
+                                <div class="definition">"A burnup chart is a graphical representation of the work completed toward a milestone. Burnup charts are used mostly within adaptive development approaches to show project progress over time." — PMBOK 8 Glossary. The scope line (total work) sits at the top. The completed line rises from zero toward it.</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "Total scope line" + "completed work line" = burnup. Pick this for scope changes or release-level tracking.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">3</div>
-                        <span class="use-case">Schedule Management</span>
-                        <h3>Gantt Chart</h3>
-                        <div class="track-label">Tracks: Task durations, dates, dependencies, and progress</div>
-                        <div class="definition">A horizontal bar chart where each bar represents a schedule activity. Bar length shows duration. Bar position shows start and finish dates. Arrows or link lines show dependencies. PMBOK 8 identifies Gantt charts as a schedule management tool for visualizing the project timeline and tracking actual vs. planned progress.</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "Horizontal bars" + "start and finish dates" = Gantt. The exam uses Gantt charts in predictive/waterfall schedule questions. Not ideal for showing task dependencies — that is a network diagram's job.</div>
+                    <div class="flashcard" style="--card-color: #3b82f6">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">Gantt Chart</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Schedule Management — Task durations, dates, dependencies</span>
+                                <div class="definition">A horizontal bar chart where each bar represents a schedule activity. Bar length shows duration. Bar position shows start and finish dates. Arrows or link lines show dependencies. PMBOK 8 identifies Gantt charts as a schedule management tool for visualizing the project timeline and tracking actual vs. planned progress.</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "Horizontal bars" + "start and finish dates" = Gantt. Not ideal for showing task dependencies — that is a network diagram's job.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">4</div>
-                        <span class="use-case">Quality Control</span>
-                        <h3>Control Chart</h3>
-                        <div class="track-label">Tracks: Process stability over time with upper/lower specification limits</div>
-                        <div class="definition">A control chart plots sample data points in time order. It includes a centerline (the mean), an upper control limit (UCL), and a lower control limit (LCL). Points outside the limits signal an out-of-control process. Runs of seven consecutive points on one side of the mean signal a non-random pattern. PMBOK 8 treats this as a quality management tool.</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "Upper control limit" (UCL) + "lower control limit" (LCL) + "out of control" = control chart. The Rule of Seven (seven consecutive points on one side) always signals a non-random cause.</div>
+                    <div class="flashcard" style="--card-color: #f59e0b">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">Control Chart</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Quality Control — Process stability over time</span>
+                                <div class="definition">A control chart plots sample data points in time order. It includes a centerline (the mean), an upper control limit (UCL), and a lower control limit (LCL). Points outside the limits signal an out-of-control process. Runs of seven consecutive points on one side of the mean signal a non-random pattern.</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "UCL" + "LCL" + "out of control" = control chart. Seven consecutive points on one side = non-random cause.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">5</div>
-                        <span class="use-case">Flow / Kanban</span>
-                        <h3>Cumulative Flow Diagram (CFD)</h3>
-                        <div class="track-label">Tracks: Work in progress (WIP), cycle time, and throughput over time</div>
-                        <div class="definition">A CFD shows the statuses of work items over time as stacked colored bands. The top band represents total work (backlog + in progress + done). The vertical width of each band at any point shows how many items are in that status. Narrowing bands mean flow is improving. Widening bands signal bottlenecks. PMBOK 8 references CFDs within Kanban and lean approaches.</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "Colored bands" + "work in progress" or "cycle time" = cumulative flow diagram. The vertical distance between bands at a point in time equals WIP.</div>
+                    <div class="flashcard" style="--card-color: #14b8a6">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">Cumulative Flow Diagram</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Flow / Kanban — WIP, cycle time, throughput</span>
+                                <div class="definition">A CFD shows the statuses of work items over time as stacked colored bands. The top band represents total work (backlog + in progress + done). The vertical width of each band at any point shows how many items are in that status. Narrowing bands mean flow is improving. Widening bands signal bottlenecks.</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "Colored bands" + "work in progress" or "cycle time" = CFD. Vertical distance between bands at a point equals WIP.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">6</div>
-                        <span class="use-case">Resource Management</span>
-                        <h3>RACI Matrix</h3>
-                        <div class="track-label">Tracks: Role assignments — Responsible, Accountable, Consult, Inform</div>
-                        <div class="definition">"A RACI matrix is a responsibility assignment matrix that uses the categories Responsible, Accountable, Consult, and Inform." — PMBOK 8 Glossary (paraphrased). A grid with tasks or deliverables as rows and team members as columns. Each cell contains R, A, C, or I. Every task must have exactly one A (Accountable).</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "RACI" + "responsible" and "accountable" being different roles = RACI matrix. The critical rule: never assign more than one person as Accountable per task. Confusion often comes from the "A" being Accountable, not the person doing the work (that is "R").</div>
+                    <div class="flashcard" style="--card-color: #f97316">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">RACI Matrix</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Resource Management — Role assignments</span>
+                                <div class="definition">"A RACI matrix is a responsibility assignment matrix that uses the categories Responsible, Accountable, Consult, and Inform." — PMBOK 8 Glossary (paraphrased). A grid with tasks or deliverables as rows and team members as columns. Each cell contains R, A, C, or I. Every task must have exactly one A (Accountable).</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "RACI" + "responsible vs accountable" = RACI matrix. Never more than one Accountable per task.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">7</div>
-                        <span class="use-case">Scope Management</span>
-                        <h3>Work Breakdown Structure (WBS)</h3>
-                        <div class="track-label">Tracks: Decomposition of total project scope into work packages</div>
-                        <div class="definition">A hierarchical decomposition of the total scope of work to be carried out by the project team to accomplish the project objectives and create the required deliverables. The lowest level is the work package, which can be estimated, scheduled, and assigned. PMBOK 8 defines the WBS as a scope management tool that decomposes scope into progressively smaller levels of detail.</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "Hierarchical decomposition" + "work packages" + "100% rule" = WBS. The 100% rule means the WBS must capture all deliverables — no more, no less. The WBS is NOT a schedule; it is a scope tool.</div>
+                    <div class="flashcard" style="--card-color: #22c55e">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">Work Breakdown Structure</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Scope Management — Decomposition into work packages</span>
+                                <div class="definition">A hierarchical decomposition of the total scope of work to be carried out by the project team to accomplish the project objectives and create the required deliverables. The lowest level is the work package, which can be estimated, scheduled, and assigned. PMBOK 8 defines the WBS as a scope management tool that decomposes scope into progressively smaller levels of detail.</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "Hierarchical decomposition" + "work packages" + "100% rule" = WBS. The WBS is NOT a schedule; it is a scope tool.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">8</div>
-                        <span class="use-case">Schedule Sequencing</span>
-                        <h3>Network Diagram (PDM)</h3>
-                        <div class="track-label">Tracks: Activity sequencing, dependencies, and the critical path</div>
-                        <div class="definition">"A project schedule network diagram is a graphical representation of the logical relationships (also called dependencies) among the project schedule activities." — PMBOK 8, Schedule Performance Domain. Nodes represent activities; arrows represent dependencies. The Precedence Diagramming Method (PDM) is the most common type, using finish-to-start, start-to-start, finish-to-finish, and start-to-start relationships.</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "Nodes and arrows" + "dependencies" + "critical path" = network diagram. The critical path is the longest path through the network with zero float. Any delay on the critical path delays the entire project.</div>
+                    <div class="flashcard" style="--card-color: #3b82f6">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">Network Diagram (PDM)</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Schedule Sequencing — Dependencies and critical path</span>
+                                <div class="definition">"A project schedule network diagram is a graphical representation of the logical relationships (also called dependencies) among the project schedule activities." — PMBOK 8, Schedule Performance Domain. Nodes represent activities; arrows represent dependencies. The Precedence Diagramming Method (PDM) is the most common type.</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "Nodes and arrows" + "dependencies" + "critical path" = network diagram. The critical path is the longest path with zero float.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">9</div>
-                        <span class="use-case">Agile / Lean</span>
-                        <h3>Kanban Board</h3>
-                        <div class="track-label">Tracks: Work items moving through workflow stages with WIP limits</div>
-                        <div class="definition">PMBOK 8 describes Kanban as "a visual workflow management method to limit work in progress (WIP) based on lean principles and focusing on continuous delivery without overburdening the team." A Kanban board divides work into columns (To Do, In Progress, Done). Cards move left to right. WIP limits cap how many items can sit in any column simultaneously.</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "Columns" + "WIP limits" + "pull system" = Kanban board. The exam pairs Kanban with flow-based, continuous delivery contexts — not timeboxed iterations (that is Scrum with a burndown).</div>
+                    <div class="flashcard" style="--card-color: #14b8a6">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">Kanban Board</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Agile / Lean — Workflow stages with WIP limits</span>
+                                <div class="definition">PMBOK 8 describes Kanban as "a visual workflow management method to limit work in progress (WIP) based on lean principles and focusing on continuous delivery without overburdening the team." A Kanban board divides work into columns (To Do, In Progress, Done). Cards move left to right. WIP limits cap how many items can sit in any column simultaneously.</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "Columns" + "WIP limits" + "pull system" = Kanban board. Pairs with flow-based delivery, not timeboxed iterations.</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flashcard">
-                        <div class="flashcard-number">10</div>
-                        <span class="use-case">Risk Management</span>
-                        <h3>Probability & Impact Matrix</h3>
-                        <div class="track-label">Tracks: Risk prioritization by probability and impact scores</div>
-                        <div class="definition">A grid where probability (low to high) runs one axis and impact (low to high) runs the other. Each cell maps to a risk score (high/medium/low). High-probability, high-impact risks go red and need aggressive responses. Low-low risks go green. PMBOK 8 identifies this as a risk management tool for prioritizing individual risks.</div>
-                        <div class="exam-tip"><strong>Exam tell:</strong> "Probability" + "impact" grid + "risk score" = probability and impact matrix. Questions test whether you know how to prioritize: high × high risks come first. The matrix is created during qualitative risk analysis, before quantitative analysis.</div>
+                    <div class="flashcard" style="--card-color: #ef4444">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <span class="chart-name">Probability & Impact Matrix</span>
+                            </div>
+                            <div class="flashcard-back">
+                                <span class="track-label">Risk Management — Risk prioritization scoring</span>
+                                <div class="definition">A grid where probability (low to high) runs one axis and impact (low to high) runs the other. Each cell maps to a risk score (high/medium/low). High-probability, high-impact risks go red and need aggressive responses. Low-low risks go green. PMBOK 8 identifies this as a risk management tool for prioritizing individual risks.</div>
+                                <div class="exam-tip"><strong>Exam tell:</strong> "Probability" + "impact" grid + "risk score" = probability and impact matrix. Created during qualitative risk analysis, before quantitative analysis.</div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -407,21 +530,33 @@
                     <h2>10 Question Practice Test</h2>
                     <p>Each question presents a chart description or scenario. Pick the correct chart type. Explanations reference PMBOK 8 definitions. Passing score: 60%.</p>
 
-                    <div class="callout callout-tip" style="margin-bottom: 1.5rem; text-align: center; font-size: 0.95rem;">
-                        Want more PMP practice? Grab <strong><a href="https://buymeacoffee.com/mattyhip/e/537680" target="_blank" rel="noopener">80 additional PMP practice questions</a></strong> with detailed explanations covering all three PMP domains.
+                    <div class="callout callout-info" style="margin-bottom: 1.5rem;">
+                        Already know these charts? Take the <strong><a href="pmp-practice-test.html">full PMP Practice Test</a></strong> — 20 questions covering all three PMP domains (People, Process, Business Environment). Free, interactive, with detailed explanations.
                     </div>
 
-                    <div class="quiz-container" id="quiz-container">
-                        <div class="quiz-header">
-                            <span class="quiz-progress" id="quiz-progress">Question 1 of 10</span>
+                    <div class="quiz-layout">
+                        <div class="quiz-main">
+                            <div class="quiz-container" id="quiz-container">
+                                <div class="quiz-header">
+                                    <span class="quiz-progress" id="quiz-progress">Question 1 of 10</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progress-fill" style="width: 10%"></div>
+                                </div>
+                                <div id="question-area"></div>
+                                <div id="review-area"></div>
+                                <div id="results-area" style="display:none"></div>
+                            </div>
                         </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progress-fill" style="width: 10%"></div>
-                        </div>
-                        <div id="question-area"></div>
-                        <div id="review-area"></div>
-                        <div id="results-area" style="display:none"></div>
+                        <aside class="quiz-sidebar" id="quiz-sidebar">
+                            <h3>Questions</h3>
+                            <div class="question-nav-grid" id="question-nav-grid"></div>
+                        </aside>
                     </div>
+                </div>
+
+                <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md); border: 1px solid rgba(245, 158, 11, 0.2); text-align: center;">
+                    <p style="margin: 0; font-size: 1.05rem;"><strong>Ready for the full PMP exam?</strong> Get <a href="https://buymeacoffee.com/mattyhip/e/537680" target="_blank" rel="noopener">80 additional PMP practice questions</a> with step-by-step explanations covering all three domains. Same interactive format — just more of them.</p>
                 </div>
 
                 <hr>
@@ -517,6 +652,33 @@
     let answers = new Array(questions.length).fill(null);
     let reviewed = new Array(questions.length).fill(false);
 
+    function renderSidebar() {
+        const grid = document.getElementById("question-nav-grid");
+        if (!grid) return;
+        grid.innerHTML = questions.map((q, i) => {
+            let cls = "question-nav-btn";
+            if (currentQ === i) cls += " active";
+            if (reviewed[i]) {
+                cls += answers[i] === q.correct ? " correct" : " incorrect";
+            } else if (answers[i] !== null) {
+                cls += " answered";
+            }
+            const label = answers[i] !== null ? "\u2713" : (i + 1);
+            return `<button class="${cls}" data-idx="${i}">${label}</button>`;
+        }).join("");
+        grid.querySelectorAll(".question-nav-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                goToQuestion(parseInt(this.dataset.idx));
+            });
+        });
+    }
+
+    function goToQuestion(idx) {
+        if (idx < 0 || idx >= questions.length) return;
+        currentQ = idx;
+        renderQuestion();
+    }
+
     function renderQuestion() {
         const q = questions[currentQ];
         const area = document.getElementById("question-area");
@@ -595,12 +757,16 @@
                 renderQuestion();
             }
         });
+
+        renderSidebar();
     }
 
     function showResults() {
         document.getElementById("question-area").innerHTML = "";
         document.getElementById("review-area").innerHTML = "";
         document.getElementById("results-area").style.display = "block";
+        const sidebar = document.getElementById("quiz-sidebar");
+        if (sidebar) sidebar.style.display = "none";
 
         const totalCorrect = answers.filter((a, i) => a === questions[i].correct).length;
         const pct = Math.round(totalCorrect / questions.length * 100);
