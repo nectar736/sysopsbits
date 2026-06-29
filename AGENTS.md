@@ -55,7 +55,7 @@ tools.html               # Tools listing page
 ## Git / Deploy
 - Remote has PAT embedded in URL
 - Push directly to `main` — no PR workflow
-- User: `matthew@sysopsbits.com` / `Matthew`
+- User: `sysopsbits@gmail.com` / `Matthew`
 
 ## PMBOK 8 Accuracy Source
 - `/home/matthew/.agents/skills/project-management/knowledge/PMBOK8.txt` — full 8th edition text
