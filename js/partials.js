@@ -46,6 +46,9 @@ async function loadPartials() {
         // Initialize theme toggle
         initThemeToggle();
         
+        // Initialize AdSense
+        initAdSense();
+        
     } catch (error) {
         console.error('Error loading partials:', error);
         // Fallback: load via synchronous method if fetch fails
@@ -228,6 +231,16 @@ function initThemeToggle() {
         if (darkLabel) darkLabel.dataset.active = isLight ? 'false' : 'true';
         if (lightLabel) lightLabel.dataset.active = isLight ? 'true' : 'false';
     });
+}
+
+function initAdSense() {
+    if (document.getElementById('adsbygoogle-script')) return;
+    const script = document.createElement('script');
+    script.id = 'adsbygoogle-script';
+    script.async = true;
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694';
+    script.crossOrigin = 'anonymous';
+    document.head.appendChild(script);
 }
 
 // Self-initializing for defer/async loading; guard prevents double-run
