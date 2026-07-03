@@ -433,6 +433,74 @@
             text-decoration: underline;
         }
 
+        /* ── Diagram Preview Grid ── */
+        .diagram-section {
+            margin: 2.5rem 0;
+        }
+        .diagram-section h2 {
+            margin-bottom: 0.5rem;
+        }
+        .diagram-section > p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.75rem;
+        }
+        .diagram-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .diagram-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: box-shadow 0.2s ease;
+        }
+        .diagram-card:hover {
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        .diagram-svg-wrapper {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-elevated);
+        }
+        .diagram-svg-wrapper svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .diagram-card-body {
+            padding: 1rem 1.25rem 1.25rem;
+        }
+        .diagram-card-body h4 {
+            margin: 0 0 0.35rem 0;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .diagram-card-body .caption {
+            font-size: 0.82rem;
+            line-height: 1.55;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        .diagram-section-link {
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 2px;
+            transition: all 0.15s ease;
+        }
+        .diagram-section-link:hover {
+            color: var(--accent-hover);
+            border-bottom-color: var(--accent-hover);
+            padding-left: 4px;
+        }
         @media (max-width: 768px) {
             .flashcards-grid {
                 grid-template-columns: 1fr;
@@ -446,6 +514,9 @@
             }
             .question-nav-grid {
                 grid-template-columns: repeat(5, 1fr);
+            }
+            .diagram-grid {
+                grid-template-columns: 1fr;
             }
             .btn { width: 100%; text-align: center; }
             .btn-success { width: auto; }
@@ -614,6 +685,254 @@
 
                 <div class="callout callout-tip">
                     <strong>Study strategy:</strong> Cover the chart name with your hand and read the "Tracks" and "Exam tell" lines. See if you can name the chart before checking. Do this three times through and the exam descriptions will trigger the right name instantly.
+                </div>
+
+                <!-- ─── CHART DIAGRAM PREVIEWS ─── -->
+                <div class="diagram-section">
+                    <h2>See the Charts in Action</h2>
+                    <p>These sample diagrams show how the three most common visual project management tools look on a real dashboard. Each is a simplified preview of the full deep-dive exercises in the paid course.</p>
+
+                    <div class="diagram-grid">
+
+                        <!-- ── Gantt Chart ── -->
+                        <div class="diagram-card">
+                            <div class="diagram-svg-wrapper">
+                                <svg viewBox="0 0 580 290" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <style>
+                                        .g-bg  { fill: var(--bg-elevated,#f8f9fa); }
+                                        .g-grid{ stroke: var(--border-color,#dee2e6); stroke-width: 1; stroke-dasharray: 4,3; }
+                                        .g-bar { fill: var(--accent,#0052cc); opacity: 0.85; }
+                                        .g-bar1{ fill: var(--accent,#0052cc); opacity: 0.85; }
+                                        .g-bar2{ fill: var(--accent,#0052cc); opacity: 0.65; }
+                                        .g-bar3{ fill: var(--accent,#0052cc); opacity: 0.75; }
+                                        .g-bar4{ fill: var(--accent,#0052cc); opacity: 0.55; }
+                                        .g-mil { fill: var(--accent,#0052cc); }
+                                        .g-txt { fill: var(--text-primary,#1a1a2e); font: 500 11px/1.4 system-ui,sans-serif; }
+                                        .g-txt2{ fill: var(--text-muted,#6b7280); font: 500 10px/1.4 system-ui,sans-serif; }
+                                        .g-dep { stroke: var(--text-muted,#6b7280); stroke-width: 1.5; fill: none; marker-end: url(#g-arrow); }
+                                        .g-axis{ stroke: var(--text-muted,#6b7280); stroke-width: 1.5; }
+                                    </style>
+                                    <defs>
+                                        <marker id="g-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                            <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--text-muted,#6b7280)"/>
+                                        </marker>
+                                    </defs>
+                                    <rect class="g-bg" x="0" y="0" width="580" height="290" rx="8"/>
+
+                                    <!-- Gridlines -->
+                                    <line class="g-grid" x1="140" y1="35" x2="140" y2="260"/>
+                                    <line class="g-grid" x1="210" y1="35" x2="210" y2="260"/>
+                                    <line class="g-grid" x1="280" y1="35" x2="280" y2="260"/>
+                                    <line class="g-grid" x1="350" y1="35" x2="350" y2="260"/>
+                                    <line class="g-grid" x1="420" y1="35" x2="420" y2="260"/>
+                                    <line class="g-grid" x1="490" y1="35" x2="490" y2="260"/>
+
+                                    <!-- Axis -->
+                                    <line class="g-axis" x1="50" y1="260" x2="560" y2="260"/>
+
+                                    <!-- Dependency arrows -->
+                                    <path class="g-dep" d="M 280,73 v 12 q 0,5 -5,5 h -55 q -5,0 -5,5 v 10"/>
+                                    <path class="g-dep" d="M 280,118 v 12 q 0,5 -5,5 h -5 q -5,0 -5,5 v 10"/>
+                                    <path class="g-dep" d="M 420,163 v 12 q 0,5 -5,5 h -55 q -5,0 -5,5 v 10"/>
+                                    <path class="g-dep" d="M 490,208 v 12 q 0,5 -5,5 h 5 q 5,0 5,5 v 8"/>
+
+                                    <!-- Bars -->
+                                    <rect class="g-bar1" x="140" y="65" width="140" height="16" rx="3"/>
+                                    <rect class="g-bar2" x="210" y="110" width="70" height="16" rx="3"/>
+                                    <rect class="g-bar3" x="280" y="155" width="140" height="16" rx="3"/>
+                                    <rect class="g-bar4" x="420" y="200" width="70" height="16" rx="3"/>
+
+                                    <!-- Milestone diamond -->
+                                    <polygon class="g-mil" points="490,243 502,255 490,267 478,255"/>
+
+                                    <!-- Task labels -->
+                                    <text class="g-txt" x="130" y="78" text-anchor="end">Requirements</text>
+                                    <text class="g-txt" x="130" y="123" text-anchor="end">Architecture</text>
+                                    <text class="g-txt" x="130" y="168" text-anchor="end">Development</text>
+                                    <text class="g-txt" x="130" y="213" text-anchor="end">Testing</text>
+                                    <text class="g-txt" x="130" y="258" text-anchor="end">Launch</text>
+
+                                    <!-- Week labels -->
+                                    <text class="g-txt2" x="140" y="276" text-anchor="middle">Wk 1</text>
+                                    <text class="g-txt2" x="210" y="276" text-anchor="middle">Wk 2</text>
+                                    <text class="g-txt2" x="280" y="276" text-anchor="middle">Wk 3</text>
+                                    <text class="g-txt2" x="350" y="276" text-anchor="middle">Wk 4</text>
+                                    <text class="g-txt2" x="420" y="276" text-anchor="middle">Wk 5</text>
+                                    <text class="g-txt2" x="490" y="276" text-anchor="middle">Wk 6</text>
+                                </svg>
+                            </div>
+                            <div class="diagram-card-body">
+                                <h4>Gantt Chart</h4>
+                                <p class="caption">Tasks plotted against a timeline with dependency arrows and a milestone diamond at delivery. Shows sequencing, duration, and critical-path relationships at a glance.</p>
+                            </div>
+                        </div>
+
+                        <!-- ── Kanban Board ── -->
+                        <div class="diagram-card">
+                            <div class="diagram-svg-wrapper">
+                                <svg viewBox="0 0 580 290" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <style>
+                                        .k-bg    { fill: var(--bg-elevated,#f8f9fa); }
+                                        .k-col   { fill: var(--bg-card,#ffffff); stroke: var(--border-color,#dee2e6); stroke-width: 1; }
+                                        .k-head  { fill: var(--accent,#0052cc); rx: 3; }
+                                        .k-hdr-1 { fill: var(--text-on-accent,#ffffff); font: 700 11px/1.4 system-ui,sans-serif; }
+                                        .k-wip   { fill: var(--text-muted,#6b7280); font: 500 9px/1.4 system-ui,sans-serif; }
+                                        .k-card  { fill: var(--bg-elevated,#f0f2f5); stroke: var(--border-color,#d1d5db); stroke-width: 1; rx: 4; }
+                                        .k-card-h{ fill: var(--accent,#0052cc); rx: 2; }
+                                        .k-card1{ fill: #e8f5e9; stroke: #a5d6a7; }
+                                        .k-card2{ fill: #fff3e0; stroke: #ffcc80; }
+                                        .k-card3{ fill: #fce4ec; stroke: #ef9a9a; }
+                                        .k-txt  { fill: var(--text-primary,#1a1a2e); font: 500 10px/1.4 system-ui,sans-serif; }
+                                        .k-txt2 { fill: var(--text-muted,#6b7280); font: 500 8px/1.4 system-ui,sans-serif; }
+                                        .k-tag  { fill: none; stroke-width: 1; rx: 3; }
+                                    </style>
+                                    <rect class="k-bg" x="0" y="0" width="580" height="290" rx="8"/>
+
+                                    <!-- Column 1 - To Do -->
+                                    <rect class="k-col" x="12" y="15" width="180" height="262" rx="6"/>
+                                    <rect class="k-head" x="14" y="17" width="176" height="30" rx="4"/>
+                                    <text class="k-hdr-1" x="100" y="37" text-anchor="middle">To Do</text>
+
+                                    <!-- Column 1 cards -->
+                                    <rect class="k-card" x="22" y="60" width="160" height="46"/>
+                                    <rect class="k-card-h" x="22" y="60" width="4" height="46"/>
+                                    <text class="k-txt" x="35" y="80">Design Sign-off</text>
+                                    <text class="k-txt2" x="35" y="95">Due: Fri</text>
+
+                                    <rect class="k-card" x="22" y="116" width="160" height="46"/>
+                                    <rect class="k-card-h" x="22" y="116" width="4" height="46"/>
+                                    <text class="k-txt" x="35" y="136">API Integration</text>
+                                    <text class="k-txt2" x="35" y="151">2 story pts</text>
+
+                                    <rect class="k-card" x="22" y="172" width="160" height="46"/>
+                                    <rect class="k-card-h" x="22" y="172" width="4" height="46"/>
+                                    <text class="k-txt" x="35" y="192">Documentation</text>
+                                    <text class="k-txt2" x="35" y="207">Low priority</text>
+
+                                    <!-- Column 2 - In Progress -->
+                                    <rect class="k-col" x="200" y="15" width="180" height="262" rx="6"/>
+                                    <rect class="k-head" x="202" y="17" width="176" height="30" rx="4"/>
+                                    <text class="k-hdr-1" x="290" y="37" text-anchor="middle">In Progress</text>
+
+                                    <rect class="k-card k-card1" x="210" y="60" width="160" height="46"/>
+                                    <rect class="k-card-h" x="210" y="60" width="4" height="46" fill="#4caf50"/>
+                                    <text class="k-txt" x="223" y="80">Login Auth</text>
+                                    <text class="k-txt2" x="223" y="95">Blocked: review</text>
+
+                                    <rect class="k-card k-card2" x="210" y="116" width="160" height="46"/>
+                                    <rect class="k-card-h" x="210" y="116" width="4" height="46" fill="#ff9800"/>
+                                    <text class="k-txt" x="223" y="136">Dashboard</text>
+                                    <text class="k-txt2" x="223" y="151">In review</text>
+
+                                    <rect class="k-card k-card3" x="210" y="172" width="160" height="46"/>
+                                    <rect class="k-card-h" x="210" y="172" width="4" height="46" fill="#f44336"/>
+                                    <text class="k-txt" x="223" y="192">Testing</text>
+                                    <text class="k-txt2" x="223" y="207">High priority</text>
+
+                                    <!-- Column 3 - Done -->
+                                    <rect class="k-col" x="388" y="15" width="180" height="262" rx="6"/>
+                                    <rect class="k-head" x="390" y="17" width="176" height="30" rx="4"/>
+                                    <text class="k-hdr-1" x="478" y="37" text-anchor="middle">Done</text>
+
+                                    <rect class="k-card" x="398" y="60" width="160" height="46"/>
+                                    <rect class="k-card-h" x="398" y="60" width="4" height="46" fill="#22c55e"/>
+                                    <text class="k-txt" x="411" y="80">Requirements</text>
+                                    <text class="k-txt2" x="411" y="95">Completed</text>
+
+                                    <rect class="k-card" x="398" y="116" width="160" height="46"/>
+                                    <rect class="k-card-h" x="398" y="116" width="4" height="46" fill="#22c55e"/>
+                                    <text class="k-txt" x="411" y="136">Wireframes</text>
+                                    <text class="k-txt2" x="411" y="151">Completed</text>
+
+                                    <rect class="k-card" x="398" y="172" width="160" height="46"/>
+                                    <rect class="k-card-h" x="398" y="172" width="4" height="46" fill="#22c55e"/>
+                                    <text class="k-txt" x="411" y="192">DB Schema</text>
+                                    <text class="k-txt2" x="411" y="207">Completed</text>
+                                </svg>
+                            </div>
+                            <div class="diagram-card-body">
+                                <h4>Kanban Board</h4>
+                                <p class="caption">Work items flow left-to-right through columns. Priority color-coded left strips, blocked items surfaced. Visual WIP limits prevent overload and keep flow steady.</p>
+                            </div>
+                        </div>
+
+                        <!-- ── Cumulative Flow Diagram ── -->
+                        <div class="diagram-card">
+                            <div class="diagram-svg-wrapper">
+                                <svg viewBox="0 0 580 290" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <style>
+                                        .c-bg  { fill: var(--bg-elevated,#f8f9fa); }
+                                        .c-axis{ stroke: var(--text-muted,#6b7280); stroke-width: 1.5; }
+                                        .c-grid{ stroke: var(--border-color,#dee2e6); stroke-width: 1; stroke-dasharray: 3,3; }
+                                        .c-band1{ fill: var(--accent,#0052cc); opacity: 0.20; stroke: var(--accent,#0052cc); stroke-width: 1.5; }
+                                        .c-band2{ fill: var(--accent,#0052cc); opacity: 0.35; stroke: var(--accent,#0052cc); stroke-width: 1.5; }
+                                        .c-band3{ fill: var(--accent,#0052cc); opacity: 0.55; stroke: var(--accent,#0052cc); stroke-width: 1.5; }
+                                        .c-txt { fill: var(--text-primary,#1a1a2e); font: 500 11px/1.4 system-ui,sans-serif; }
+                                        .c-txt2{ fill: var(--text-muted,#6b7280); font: 500 9px/1.4 system-ui,sans-serif; }
+                                        .c-leg { font: 500 9px/1.4 system-ui,sans-serif; }
+                                    </style>
+                                    <rect class="c-bg" x="0" y="0" width="580" height="290" rx="8"/>
+
+                                    <!-- Grid -->
+                                    <line class="c-grid" x1="65" y1="50" x2="65" y2="245"/>
+                                    <line class="c-grid" x1="145" y1="50" x2="145" y2="245"/>
+                                    <line class="c-grid" x1="225" y1="50" x2="225" y2="245"/>
+                                    <line class="c-grid" x1="305" y1="50" x2="305" y2="245"/>
+                                    <line class="c-grid" x1="385" y1="50" x2="385" y2="245"/>
+                                    <line class="c-grid" x1="465" y1="50" x2="465" y2="245"/>
+                                    <line class="c-grid" x1="545" y1="50" x2="545" y2="245"/>
+
+                                    <!-- Axes -->
+                                    <line class="c-axis" x1="50" y1="245" x2="560" y2="245"/>
+                                    <line class="c-axis" x1="50" y1="50" x2="50" y2="245"/>
+
+                                    <!-- Labels -->
+                                    <text class="c-txt2" x="50" y="40" text-anchor="middle">Items</text>
+                                    <text class="c-txt2" x="65" y="262" text-anchor="middle">S1</text>
+                                    <text class="c-txt2" x="145" y="262" text-anchor="middle">S2</text>
+                                    <text class="c-txt2" x="225" y="262" text-anchor="middle">S3</text>
+                                    <text class="c-txt2" x="305" y="262" text-anchor="middle">S4</text>
+                                    <text class="c-txt2" x="385" y="262" text-anchor="middle">S5</text>
+                                    <text class="c-txt2" x="465" y="262" text-anchor="middle">S6</text>
+                                    <text class="c-txt2" x="545" y="262" text-anchor="middle">S7</text>
+
+                                    <!-- Y-axis ticks -->
+                                    <text class="c-txt2" x="44" y="248" text-anchor="end">0</text>
+                                    <text class="c-txt2" x="44" y="148" text-anchor="end">50</text>
+                                    <text class="c-txt2" x="44" y="58" text-anchor="end">100</text>
+
+                                    <!-- Band 3 – Backlog (top) -->
+                                    <path class="c-band3" d="M 65,52 L 145,65 L 225,85 L 305,110 L 385,135 L 465,158 L 545,178
+                                                              L 545,190 L 465,168 L 385,148 L 305,128 L 225,105 L 145,85 L 65,72 Z"/>
+
+                                    <!-- Band 2 – In Progress (middle) -->
+                                    <path class="c-band2" d="M 65,72 L 145,85 L 225,105 L 305,128 L 385,148 L 465,168 L 545,190
+                                                              L 545,220 L 465,205 L 385,190 L 305,180 L 225,172 L 145,168 L 65,165 Z"/>
+
+                                    <!-- Band 1 – Done (bottom) -->
+                                    <path class="c-band1" d="M 65,165 L 145,168 L 225,172 L 305,180 L 385,190 L 465,205 L 545,220
+                                                              L 545,245 L 65,245 Z"/>
+
+                                    <!-- Legend -->
+                                    <rect x="440" y="22" width="10" height="10" fill="var(--accent,#0052cc)" opacity="0.55" rx="2"/>
+                                    <text class="c-leg" x="455" y="31" fill="var(--text-primary,#1a1a2e)">Backlog</text>
+                                    <rect x="500" y="22" width="10" height="10" fill="var(--accent,#0052cc)" opacity="0.35" rx="2"/>
+                                    <text class="c-leg" x="515" y="31" fill="var(--text-primary,#1a1a2e)">WIP</text>
+                                    <rect x="545" y="22" width="10" height="10" fill="var(--accent,#0052cc)" opacity="0.20" rx="2"/>
+                                    <text class="c-leg" x="560" y="31" fill="var(--text-primary,#1a1a2e)">Done</text>
+                                </svg>
+                            </div>
+                            <div class="diagram-card-body">
+                                <h4>Cumulative Flow Diagram</h4>
+                                <p class="caption">Stacked area bands show how work moves from Backlog → WIP → Done over seven sprints. Narrowing Backlog + growing Done = healthy throughput.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <p style="text-align:center; margin-top:0.5rem;">
+                        <a href="#course-section" class="diagram-section-link">Get step-by-step exercises for all three charts →</a>
+                    </p>
                 </div>
 
                 <!-- ─── QUIZ SECTION ─── -->
