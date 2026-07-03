@@ -17,6 +17,285 @@
     <link rel="stylesheet" href="../css/syntax.css">
     <link rel="icon" type="image/x-icon" href="../favicon.ico">
     <link rel="stylesheet" href="../css/shortcodes.css">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .quiz-progress {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .domain-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .domain-process { background: rgba(6, 182, 212, 0.15); color: var(--accent-secondary); }
+        .question-text {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+        .options-list li {
+            margin-bottom: 0.75rem;
+        }
+        .options-list label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+        .options-list label:hover {
+            border-color: var(--accent);
+            background: var(--bg-elevated);
+        }
+        .options-list label.selected {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+        .options-list label.correct {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+        .options-list label.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .options-list label.disabled {
+            cursor: default;
+            opacity: 0.85;
+        }
+        .options-list input[type="radio"] {
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+        }
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #000;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .btn-primary:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px var(--accent-glow);
+        }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover { background: var(--bg-card-hover); }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #fff;
+        }
+        .btn-success:hover { opacity: 0.9; }
+        .review-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            border-left: 4px solid;
+        }
+        .review-box.correct { background: rgba(34, 197, 94, 0.1); border-color: #22c55e; }
+        .review-box.incorrect { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
+        .review-box h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+        .review-box .explanation {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        .results-container {
+            text-align: center;
+        }
+        .results-score {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+        .results-score.pass { color: #22c55e; }
+        .results-score.fail { color: #ef4444; }
+        .results-pass-fail {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        .results-pass-fail.pass { color: #22c55e; }
+        .results-pass-fail.fail { color: #ef4444; }
+        .domain-breakdown {
+            text-align: left;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        .domain-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .domain-row:last-child { border-bottom: none; }
+        .domain-row .domain-name { font-weight: 500; color: var(--text-primary); }
+        .domain-row .domain-score { color: var(--text-secondary); }
+        .quiz-actions-center { justify-content: center; }
+        .retake-area { margin-top: 2rem; }
+        .quiz-layout {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        .quiz-main {
+            flex: 1;
+            min-width: 0;
+        }
+        .quiz-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            position: sticky;
+            top: 1rem;
+        }
+        .quiz-sidebar h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .question-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        .question-nav-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .question-nav-btn:hover {
+            border-color: var(--accent);
+            background: var(--bg-elevated);
+        }
+        .question-nav-btn.active {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #000;
+        }
+        .question-nav-btn.answered {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+        .question-nav-btn.correct {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+        .question-nav-btn.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .question-nav-btn.answered.active,
+        .question-nav-btn.correct.active,
+        .question-nav-btn.incorrect.active {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            .quiz-layout {
+                flex-direction: column;
+            }
+            .quiz-sidebar {
+                width: 100%;
+                position: static;
+            }
+            .question-nav-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            .quiz-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
     <script>
@@ -92,148 +371,26 @@
 
                 <hr>
 
-                <h2>10 Practice Questions</h2>
-                <p>Try to work through each one before looking at the solution. The key is getting comfortable spotting which numbers map to PV, EV, AC, and BAC — the math itself never gets harder than division and subtraction.</p>
-
-                <h3>Question 1</h3>
-                <p>A software development project has a budget at completion of $500,000. By the end of month 6, the team was scheduled to complete 45% of the work. At that point, they had actually completed 40% of the work and spent $220,000. What are the PV, EV, AC, SV, and CV?</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $500,000</li>
-                    <li><strong>PV</strong> = 45% × $500,000 = $225,000 (this is what you planned to have done)</li>
-                    <li><strong>EV</strong> = 40% × $500,000 = $200,000 (this is what you actually got done, measured in budget terms)</li>
-                    <li><strong>AC</strong> = $220,000 (this is what you spent)</li>
-                    <li><strong>SV</strong> = EV − PV = $200,000 − $225,000 = −$25,000 → behind schedule</li>
-                    <li><strong>CV</strong> = EV − AC = $200,000 − $220,000 = −$20,000 → over budget</li>
-                </ul>
-                <p>Both variances are negative, which means this project is behind schedule and over budget. Not a great spot to be in, but catching it at month 6 gives you time to correct course.</p>
-
-                <h3>Question 2</h3>
-                <p>A construction project has a BAC of $2,000,000. At the status date, the project is 30% complete but was planned to be 35% complete. The actual costs incurred so far total $550,000. Calculate the CPI and SPI, and interpret what they mean.</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $2,000,000</li>
-                    <li><strong>PV</strong> = 35% × $2,000,000 = $700,000</li>
-                    <li><strong>EV</strong> = 30% × $2,000,000 = $600,000</li>
-                    <li><strong>AC</strong> = $550,000</li>
-                    <li><strong>CPI</strong> = EV / AC = $600,000 / $550,000 = 1.09 → under budget (you're getting $1.09 worth of work for every dollar spent)</li>
-                    <li><strong>SPI</strong> = EV / PV = $600,000 / $700,000 = 0.86 → behind schedule (you're progressing at 86% of the planned rate)</li>
-                </ul>
-                <p>This is actually a mix worth noticing. The CPI above 1.0 means you're spending efficiently — whatever you're doing cost-wise is working. But the SPI below 1.0 means you're just not getting enough done. The project is cost-efficient but behind schedule, which can happen when a small, efficient team is working slower than planned.</p>
-
-                <h3>Question 3</h3>
-                <p>A project has a CPI of 1.15 and a BAC of $1,200,000. If this cost efficiency continues for the remainder of the project, what is the EAC?</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $1,200,000</li>
-                    <li><strong>CPI</strong> = 1.15</li>
-                    <li><strong>EAC</strong> = BAC / CPI = $1,200,000 / 1.15 = $1,043,478</li>
-                </ul>
-                <p>When the problem says "if this cost efficiency continues," your brain should immediately go to EAC = BAC / CPI. That formula assumes the same CPI will hold for the rest of the project. The result tells you that at the current efficiency rate, you'll finish about $156,522 under budget. Nice.</p>
-
-                <h3>Question 4</h3>
-                <p>A project with a BAC of $800,000 has completed 50% of the work. The EV is $400,000 and the AC is $450,000. The remaining work is expected to be completed at the planned rate (not at the current cost efficiency). Calculate the EAC.</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $800,000</li>
-                    <li><strong>EV</strong> = $400,000</li>
-                    <li><strong>AC</strong> = $450,000</li>
-                    <li><strong>EAC</strong> = AC + (BAC − EV) = $450,000 + ($800,000 − $400,000) = $450,000 + $400,000 = $850,000</li>
-                </ul>
-                <p>The phrase "at the planned rate" is your clue to use the formula EAC = AC + (BAC − EV). This formula says: take what you've already spent, then add the remaining budget (BAC − EV) as if you'll spend it exactly according to plan. You're basically saying the overrun so far doesn't affect how you'll spend going forward. That's the optimistic EAC calculation.</p>
-
-                <h3>Question 5</h3>
-                <p>A project has a BAC of $1,500,000. The PV is $750,000, EV is $600,000, and AC is $720,000. If both the CPI and SPI are expected to influence the remaining work, calculate the EAC.</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $1,500,000</li>
-                    <li><strong>PV</strong> = $750,000</li>
-                    <li><strong>EV</strong> = $600,000</li>
-                    <li><strong>AC</strong> = $720,000</li>
-                    <li><strong>CPI</strong> = EV / AC = $600,000 / $720,000 = 0.833</li>
-                    <li><strong>SPI</strong> = EV / PV = $600,000 / $750,000 = 0.80</li>
-                    <li><strong>EAC</strong> = AC + [(BAC − EV) / (CPI × SPI)] = $720,000 + [($1,500,000 − $600,000) / (0.833 × 0.80)]</li>
-                    <li>= $720,000 + [$900,000 / 0.6664]</li>
-                    <li>= $720,000 + $1,350,405</li>
-                    <li>= $2,070,405</li>
-                </ul>
-                <p>This is the most aggressive EAC formula because it factors in both cost and schedule performance. When both CPI and SPI are below 1.0, dividing by their product makes the remaining work significantly more expensive. That's realistic if being behind schedule is driving up costs (think overtime, penalties, or resource inefficiencies).</p>
-
-                <h3>Question 6</h3>
-                <p>A project has a BAC of $3,000,000, an EV of $1,800,000, and an AC of $2,100,000. Calculate the TCPI based on the original BAC. Interpret what it means.</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $3,000,000</li>
-                    <li><strong>EV</strong> = $1,800,000</li>
-                    <li><strong>AC</strong> = $2,100,000</li>
-                    <li><strong>TCPI (BAC)</strong> = (BAC − EV) / (BAC − AC) = ($3,000,000 − $1,800,000) / ($3,000,000 − $2,100,000)</li>
-                    <li>= $1,200,000 / $900,000 = 1.33</li>
-                </ul>
-                <p>A TCPI of 1.33 is rough. It means you need a CPI of 1.33 on all remaining work to still hit the original BAC. Given your current CPI is EV / AC = $1,800,000 / $2,100,000 = 0.86, jumping from 0.86 to 1.33 is a massive efficiency gain. That's usually not realistic, which is why in practice you'd want to calculate EAC and present that to stakeholders as the more likely outcome.</p>
-
-                <h3>Question 7</h3>
-                <p>A project has a BAC of $2,500,000. The current EV is $1,000,000 and AC is $1,300,000. The project manager calculates the EAC as $3,250,000 using the BAC/CPI formula. The sponsor asks whether that EAC is realistic. What is the VAC, and what does it tell you?</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $2,500,000</li>
-                    <li><strong>EAC</strong> = $3,250,000</li>
-                    <li><strong>VAC</strong> = BAC − EAC = $2,500,000 − $3,250,000 = −$750,000</li>
-                </ul>
-                <p>A negative VAC means you're projecting a cost overrun at completion — $750,000 over budget in this case. That's a 30% overrun on a $2.5M project, which is significant. The VAC gives you the bottom-line number in dollars, which stakeholders understand better than a ratio. "We're tracking to be $750K over" tends to get more attention than "our CPI is 0.77."</p>
-
-                <h3>Question 8</h3>
-                <p>A project has a BAC of $1,800,000. By the status date, the PV is $900,000, EV is $720,000, and AC is $660,000. The project manager expects that the remaining work will be completed at the planned rate. Calculate the ETC.</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $1,800,000</li>
-                    <li><strong>PV</strong> = $900,000</li>
-                    <li><strong>EV</strong> = $720,000</li>
-                    <li><strong>AC</strong> = $660,000</li>
-                    <li><strong>EAC</strong> = AC + (BAC − EV) = $660,000 + ($1,800,000 − $720,000) = $660,000 + $1,080,000 = $1,740,000</li>
-                    <li><strong>ETC</strong> = EAC − AC = $1,740,000 − $660,000 = $1,080,000</li>
-                </ul>
-                <p>ETC always comes after EAC — you can't calculate ETC without knowing EAC first. The logic here is clean: you already spent $660K, you expect to finish at $1.74M, so you need $1.08M more. In simpler terms: what you've already burned plus what you still need equals the total projected cost.</p>
-
-                <h3>Question 9</h3>
-                <p>A project is 60% complete with a BAC of $4,000,000. The actual costs to date are $2,600,000. The team has observed that the project has been running at 90% cost efficiency consistently. Management wants to know the most realistic EAC given this trend.</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $4,000,000</li>
-                    <li><strong>EV</strong> = 60% × $4,000,000 = $2,400,000</li>
-                    <li><strong>AC</strong> = $2,600,000</li>
-                    <li><strong>CPI</strong> = EV / AC = $2,400,000 / $2,600,000 = 0.923</li>
-                </ul>
-                <p>When management asks for the "most realistic" EAC and you have a consistent trend, use EAC = BAC / CPI. That formula assumes your past performance pattern will continue, which is usually the safest bet.</p>
-                <ul>
-                    <li><strong>EAC</strong> = $4,000,000 / 0.923 = $4,333,333</li>
-                </ul>
-                <p>The project is trending to finish about $333K over budget. The 90% efficiency (CPI of roughly 0.9) has been consistent, so there's no reason to expect improvement without a specific intervention plan. If management wants to get back to the original BAC, you'd need a TCPI above 1.0 — and you should be able to walk them through what that would require.</p>
-
-                <h3>Question 10</h3>
-                <p>A project has a BAC of $2,200,000. Current data shows EV of $1,100,000, AC of $1,375,000, and PV of $1,200,000. Calculate CPI, SPI, EAC (assuming the same cost efficiency), and the TCPI based on BAC. Then explain to a stakeholder whether the TCPI is achievable.</p>
-
-                <p><strong>Solution:</strong></p>
-                <ul>
-                    <li><strong>BAC</strong> = $2,200,000</li>
-                    <li><strong>PV</strong> = $1,200,000</li>
-                    <li><strong>EV</strong> = $1,100,000</li>
-                    <li><strong>AC</strong> = $1,375,000</li>
-                    <li><strong>CPI</strong> = EV / AC = $1,100,000 / $1,375,000 = 0.80</li>
-                    <li><strong>SPI</strong> = EV / PV = $1,100,000 / $1,200,000 = 0.917</li>
-                    <li><strong>EAC</strong> = BAC / CPI = $2,200,000 / 0.80 = $2,750,000</li>
-                    <li><strong>TCPI (BAC)</strong> = (BAC − EV) / (BAC − AC) = ($2,200,000 − $1,100,000) / ($2,200,000 − $1,375,000) = $1,100,000 / $825,000 = 1.33</li>
-                </ul>
-                <p>Here's the reality check. Your current CPI is 0.80 — you're getting 80 cents of work for every dollar spent. To hit the original BAC, you'd need a TCPI of 1.33, which means suddenly performing at 133% efficiency. That's going from underwater to superhuman, and it's not realistic without a major change in how the work is being done.</p>
-                <p>The honest answer to the stakeholder: "We're projecting an EAC of $2.75M based on our consistent performance trend. Getting back to the $2.2M BAC would require us to perform at 33% above plan for the rest of the project, which isn't realistic without significant changes to scope, schedule, or resources. I recommend we baseline the EAC at $2.75M and discuss corrective actions to improve our CPI going forward."</p>
+                <div class="quiz-container" id="quiz-container">
+                    <div class="quiz-layout">
+                        <div class="quiz-main">
+                            <div class="quiz-header">
+                                <span class="domain-badge" id="domain-badge">Process</span>
+                                <span class="quiz-progress" id="quiz-progress">Question 1 of 10</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill" style="width: 10%"></div>
+                            </div>
+                            <div id="question-area"></div>
+                            <div id="review-area"></div>
+                            <div id="results-area" style="display:none"></div>
+                        </div>
+                        <aside class="quiz-sidebar" id="quiz-sidebar">
+                            <h3>Questions</h3>
+                            <div class="question-nav-grid" id="question-nav-grid"></div>
+                        </aside>
+                    </div>
+                </div>
 
                 <h2>Key Takeaways for the PMP Exam</h2>
                 <p>A few things to keep in mind as you practice:</p>
@@ -267,6 +424,164 @@
     <script src="../js/partials.js"></script>
     <script>
         loadPartials();
+    </script>
+    <script>
+    const questions = [
+        { id: 1, domain: "Process", question: "A software development project has a BAC of $500,000. By the end of month 6, the team was scheduled to complete 45% of the work. At that point, they had actually completed 40% of the work and spent $220,000. What is the Schedule Variance (SV)?", options: ["$25,000", "-$25,000", "-$20,000", "$20,000"], correct: 1, explanation: "PV = 45% × $500,000 = $225,000. EV = 40% × $500,000 = $200,000. SV = EV − PV = $200,000 − $225,000 = −$25,000. A negative SV means the project is behind schedule." },
+        { id: 2, domain: "Process", question: "A construction project has a BAC of $2,000,000. At the status date, the project is 30% complete but was planned to be 35% complete. The actual costs incurred total $550,000. What is the Cost Performance Index (CPI)?", options: ["0.86", "1.09", "0.91", "1.14"], correct: 1, explanation: "PV = 35% × $2,000,000 = $700,000. EV = 30% × $2,000,000 = $600,000. AC = $550,000. CPI = EV / AC = $600,000 / $550,000 = 1.09. A CPI above 1.0 means the project is under budget." },
+        { id: 3, domain: "Process", question: "A project has a CPI of 1.15 and a BAC of $1,200,000. If this cost efficiency continues for the remainder of the project, what is the Estimate at Completion (EAC)?", options: ["$1,043,478", "$1,200,000", "$1,380,000", "$1,156,522"], correct: 0, explanation: "When the problem says 'if this cost efficiency continues,' use EAC = BAC / CPI. EAC = $1,200,000 / 1.15 = $1,043,478. You'll finish about $156,522 under budget at the current efficiency rate." },
+        { id: 4, domain: "Process", question: "A project with a BAC of $800,000 has completed 50% of the work. EV is $400,000 and AC is $450,000. The remaining work is expected to be completed at the planned rate. What is the EAC?", options: ["$800,000", "$850,000", "$900,000", "$950,000"], correct: 1, explanation: "The phrase 'at the planned rate' signals EAC = AC + (BAC − EV). EAC = $450,000 + ($800,000 − $400,000) = $850,000. This formula assumes past cost overruns won't affect future spending." },
+        { id: 5, domain: "Process", question: "A project has a BAC of $1,500,000. PV is $750,000, EV is $600,000, and AC is $720,000. If both CPI and SPI are expected to influence the remaining work, what is the EAC?", options: ["$1,500,000", "$1,800,000", "$2,070,405", "$2,250,000"], correct: 2, explanation: "CPI = $600,000/$720,000 = 0.833. SPI = $600,000/$750,000 = 0.80. EAC = AC + [(BAC − EV) / (CPI × SPI)] = $720,000 + [$900,000 / (0.833 × 0.80)] = $2,070,405. This is the most aggressive EAC formula since it factors in both cost and schedule performance." },
+        { id: 6, domain: "Process", question: "A project has a BAC of $3,000,000, EV of $1,800,000, and AC of $2,100,000. What is the To-Complete Performance Index (TCPI) based on the original BAC?", options: ["0.86", "1.33", "1.17", "0.75"], correct: 1, explanation: "TCPI (BAC) = (BAC − EV) / (BAC − AC) = ($3,000,000 − $1,800,000) / ($3,000,000 − $2,100,000) = $1,200,000 / $900,000 = 1.33. A TCPI of 1.33 means you need 133% efficiency on remaining work to hit the original budget — unrealistic given the current CPI of 0.86." },
+        { id: 7, domain: "Process", question: "A project has a BAC of $2,500,000. EV is $1,000,000 and AC is $1,300,000. Using the BAC/CPI formula, the EAC is $3,250,000. What is the Variance at Completion (VAC)?", options: ["$750,000", "-$750,000", "$1,250,000", "-$500,000"], correct: 1, explanation: "CPI = EV/AC = $1,000,000/$1,300,000 = 0.77. VAC = BAC − EAC = $2,500,000 − $3,250,000 = −$750,000. A negative VAC means you're projecting a $750K cost overrun at completion — a significant 30% over budget." },
+        { id: 8, domain: "Process", question: "A project has a BAC of $1,800,000. PV is $900,000, EV is $720,000, and AC is $660,000. The remaining work will be completed at the planned rate. What is the Estimate to Complete (ETC)?", options: ["$1,080,000", "$900,000", "$1,140,000", "$660,000"], correct: 0, explanation: "First calculate EAC = AC + (BAC − EV) = $660,000 + ($1,800,000 − $720,000) = $1,740,000. Then ETC = EAC − AC = $1,740,000 − $660,000 = $1,080,000. ETC always follows EAC — you can't calculate it directly." },
+        { id: 9, domain: "Process", question: "A project is 60% complete with a BAC of $4,000,000. Actual costs to date are $2,600,000. The project has been running at 90% cost efficiency consistently. What is the most realistic EAC?", options: ["$4,000,000", "$4,333,333", "$4,444,444", "$4,200,000"], correct: 1, explanation: "EV = 60% × $4,000,000 = $2,400,000. CPI = $2,400,000/$2,600,000 = 0.923. When management asks for the 'most realistic' EAC with consistent trends, use EAC = BAC/CPI = $4,000,000/0.923 = $4,333,333. The project is trending about $333K over budget." },
+        { id: 10, domain: "Process", question: "A project has a BAC of $2,200,000. EV is $1,100,000, AC is $1,375,000, and PV is $1,200,000. Based on the TCPI, is hitting the original BAC realistic?", options: ["Yes, the TCPI of 0.80 is easily achievable", "Yes, the TCPI of 1.09 is achievable with minor adjustments", "No, the TCPI of 1.33 requires unrealistic 133% efficiency", "No, the TCPI of 0.92 shows the project is too far behind"], correct: 2, explanation: "CPI = 0.80, SPI = 0.917, EAC = $2,750,000. TCPI = ($2,200,000 − $1,100,000) / ($2,200,000 − $1,375,000) = 1.33. Going from 80% efficiency to 133% is not realistic without major changes to scope, schedule, or resources. Recommend baselining the EAC at $2.75M." }
+    ];
+
+    const domainLabels = {};
+    let currentQ = 0;
+    let answers = new Array(questions.length).fill(null);
+    let reviewed = new Array(questions.length).fill(false);
+
+    function renderSidebar() {
+        const grid = document.getElementById("question-nav-grid");
+        grid.innerHTML = questions.map((q, i) => {
+            let cls = "question-nav-btn";
+            if (currentQ === i) cls += " active";
+            if (reviewed[i]) {
+                cls += answers[i] === q.correct ? " correct" : " incorrect";
+            } else if (answers[i] !== null) {
+                cls += " answered";
+            }
+            const label = answers[i] !== null ? "\u2713" : (i + 1);
+            return `<button class="${cls}" data-idx="${i}">${label}</button>`;
+        }).join("");
+
+        grid.querySelectorAll(".question-nav-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                goToQuestion(parseInt(this.dataset.idx));
+            });
+        });
+    }
+
+    function goToQuestion(idx) {
+        if (idx < 0 || idx >= questions.length) return;
+        currentQ = idx;
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQ];
+        const area = document.getElementById("question-area");
+        const reviewArea = document.getElementById("review-area");
+        const resultsArea = document.getElementById("results-area");
+
+        resultsArea.style.display = "none";
+        document.getElementById("domain-badge").textContent = q.domain;
+        document.getElementById("domain-badge").className = "domain-badge domain-process";
+        document.getElementById("quiz-progress").textContent = "Question " + (currentQ + 1) + " of " + questions.length;
+        document.getElementById("progress-fill").style.width = ((currentQ + 1) / questions.length * 100) + "%";
+
+        let optionsHtml = q.options.map((opt, i) => {
+            let labelClass = "";
+            if (reviewed[currentQ]) {
+                if (i === q.correct) labelClass = "correct disabled";
+                else if (i === answers[currentQ] && i !== q.correct) labelClass = "incorrect disabled";
+                else labelClass = "disabled";
+            } else if (answers[currentQ] === i) {
+                labelClass = "selected";
+            }
+            const checked = answers[currentQ] === i ? "checked" : "";
+            const disabled = reviewed[currentQ] ? "disabled" : "";
+            return `<li><label class="${labelClass}"><input type="radio" name="q" value="${i}" ${checked} ${disabled}> ${opt}</label></li>`;
+        }).join("");
+
+        area.innerHTML = `
+            <div class="question-text">${q.question}</div>
+            <ul class="options-list">${optionsHtml}</ul>
+            <div class="quiz-actions" id="quiz-actions">
+                <button class="btn btn-secondary" id="prev-btn" ${currentQ === 0 ? "disabled" : ""}>\u2190 Back</button>
+                <button class="btn btn-secondary" id="review-btn" ${answers[currentQ] === null ? "disabled" : ""}>Review</button>
+                <button class="btn btn-primary" id="next-btn">${currentQ === questions.length - 1 ? "See Results" : "Next Question"}</button>
+            </div>
+        `;
+
+        reviewArea.innerHTML = "";
+        if (reviewed[currentQ]) {
+            const isCorrect = answers[currentQ] === q.correct;
+            reviewArea.innerHTML = `
+                <div class="review-box ${isCorrect ? 'correct' : 'incorrect'}">
+                    <h4>${isCorrect ? '\u2713 Correct' : '\u2717 Incorrect'}</h4>
+                    <div class="explanation"><strong>Correct answer:</strong> ${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}</div>
+                    <div class="explanation" style="margin-top:0.75rem"><strong>Explanation:</strong> ${q.explanation}</div>
+                </div>
+            `;
+        }
+
+        document.querySelectorAll('input[name="q"]').forEach(radio => {
+            radio.addEventListener("change", function() {
+                if (!reviewed[currentQ]) {
+                    answers[currentQ] = parseInt(this.value);
+                    document.getElementById("review-btn").disabled = false;
+                    document.querySelectorAll(".options-list label").forEach(l => l.classList.remove("selected"));
+                    this.closest("label").classList.add("selected");
+                    renderSidebar();
+                }
+            });
+        });
+
+        document.getElementById("review-btn").addEventListener("click", function() {
+            if (answers[currentQ] === null) return;
+            reviewed[currentQ] = true;
+            renderQuestion();
+        });
+
+        document.getElementById("next-btn").addEventListener("click", function() {
+            if (currentQ === questions.length - 1) {
+                showResults();
+            } else {
+                currentQ++;
+                renderQuestion();
+            }
+        });
+
+        document.getElementById("prev-btn").addEventListener("click", function() {
+            if (currentQ > 0) {
+                currentQ--;
+                renderQuestion();
+            }
+        });
+
+        renderSidebar();
+    }
+
+    function showResults() {
+        document.getElementById("question-area").innerHTML = "";
+        document.getElementById("review-area").innerHTML = "";
+        document.getElementById("quiz-sidebar").style.display = "none";
+        document.getElementById("results-area").style.display = "block";
+
+        const totalCorrect = answers.filter((a, i) => a === questions[i].correct).length;
+        const pct = Math.round(totalCorrect / questions.length * 100);
+        const passed = pct >= 60;
+
+        document.getElementById("results-area").innerHTML = `
+            <div class="results-container">
+                <h2>Practice Test Results</h2>
+                <div class="results-score ${passed ? 'pass' : 'fail'}">${pct}%</div>
+                <div class="results-pass-fail ${passed ? 'pass' : 'fail'}">${passed ? '\u2713 PASSED' : '\u2717 NOT PASSED'}</div>
+                <p>You answered <strong>${totalCorrect}</strong> out of <strong>${questions.length}</strong> questions correctly. PMI requires a passing score of approximately 60%.</p>
+                <div class="retake-area">
+                    <button class="btn btn-success" onclick="location.reload()">Retake Test</button>
+                </div>
+            </div>
+        `;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderQuestion();
+    });
     </script>
 </body>
 </html>
