@@ -62,7 +62,7 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        .domain-process { background: rgba(6, 182, 212, 0.15); color: var(--accent-secondary); }
+        .domain-evm { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
         .question-text {
             font-size: 1.125rem;
             line-height: 1.6;
@@ -230,7 +230,7 @@
         }
         .question-nav-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 0.5rem;
         }
         .question-nav-btn {
@@ -371,11 +371,14 @@
 
                 <hr>
 
+                <h2>10 Practice Questions</h2>
+                <p>Try to work through each one before looking at the solution. The key is getting comfortable spotting which numbers map to PV, EV, AC, and BAC — the math itself never gets harder than division and subtraction.</p>
+
                 <div class="quiz-container" id="quiz-container">
                     <div class="quiz-layout">
                         <div class="quiz-main">
                             <div class="quiz-header">
-                                <span class="domain-badge" id="domain-badge">Process</span>
+                                <span class="domain-badge" id="domain-badge">EVM</span>
                                 <span class="quiz-progress" id="quiz-progress">Question 1 of 10</span>
                             </div>
                             <div class="progress-bar">
@@ -421,25 +424,43 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="../js/partials.js"></script>
-    <script>
-        loadPartials();
-    </script>
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
     <script>
     const questions = [
-        { id: 1, domain: "Process", question: "A software development project has a BAC of $500,000. By the end of month 6, the team was scheduled to complete 45% of the work. At that point, they had actually completed 40% of the work and spent $220,000. What is the Schedule Variance (SV)?", options: ["$25,000", "-$25,000", "-$20,000", "$20,000"], correct: 1, explanation: "PV = 45% × $500,000 = $225,000. EV = 40% × $500,000 = $200,000. SV = EV − PV = $200,000 − $225,000 = −$25,000. A negative SV means the project is behind schedule." },
-        { id: 2, domain: "Process", question: "A construction project has a BAC of $2,000,000. At the status date, the project is 30% complete but was planned to be 35% complete. The actual costs incurred total $550,000. What is the Cost Performance Index (CPI)?", options: ["0.86", "1.09", "0.91", "1.14"], correct: 1, explanation: "PV = 35% × $2,000,000 = $700,000. EV = 30% × $2,000,000 = $600,000. AC = $550,000. CPI = EV / AC = $600,000 / $550,000 = 1.09. A CPI above 1.0 means the project is under budget." },
-        { id: 3, domain: "Process", question: "A project has a CPI of 1.15 and a BAC of $1,200,000. If this cost efficiency continues for the remainder of the project, what is the Estimate at Completion (EAC)?", options: ["$1,043,478", "$1,200,000", "$1,380,000", "$1,156,522"], correct: 0, explanation: "When the problem says 'if this cost efficiency continues,' use EAC = BAC / CPI. EAC = $1,200,000 / 1.15 = $1,043,478. You'll finish about $156,522 under budget at the current efficiency rate." },
-        { id: 4, domain: "Process", question: "A project with a BAC of $800,000 has completed 50% of the work. EV is $400,000 and AC is $450,000. The remaining work is expected to be completed at the planned rate. What is the EAC?", options: ["$800,000", "$850,000", "$900,000", "$950,000"], correct: 1, explanation: "The phrase 'at the planned rate' signals EAC = AC + (BAC − EV). EAC = $450,000 + ($800,000 − $400,000) = $850,000. This formula assumes past cost overruns won't affect future spending." },
-        { id: 5, domain: "Process", question: "A project has a BAC of $1,500,000. PV is $750,000, EV is $600,000, and AC is $720,000. If both CPI and SPI are expected to influence the remaining work, what is the EAC?", options: ["$1,500,000", "$1,800,000", "$2,070,405", "$2,250,000"], correct: 2, explanation: "CPI = $600,000/$720,000 = 0.833. SPI = $600,000/$750,000 = 0.80. EAC = AC + [(BAC − EV) / (CPI × SPI)] = $720,000 + [$900,000 / (0.833 × 0.80)] = $2,070,405. This is the most aggressive EAC formula since it factors in both cost and schedule performance." },
-        { id: 6, domain: "Process", question: "A project has a BAC of $3,000,000, EV of $1,800,000, and AC of $2,100,000. What is the To-Complete Performance Index (TCPI) based on the original BAC?", options: ["0.86", "1.33", "1.17", "0.75"], correct: 1, explanation: "TCPI (BAC) = (BAC − EV) / (BAC − AC) = ($3,000,000 − $1,800,000) / ($3,000,000 − $2,100,000) = $1,200,000 / $900,000 = 1.33. A TCPI of 1.33 means you need 133% efficiency on remaining work to hit the original budget — unrealistic given the current CPI of 0.86." },
-        { id: 7, domain: "Process", question: "A project has a BAC of $2,500,000. EV is $1,000,000 and AC is $1,300,000. Using the BAC/CPI formula, the EAC is $3,250,000. What is the Variance at Completion (VAC)?", options: ["$750,000", "-$750,000", "$1,250,000", "-$500,000"], correct: 1, explanation: "CPI = EV/AC = $1,000,000/$1,300,000 = 0.77. VAC = BAC − EAC = $2,500,000 − $3,250,000 = −$750,000. A negative VAC means you're projecting a $750K cost overrun at completion — a significant 30% over budget." },
-        { id: 8, domain: "Process", question: "A project has a BAC of $1,800,000. PV is $900,000, EV is $720,000, and AC is $660,000. The remaining work will be completed at the planned rate. What is the Estimate to Complete (ETC)?", options: ["$1,080,000", "$900,000", "$1,140,000", "$660,000"], correct: 0, explanation: "First calculate EAC = AC + (BAC − EV) = $660,000 + ($1,800,000 − $720,000) = $1,740,000. Then ETC = EAC − AC = $1,740,000 − $660,000 = $1,080,000. ETC always follows EAC — you can't calculate it directly." },
-        { id: 9, domain: "Process", question: "A project is 60% complete with a BAC of $4,000,000. Actual costs to date are $2,600,000. The project has been running at 90% cost efficiency consistently. What is the most realistic EAC?", options: ["$4,000,000", "$4,333,333", "$4,444,444", "$4,200,000"], correct: 1, explanation: "EV = 60% × $4,000,000 = $2,400,000. CPI = $2,400,000/$2,600,000 = 0.923. When management asks for the 'most realistic' EAC with consistent trends, use EAC = BAC/CPI = $4,000,000/0.923 = $4,333,333. The project is trending about $333K over budget." },
-        { id: 10, domain: "Process", question: "A project has a BAC of $2,200,000. EV is $1,100,000, AC is $1,375,000, and PV is $1,200,000. Based on the TCPI, is hitting the original BAC realistic?", options: ["Yes, the TCPI of 0.80 is easily achievable", "Yes, the TCPI of 1.09 is achievable with minor adjustments", "No, the TCPI of 1.33 requires unrealistic 133% efficiency", "No, the TCPI of 0.92 shows the project is too far behind"], correct: 2, explanation: "CPI = 0.80, SPI = 0.917, EAC = $2,750,000. TCPI = ($2,200,000 − $1,100,000) / ($2,200,000 − $1,375,000) = 1.33. Going from 80% efficiency to 133% is not realistic without major changes to scope, schedule, or resources. Recommend baselining the EAC at $2.75M." }
+        { id: 1, domain: "EVM", question: "Which EVM metric represents the authorized budget for the work actually completed?",
+            options: ["Planned Value (PV)", "Earned Value (EV)", "Actual Cost (AC)", "Budget at Completion (BAC)"],
+            correct: 1, explanation: "Earned Value (EV) is the authorized budget assigned to the work that has actually been completed. PV is what you planned to complete, AC is what you spent, and BAC is the total project budget." },
+        { id: 2, domain: "EVM", question: "A project has EV of $200,000, PV of $225,000, and AC of $220,000. What is the Schedule Variance (SV)?",
+            options: ["-$20,000", "$25,000", "-$25,000", "$20,000"],
+            correct: 2, explanation: "SV = EV - PV = $200,000 - $225,000 = -$25,000. A negative SV means the project is behind schedule. The -$20,000 figure is the Cost Variance (CV = EV - AC)." },
+        { id: 3, domain: "EVM", question: "A project has a CPI of 1.15 and a BAC of $1,200,000. Assuming the same cost efficiency continues, what is the Estimate at Completion (EAC)?",
+            options: ["$1,380,000", "$1,043,478", "$1,200,000", "$1,150,000"],
+            correct: 1, explanation: "EAC = BAC / CPI = $1,200,000 / 1.15 = $1,043,478. The phrase 'same cost efficiency continues' is your trigger to use this formula." },
+        { id: 4, domain: "EVM", question: "A project has EV of $600,000 and AC of $550,000. What is the Cost Performance Index (CPI)?",
+            options: ["0.92", "1.09", "1.20", "0.83"],
+            correct: 1, explanation: "CPI = EV / AC = $600,000 / $550,000 = 1.09. A CPI above 1.0 means the project is under budget — you're getting $1.09 worth of work for every dollar spent." },
+        { id: 5, domain: "EVM", question: "What does a To-Complete Performance Index (TCPI) of 1.33 tell the project manager?",
+            options: ["The project is 33% under budget", "The remaining work must be performed at a CPI of 1.33 to meet the original BAC", "The project is 33% ahead of schedule", "The project will finish 33% under budget"],
+            correct: 1, explanation: "TCPI tells you the cost performance needed on remaining work to stay within the original budget. A TCPI of 1.33 means you need to perform at 133% efficiency going forward — which is challenging if your current CPI is below 1.0." },
+        { id: 6, domain: "EVM", question: "A project with BAC of $3,000,000 has EV of $1,800,000 and AC of $2,100,000. What is the TCPI based on the original BAC?",
+            options: ["0.86", "1.33", "1.17", "1.09"],
+            correct: 1, explanation: "TCPI = (BAC - EV) / (BAC - AC) = ($3,000,000 - $1,800,000) / ($3,000,000 - $2,100,000) = $1,200,000 / $900,000 = 1.33. The current CPI is 0.86, so hitting 1.33 would require a dramatic improvement." },
+        { id: 7, domain: "EVM", question: "A project has BAC of $2,500,000 and an EAC of $3,250,000. What is the Variance at Completion (VAC)?",
+            options: ["$750,000", "-$750,000", "$1,250,000", "-$1,250,000"],
+            correct: 1, explanation: "VAC = BAC - EAC = $2,500,000 - $3,250,000 = -$750,000. A negative VAC means you're projecting a cost overrun at completion. This is a 30% overrun — significant enough to warrant stakeholder discussion." },
+        { id: 8, domain: "EVM", question: "A project has AC of $660,000, BAC of $1,800,000, and EV of $720,000. If remaining work proceeds at the planned rate, what is the Estimate to Complete (ETC)?",
+            options: ["$720,000", "$1,080,000", "$1,740,000", "$660,000"],
+            correct: 1, explanation: "First calculate EAC = AC + (BAC - EV) = $660,000 + ($1,800,000 - $720,000) = $1,740,000. Then ETC = EAC - AC = $1,740,000 - $660,000 = $1,080,000. ETC always follows EAC." },
+        { id: 9, domain: "EVM", question: "Which EAC formula should be used when both cost and schedule performance are expected to influence the remaining work?",
+            options: ["EAC = BAC / CPI", "EAC = AC + (BAC - EV)", "EAC = AC + [(BAC - EV) / (CPI \u00d7 SPI)]", "EAC = AC + bottom-up ETC"],
+            correct: 2, explanation: "The compound formula EAC = AC + [(BAC - EV) / (CPI \u00d7 SPI)] accounts for both cost efficiency (CPI) and schedule efficiency (SPI). It's the most aggressive EAC formula and is appropriate when being behind schedule is driving up costs." },
+        { id: 10, domain: "EVM", question: "A project has SPI of 0.86 and CPI of 1.09. Which statement is correct?",
+            options: ["Ahead of schedule and over budget", "Behind schedule but under budget", "Ahead of schedule and under budget", "Behind schedule and over budget"],
+            correct: 1, explanation: "SPI < 1.0 means behind schedule (you're progressing at 86% of the planned rate). CPI > 1.0 means under budget (you're getting $1.09 of value for every dollar spent). This combination is common when a small, efficient team works slower than planned." }
     ];
 
-    const domainLabels = {};
+    const domainLabels = { "EVM": "domain-evm" };
     let currentQ = 0;
     let answers = new Array(questions.length).fill(null);
     let reviewed = new Array(questions.length).fill(false);
@@ -479,7 +500,7 @@
 
         resultsArea.style.display = "none";
         document.getElementById("domain-badge").textContent = q.domain;
-        document.getElementById("domain-badge").className = "domain-badge domain-process";
+        document.getElementById("domain-badge").className = "domain-badge " + (domainLabels[q.domain] || "");
         document.getElementById("quiz-progress").textContent = "Question " + (currentQ + 1) + " of " + questions.length;
         document.getElementById("progress-fill").style.width = ((currentQ + 1) / questions.length * 100) + "%";
 
@@ -571,9 +592,9 @@
                 <h2>Practice Test Results</h2>
                 <div class="results-score ${passed ? 'pass' : 'fail'}">${pct}%</div>
                 <div class="results-pass-fail ${passed ? 'pass' : 'fail'}">${passed ? '\u2713 PASSED' : '\u2717 NOT PASSED'}</div>
-                <p>You answered <strong>${totalCorrect}</strong> out of <strong>${questions.length}</strong> questions correctly. PMI requires a passing score of approximately 60%.</p>
+                <p>You answered <strong>${totalCorrect}</strong> out of <strong>${questions.length}</strong> questions correctly.</p>
                 <div class="retake-area">
-                    <button class="btn btn-success" onclick="location.reload()">Retake Test</button>
+                    <button class="btn btn-success" onclick="location.reload()">Retake Quiz</button>
                 </div>
             </div>
         `;
