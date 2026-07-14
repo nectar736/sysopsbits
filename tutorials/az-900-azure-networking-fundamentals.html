@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Networking Fundamentals: VNet, Subnets, Peering, DNS for AZ-900 - SysOpsBits</title>
+    <meta name="description" content="Everything you need to know about Azure networking for the AZ-900 exam. Virtual networks, subnets, peering, DNS, and network security explained simply.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/az-900-azure-networking-fundamentals.html">
+    <meta property="og:title" content="Azure Networking Fundamentals: VNet, Subnets, Peering, DNS for AZ-900">
+    <meta property="og:description" content="Master Azure networking concepts for the AZ-900 exam. Understand VNets, subnets, peering, DNS resolution, and network security groups with practical examples.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/az-900-azure-networking-fundamentals.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/load-balancer.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script>
+</script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-07-11">July 11, 2026</time>
+                    </div>
+                    <h1>Azure Networking Fundamentals: VNet, Subnets, Peering, DNS for AZ-900</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/load-balancer.jpg" alt="Azure Networking Fundamentals" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Networking is one of the most heavily tested areas on the AZ-900 exam. Microsoft wants you to understand how Azure resources talk to each other and to the outside world. This guide covers the core networking concepts you need to know: virtual networks, subnets, peering, DNS, and network security. No fluff, just what AZ-900 expects.</p>
+
+                    <h2>What Is an Azure Virtual Network?</h2>
+                    <p>An Azure Virtual Network (VNet) is your private network in the cloud. It's a logical isolation boundary that lets Azure resources like VMs, databases, and app services communicate securely. Think of a VNet as your own data center network, but Microsoft handles the physical hardware.</p>
+
+                    <p>Every VNet exists within a single Azure region and a single subscription. You define its IP address space using CIDR notation, like <code>10.0.0.0/16</code>. That address space gives you roughly 65,000 usable IP addresses to work with.</p>
+
+                    <div class="callout callout-info">
+                        <strong>AZ-900 Tip:</strong> Remember that VNets are region-scoped, not globally scoped. A VNet in East US is separate from a VNet in West Europe unless you connect them with peering or a VPN gateway.
+                    </div>
+
+                    <h2>Subnets: Dividing Your VNet</h2>
+                    <p>Subnets let you partition your VNet into smaller networks. Each subnet gets a portion of the VNet's address space. You use subnets to organize resources and control traffic flow.</p>
+
+                    <p>For example, you could create a VNet with a <code>10.0.0.0/16</code> address space and split it into:</p>
+                    <ul>
+                        <li><strong>Web subnet:</strong> <code>10.0.1.0/24</code> — front-end web servers</li>
+                        <li><strong>App subnet:</strong> <code>10.0.2.0/24</code> — application logic tier</li>
+                        <li><strong>Database subnet:</strong> <code>10.0.3.0/24</code> — SQL or NoSQL databases</li>
+                    </ul>
+
+                    <p>Azure reserves the first four and the last IP address in each subnet. That means a /24 subnet with 256 addresses gives you 251 usable ones. You need to account for this when sizing your subnets.</p>
+
+                    <pre><code># Create a VNet and subnet with Azure CLI
+az network vnet create \
+  --resource-group myResourceGroup \
+  --name myVNet \
+  --address-prefixes 10.0.0.0/16
+
+az network subnet create \
+  --resource-group myResourceGroup \
+  --vnet-name myVNet \
+  --name webSubnet \
+  --address-prefixes 10.0.1.0/24</code></pre>
+
+                    <h3>Subnet Types You Should Know for AZ-900</h3>
+                    <p>The exam asks about two special subnet types:</p>
+                    <ul>
+                        <li><strong>AzureBastionSubnet:</strong> Must be named exactly <code>AzureBastionSubnet</code> with a minimum /26 prefix. Used by Azure Bastion for secure VM access without public IPs.</li>
+                        <li><strong>GatewaySubnet:</strong> Must be named exactly <code>GatewaySubnet</code> with a minimum /27 prefix. Used by VPN and ExpressRoute gateways.</li>
+                    </ul>
+
+                    <h2>VNet Peering: Connecting Networks</h2>
+                    <p>VNet peering lets you connect two VNets so resources in one can talk to resources in the other using the Microsoft backbone network. No public internet involved, no VPN required.</p>
+
+                    <h3>Key Facts for the Exam</h3>
+                    <ul>
+                        <li><strong>Global peering:</strong> You can peer VNets across Azure regions, not just within the same region. This is called global VNet peering.</li>
+                        <li><strong>Non-transitive:</strong> If VNet A is peered with VNet B, and VNet B is peered with VNet C, traffic does NOT flow from A to C. Peering is a direct one-to-one relationship.</li>
+                        <li><strong>No downtime:</strong> Creating a peering connection does not affect running workloads in either VNet.</li>
+                        <li><strong>Gateway transit:</strong> You can configure a peered VNet to use the VPN gateway of another VNet, but only within the same region (not global peering).</li>
+                    </ul>
+
+                    <pre><code># Peer two VNets
+az network vnet peering create \
+  --resource-group myResourceGroup \
+  --name vnetA-to-vnetB \
+  --vnet-name vnetA \
+  --remote-vnet vnetB \
+  --allow-vnet-access
+
+# Create the reverse peering (both sides required)
+az network vnet peering create \
+  --resource-group myResourceGroup \
+  --name vnetB-to-vnetA \
+  --vnet-name vnetB \
+  --remote-vnet vnetA \
+  --allow-vnet-access</code></pre>
+
+                    <div class="callout callout-warning">
+                        <strong>Important:</strong> You must create peering in both directions. Creating a peering from VNet A to VNet B does not automatically create the reverse. Both sides must be configured for bidirectional communication.
+                    </div>
+
+                    <h2>DNS Resolution in Azure</h2>
+                    <p>Azure provides built-in DNS resolution for resources in the same VNet. When you deploy a VM, Azure automatically registers its private IP in the default DNS. Other resources in the same VNet can reach it by hostname.</p>
+
+                    <h3>DNS Options for AZ-900</h3>
+                    <ul>
+                        <li><strong>Azure-provided DNS:</strong> Free, automatic, works within a single VNet. Resources get an internal DNS suffix and can resolve each other by name.</li>
+                        <li><strong>Custom DNS servers:</strong> You can override the default DNS with your own servers (like on-premises Active Directory). You specify custom DNS server IPs at the VNet level.</li>
+                        <li><strong>Azure DNS Private Zones:</strong> Lets you resolve names across peered VNets using a custom domain like <code>contoso.internal</code>. Essential when you have multi-tier apps spread across VNets.</li>
+                    </ul>
+
+                    <p>For AZ-900, remember that Azure-provided DNS only works within a single VNet. If you need name resolution across peered VNets, you need Azure DNS Private Zones or custom DNS servers.</p>
+
+                    <h2>Network Security Groups</h2>
+                    <p>Network Security Groups (NSGs) filter traffic at the network layer. They contain security rules that allow or deny traffic based on source and destination IP, port, and protocol. Every subnet and network interface can have an NSG attached.</p>
+
+                    <h3>How NSG Rules Work</h3>
+                    <ul>
+                        <li>Rules are evaluated in priority order (100 to 4096). Lower numbers are processed first.</li>
+                        <li>Each rule has a source, destination, port, protocol, and action (Allow or Deny).</li>
+                        <li>Azure has default rules that allow VNet-internal traffic and deny internet inbound traffic.</li>
+                        <li>You cannot remove the default rules, but you can override them with higher-priority custom rules.</li>
+                    </ul>
+
+                    <p>NSGs are stateless at the rule level but stateful in practice — Azure allows return traffic automatically when a flow is established.</p>
+
+                    <div class="callout callout-info">
+                        <strong>AZ-900 Tip:</strong> The exam asks you to compare NSGs with Azure Firewall. NSG is a distributed, basic firewall at the subnet/NIC level. Azure Firewall is a central, fully managed service with advanced features like threat intelligence, URL filtering, and application rules.
+                    </div>
+
+                    <h2>VPN Gateway and ExpressRoute</h2>
+                    <p>These two services connect your on-premises network to Azure. They're a core part of AZ-900's "connectivity" domain.</p>
+
+                    <h3>VPN Gateway</h3>
+                    <p>VPN Gateway sends encrypted traffic over the public internet. It supports site-to-site (S2S) connections for branch offices and point-to-site (P2S) connections for individual users. The tunnel uses IPSec/IKE encryption. You can also use VPN Gateway to connect VNets across regions (VNet-to-VNet).</p>
+
+                    <h3>ExpressRoute</h3>
+                    <p>ExpressRoute provides a private, dedicated connection between your on-premises network and Azure. Traffic does NOT go over the public internet — it uses a private circuit through a connectivity provider. Benefits include lower latency, higher reliability, and higher bandwidth compared to VPN.</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>VPN Gateway</th>
+                                <th>ExpressRoute</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Network path</td>
+                                <td>Public internet (encrypted)</td>
+                                <td>Private, dedicated circuit</td>
+                            </tr>
+                            <tr>
+                                <td>Bandwidth</td>
+                                <td>Up to ~1.25 Gbps</td>
+                                <td>Up to 100 Gbps</td>
+                            </tr>
+                            <tr>
+                                <td>Latency</td>
+                                <td>Variable (internet-dependent)</td>
+                                <td>Consistent, low</td>
+                            </tr>
+                            <tr>
+                                <td>SLA</td>
+                                <td>99.95% for active-active</td>
+                                <td>99.95% or higher</td>
+                            </tr>
+                            <tr>
+                                <td>Cost</td>
+                                <td>Lower</td>
+                                <td>Higher (dedicated circuit)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Azure Load Balancer</h2>
+                    <p>Azure Load Balancer distributes incoming traffic across multiple VMs to improve availability and reliability. It operates at layer 4 (TCP/UDP) and supports both inbound and outbound traffic.</p>
+
+                    <ul>
+                        <li><strong>Public load balancer:</strong> Balances internet traffic to VMs. Provides outbound connections for VMs.</li>
+                        <li><strong>Internal load balancer:</strong> Balances traffic within a VNet. Used for multi-tier applications.</li>
+                    </ul>
+
+                    <p>For AZ-900, understand that Load Balancer uses health probes to check if backend VMs are healthy. If a VM fails its probe, traffic stops going to it until it recovers.</p>
+
+                    <h2>Choosing the Right Connectivity Solution</h2>
+                    <p>AZ-900 presents scenarios where you must pick the right networking service. Here's how they differ:</p>
+
+                    <ul>
+                        <li><strong>VNet peering:</strong> Connect Azure VNets within or across regions. Used for multi-region apps or resource sharing.</li>
+                        <li><strong>VPN Gateway:</strong> Connect on-premises to Azure over the internet. Good for branch offices, hybrid scenarios.</li>
+                        <li><strong>ExpressRoute:</strong> Private connection to Azure. Used when latency, bandwidth, or regulatory requirements matter.</li>
+                        <li><strong>Azure DNS:</strong> Name resolution. Not a connectivity service, but essential for routing.</li>
+                    </ul>
+
+                    <h2>Common AZ-900 Networking Scenarios</h2>
+                    <p>These scenario-based questions appear frequently on the exam. Learn the pattern:</p>
+
+                    <ul>
+                        <li><strong>Scenario 1:</strong> "You need to connect two VNets in different regions with low latency." <em>Answer: Global VNet peering.</em></li>
+                        <li><strong>Scenario 2:</strong> "You need a private connection from your data center to Azure that doesn't use the internet." <em>Answer: ExpressRoute.</em></li>
+                        <li><strong>Scenario 3:</strong> "You need to filter traffic between subnets in the same VNet." <em>Answer: Network Security Group.</em></li>
+                        <li><strong>Scenario 4:</strong> "You need to distribute incoming web traffic across multiple VMs." <em>Answer: Azure Load Balancer.</em></li>
+                        <li><strong>Scenario 5:</strong> "You need secure, encrypted connectivity for remote employees." <em>Answer: Point-to-Site VPN.</em></li>
+                    </ul>
+
+                    <h2>What AZ-900 Expects You to Know</h2>
+                    <p>The exam objectives for networking fall under "Describe Azure compute and networking services." Here's the checklist:</p>
+
+                    <ul>
+                        <li>The purpose of Azure Virtual Networks and how subnets work</li>
+                        <li>The difference between VNet peering and VPN Gateway</li>
+                        <li>When to use ExpressRoute vs VPN Gateway</li>
+                        <li>How Network Security Groups filter traffic</li>
+                        <li>The role of Azure Load Balancer and comparison with other services</li>
+                        <li>How DNS resolution works in Azure (default vs custom)</li>
+                        <li>Azure DNS and Azure DNS Private Zones</li>
+                    </ul>
+
+                    <p>If you understand these concepts and can match them to the scenario questions above, you're in good shape for the networking section of AZ-900.</p>
+
+                    <div class="callout callout-info">
+                        <strong>Ready for the exam?</strong> Test your knowledge with our <a href="az-900-practice-test.html">AZ-900 Practice Test: 10 Free Questions</a> or get the full study guide with practice questions and labs from <a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/?practice-assessment-type=certification" target="_blank" rel="noopener">Microsoft Learn's official AZ-900 page</a>.
+                    </div>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Can I change a VNet's address space after creation?</h3>
+                                <p>Yes, you can add or remove address ranges from a VNet after creation, as long as no resources are using the address space you want to remove. This is a common exam scenario — the answer is yes, with the caveat that you can't remove a range that's in use.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What's the difference between service endpoints and private endpoints?</h3>
+                                <p>Service endpoints extend your VNet to Azure services like Storage or SQL over the Microsoft backbone. Private endpoints give those services a private IP inside your VNet. For AZ-900, just know both exist and provide secure access to Azure PaaS services.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Does VNet peering support transitive routing?</h3>
+                                <p>No. VNet peering is not transitive. If you need traffic to flow from VNet A through VNet B to VNet C, you must either peer A and C directly or use a hub-spoke topology with a network virtual appliance or Azure Route Server.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#az-900</span>
+                        <span class="tag">#networking</span>
+                        <span class="tag">#vnet</span>
+                        <span class="tag">#cloud</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

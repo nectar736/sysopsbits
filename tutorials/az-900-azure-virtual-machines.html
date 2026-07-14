@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Virtual Machines: What AZ-900 Expects You to Know - SysOpsBits</title>
+    <meta name="description" content="Everything you need to know about Azure Virtual Machines for the AZ-900 exam. VM types, sizes, availability options, scaling, and pricing explained.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/az-900-azure-virtual-machines.html">
+    <meta property="og:title" content="Azure Virtual Machines: What AZ-900 Expects You to Know">
+    <meta property="og:description" content="Master Azure VMs for the AZ-900 exam. Learn VM types, sizes, availability sets, zones, scale sets, and how to choose the right compute option.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/az-900-azure-virtual-machines.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/create-secure-linux-vm-azure.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script>
+</script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-07-13">July 13, 2026</time>
+                    </div>
+                    <h1>Azure Virtual Machines: What AZ-900 Expects You to Know</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/create-secure-linux-vm-azure.jpg" alt="Azure Virtual Machines" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Virtual Machines are one of the most recognisable services in Azure, and AZ-900 covers them extensively. Microsoft wants you to understand not just what a VM is, but how to pick the right size, plan for availability, and know when a VM is the right choice versus a container or serverless option. This guide covers everything the exam expects.</p>
+
+                    <h2>What Is an Azure Virtual Machine?</h2>
+                    <p>An Azure Virtual Machine gives you full control over a server running in Microsoft's data centre. You choose the operating system, the hardware specs, and what software runs on it. You're responsible for patching, securing, and maintaining the OS and applications. This is Infrastructure as a Service (IaaS).</p>
+
+                    <p>VMs are ideal for lift-and-shift migrations, custom software that needs a specific OS configuration, and workloads where you need full administrative access. If you need control over the environment, you want a VM.</p>
+
+                    <div class="callout callout-info">
+                        <strong>AZ-900 Tip:</strong> The exam tests your ability to choose between IaaS (VMs), PaaS (App Service), and serverless (Azure Functions). VMs = full control and full responsibility. PaaS = less control but less management overhead. Know this distinction cold.
+                    </div>
+
+                    <h2>VM Sizes and Families</h2>
+                    <p>Azure offers dozens of VM sizes grouped into families. Each family is optimised for a specific type of workload. For AZ-900, you don't need to memorise specific sizes, but you need to understand the categories and what they're for.</p>
+
+                    <h3>General Purpose</h3>
+                    <p>Balanced CPU-to-memory ratio. Good for testing, development, small to medium databases, and low-traffic web servers. The <strong>B-series</strong> (burstable) is popular for dev/test workloads because it accumulates credits during idle time and bursts when needed.</p>
+
+                    <h3>Compute Optimized</h3>
+                    <p>High CPU-to-memory ratio. Designed for batch processing, web servers with high traffic, gaming servers, and network appliances. The <strong>F-series</strong> is the main line here.</p>
+
+                    <h3>Memory Optimized</h3>
+                    <p>High memory-to-CPU ratio. For large databases, data analytics, and in-memory caches like Redis. The <strong>E-series</strong> and <strong>M-series</strong> are common choices.</p>
+
+                    <h3>Storage Optimized</h3>
+                    <p>High disk throughput and IOPS. For data warehouses, big data, and SQL Server workloads that need fast local storage. The <strong>L-series</strong> uses local NVMe disks for ultra-low latency.</p>
+
+                    <h3>GPU</h3>
+                    <p>Specialised for graphics rendering and machine learning training. The <strong>N-series</strong> includes NVIDIA GPUs. Used for video transcoding, 3D visualization, and model inference.</p>
+
+                    <h3>High Performance Compute (HPC)</h3>
+                    <p>Highest CPU performance with InfiniBand networking for tightly coupled parallel workloads. Used for scientific simulations, weather modelling, and computational fluid dynamics. The <strong>H-series</strong> is the main line.</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Family</th>
+                                <th>Use Case</th>
+                                <th>Example Sizes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>General Purpose</td>
+                                <td>Dev/test, web servers, small DBs</td>
+                                <td>B-series, D-series</td>
+                            </tr>
+                            <tr>
+                                <td>Compute Optimized</td>
+                                <td>Batch processing, high traffic web</td>
+                                <td>F-series</td>
+                            </tr>
+                            <tr>
+                                <td>Memory Optimized</td>
+                                <td>Large databases, analytics, cache</td>
+                                <td>E-series, M-series</td>
+                            </tr>
+                            <tr>
+                                <td>Storage Optimized</td>
+                                <td>Data warehousing, big data</td>
+                                <td>L-series</td>
+                            </tr>
+                            <tr>
+                                <td>GPU</td>
+                                <td>Rendering, ML training</td>
+                                <td>N-series</td>
+                            </tr>
+                            <tr>
+                                <td>HPC</td>
+                                <td>Scientific simulations, modelling</td>
+                                <td>H-series</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout callout-warning">
+                        <strong>Important:</strong> A VM's size determines its cost. Resizing a VM requires it to stop (deallocate). You cannot resize a running VM. When you deallocate, you stop paying for the compute but still pay for the attached storage.
+                    </div>
+
+                    <h2>Availability Options</h2>
+                    <p>This is one of the most heavily tested areas of AZ-900. Azure offers several ways to keep your VMs running during planned and unplanned events.</p>
+
+                    <h3>Availability Sets</h3>
+                    <p>An availability set spreads VMs across multiple physical hardware within a single data centre. It uses two constructs:</p>
+                    <ul>
+                        <li><strong>Fault domains:</strong> Groups of VMs that share the same power source and network switch. If a rack fails, only VMs in that fault domain go down. Azure gives you up to 3 fault domains per availability set.</li>
+                        <li><strong>Update domains:</strong> Groups of VMs that can be rebooted together during planned maintenance. Azure updates one update domain at a time, ensuring your app stays available. You get up to 20 update domains.</li>
+                    </ul>
+                    <p>Availability sets provide no SLA on their own, but they qualify your VMs for the 99.95% VM SLA when you deploy two or more VMs in the set.</p>
+
+                    <h3>Availability Zones</h3>
+                    <p>Availability Zones are physically separate data centres within an Azure region. Each zone has independent power, cooling, and networking. When you deploy VMs across multiple zones, you're protected against an entire data centre failure.</p>
+                    <ul>
+                        <li>Not every region supports availability zones</li>
+                        <li>Each region with zones has at least three zones</li>
+                        <li>Zonal VMs have a 99.99% SLA</li>
+                        <li>Cross-zone traffic incurs standard bandwidth charges</li>
+                    </ul>
+
+                    <h3>Virtual Machine Scale Sets</h3>
+                    <p>Scale sets let you deploy and manage a group of identical, load-balanced VMs. The number of VM instances can automatically increase or decrease based on CPU usage, memory pressure, or a schedule. This gives you built-in autoscaling and load balancing.</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Availability Set</th>
+                                <th>Availability Zone</th>
+                                <th>Scale Set</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Protects against</td>
+                                <td>Rack failure</td>
+                                <td>Data centre failure</td>
+                                <td>Rack failure + autoscaling</td>
+                            </tr>
+                            <tr>
+                                <td>SLA (2+ VMs)</td>
+                                <td>99.95%</td>
+                                <td>99.99%</td>
+                                <td>99.95% or 99.99%</td>
+                            </tr>
+                            <tr>
+                                <td>Autoscaling</td>
+                                <td>No</td>
+                                <td>No</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>Regional requirement</td>
+                                <td>None</td>
+                                <td>Zone-enabled region</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <td>Cost</td>
+                                <td>Free (feature)</td>
+                                <td>Free (feature)</td>
+                                <td>Free (feature)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>VM Storage</h2>
+                    <p>Each VM uses at least two disks: an OS disk (usually 127-128 GB) and a temporary disk. You can add additional data disks.</p>
+
+                    <h3>Disk Types</h3>
+                    <ul>
+                        <li><strong>Ultra Disk:</strong> Highest performance, sub-millisecond latency. For extreme I/O workloads.</li>
+                        <li><strong>Premium SSD v2:</strong> Next-gen SSD with per-GB IOPS and throughput config. Lower cost than Ultra but still high performance.</li>
+                        <li><strong>Premium SSD:</strong> Consistent low latency for production workloads.</li>
+                        <li><strong>Standard SSD:</strong> Affordable SSD for moderate I/O, dev/test.</li>
+                        <li><strong>Standard HDD:</strong> Slowest and cheapest. For backup, staging, infrequent access.</li>
+                    </ul>
+
+                    <h3>Important Disk Concepts for AZ-900</h3>
+                    <ul>
+                        <li><strong>Managed disks:</strong> Azure manages the storage account. You don't need to worry about storage account limits. This is the default and recommended option.</li>
+                        <li><strong>Disk snapshots:</strong> A point-in-time copy of a managed disk. Used for backups and migration.</li>
+                        <li><strong>Disk encryption:</strong> Azure Disk Encryption uses BitLocker (Windows) or DM-Crypt (Linux) to encrypt OS and data disks. Azure Storage Service Encryption encrypts disks at rest by default.</li>
+                    </ul>
+
+                    <h2>VM Pricing Models</h2>
+                    <p>AZ-900 tests your understanding of how to optimise VM costs.</p>
+
+                    <h3>Pay-as-you-go</h3>
+                    <p>You pay per second for compute time. No upfront commitment, no cancellation fee. Best for short-term, unpredictable workloads, dev/test environments, and workloads that cannot be interrupted.</p>
+
+                    <h3>Reserved Instances</h3>
+                    <p>You commit to 1 or 3 years in exchange for a discounted rate (up to 72% off pay-as-you-go). Best for steady-state, predictable workloads. If you stop using the VM, you still pay for the reservation. Payment options: upfront, monthly, or no upfront — the more you pay upfront, the bigger the discount.</p>
+
+                    <h3>Spot Instances</h3>
+                    <p>You get unused Azure capacity at a deep discount — up to 90% off. The catch: Azure can evict your VM with 30 seconds notice when it needs the capacity back. Perfect for batch processing, dev/test, and fault-tolerant workloads. Not suitable for production critical apps.</p>
+
+                    <h3>Azure Hybrid Benefit</h3>
+                    <p>If you already have Windows Server or SQL Server licenses with Software Assurance, you can use them in Azure and pay only the base compute rate. This can save up to 40% on Windows VMs.</p>
+
+                    <div class="callout callout-info">
+                        <strong>AZ-900 Tip:</strong> Scenario questions about cost optimisation are guaranteed. Know which pricing model fits which scenario: predictable workloads → Reserved Instances, flexible workloads → pay-as-you-go, fault-tolerant batch jobs → Spot.
+                    </div>
+
+                    <h2>VM vs Containers vs Serverless</h2>
+                    <p>The exam expects you to compare compute options and pick the right one for a given scenario.</p>
+
+                    <ul>
+                        <li><strong>Virtual Machines (IaaS):</strong> Full OS control, custom software, lift-and-shift. Highest responsibility.</li>
+                        <li><strong>Containers (ACI, AKS):</strong> Lightweight, fast startup, portable. Good for microservices, CI/CD, modern apps. You manage the container runtime but not the host OS.</li>
+                        <li><strong>Azure App Service (PaaS):</strong> Deploy web apps without managing servers. Handles auto-scaling, patching, load balancing. Good for web APIs, mobile backends.</li>
+                        <li><strong>Azure Functions (Serverless):</strong> Event-driven, pay-per-execution. Scales to zero when idle. Good for scheduled tasks, webhooks, message processing.</li>
+                    </ul>
+
+                    <h2>Common AZ-900 VM Scenarios</h2>
+                    <ul>
+                        <li><strong>Scenario 1:</strong> "You need full control over the OS and want to migrate an on-premises app without changes." <em>Answer: Azure VM.</em></li>
+                        <li><strong>Scenario 2:</strong> "You need high availability for a critical app across multiple data centres in a region." <em>Answer: Deploy VMs across availability zones.</em></li>
+                        <li><strong>Scenario 3:</strong> "You need automatic scaling for a stateless web app." <em>Answer: Virtual Machine Scale Sets.</em></li>
+                        <li><strong>Scenario 4:</strong> "You want the lowest cost for a batch processing job that can be interrupted." <em>Answer: Spot VMs.</em></li>
+                        <li><strong>Scenario 5:</strong> "You need to reduce costs for a 3-year production workload." <em>Answer: Reserved Instances.</em></li>
+                    </ul>
+
+                    <h2>What AZ-900 Expects You to Know</h2>
+                    <p>Here's the official exam objective checklist for compute:</p>
+
+                    <ul>
+                        <li>Describe virtual machine options — sizes, families, and when to use each</li>
+                        <li>Describe availability options — availability sets, availability zones, scale sets</li>
+                        <li>Describe VM pricing — pay-as-you-go, reserved, spot, hybrid benefit</li>
+                        <li>Compare VMs to other compute services — containers, App Service, Functions</li>
+                        <li>Understand managed disks and disk types</li>
+                        <li>Know the SLA commitments for single-VM, multi-VM, and zonal deployments</li>
+                    </ul>
+
+                    <p>If you can work through the scenarios above and explain the trade-offs between each option, you're ready for the compute section of AZ-900.</p>
+
+                    <div class="callout callout-info">
+                        <strong>Ready for the exam?</strong> Take our <a href="az-900-practice-test.html">AZ-900 Practice Test: 10 Free Questions</a> to check your knowledge, or visit the <a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/?practice-assessment-type=certification" target="_blank" rel="noopener">official Microsoft Learn AZ-900 page</a> for the full exam outline and free practice assessment.
+                    </div>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>What's the difference between stopping and deallocating a VM?</h3>
+                                <p>Stop (without deallocate) keeps the VM's resources reserved — you still pay for compute. Deallocate releases the hardware and stops compute charges. You only pay for storage. Stopping from the Azure Portal deallocates by default, but stopping from within the OS does not.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Can I change a VM's size after deployment?</h3>
+                                <p>Yes, but the VM must be stopped (deallocated). You can then select a new size, as long as the size is available in your region and your subscription has enough quota. B-series VMs have some restrictions on resizing to non-burstable families.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>How many VMs can I run for free?</h3>
+                                <p>The Azure free account includes 750 hours of B1s Windows VM and 750 hours of B1s Linux VM per month for 12 months. After that, you pay standard rates. The free tier does not include the 99.9% SLA — you need two or more VMs in an availability set or zone for SLA coverage.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#az-900</span>
+                        <span class="tag">#virtual-machines</span>
+                        <span class="tag">#compute</span>
+                        <span class="tag">#cloud</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
