@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZ-104 Practice Test - 10 Free Questions - SysOpsBits</title>
+    <meta name="description" content="Free AZ-104 practice test with 10 questions covering Azure identity, storage, compute, networking, and monitoring. Test your Azure Administrator knowledge.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/az-104-practice-test.html">
+    <meta property="og:title" content="AZ-104 Practice Test - 10 Free Questions - SysOpsBits">
+    <meta property="og:description" content="Free AZ-104 practice test covering identity, storage, compute, networking, and monitoring. Interactive quiz with detailed explanations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/az-104-practice-test.html">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-B67YJF8565');
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .quiz-progress {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .domain-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .domain-identity { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+        .domain-storage { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+        .domain-compute { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .domain-networking { background: rgba(6, 182, 212, 0.15); color: #06b6d4; }
+        .domain-monitoring { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+        .question-text {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+        .options-list li {
+            margin-bottom: 0.75rem;
+        }
+        .options-list label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+        .options-list label:hover {
+            border-color: var(--accent);
+            background: var(--bg-elevated);
+        }
+        .options-list label.selected {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+        .options-list label.correct {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+        .options-list label.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .options-list label.disabled {
+            cursor: default;
+            opacity: 0.85;
+        }
+        .options-list input[type="radio"] {
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+        }
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #000;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .btn-primary:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px var(--accent-glow);
+        }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover { background: var(--bg-card-hover); }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #fff;
+        }
+        .btn-success:hover { opacity: 0.9; }
+        .review-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            border-left: 4px solid;
+        }
+        .review-box.correct { background: rgba(34, 197, 94, 0.1); border-color: #22c55e; }
+        .review-box.incorrect { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
+        .review-box h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+        .review-box .explanation {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        .results-container {
+            text-align: center;
+        }
+        .results-score {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+        .results-score.pass { color: #22c55e; }
+        .results-score.fail { color: #ef4444; }
+        .results-pass-fail {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        .results-pass-fail.pass { color: #22c55e; }
+        .results-pass-fail.fail { color: #ef4444; }
+        .domain-breakdown {
+            text-align: left;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        .domain-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .domain-row:last-child { border-bottom: none; }
+        .domain-row .domain-name { font-weight: 500; color: var(--text-primary); }
+        .domain-row .domain-score { color: var(--text-secondary); }
+        .quiz-actions-center { justify-content: center; }
+        .retake-area { margin-top: 2rem; }
+        .section-header {
+            margin-bottom: 1rem;
+        }
+        .section-header h1 { margin-bottom: 0.5rem; }
+        .quiz-layout {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        .quiz-main {
+            flex: 1;
+            min-width: 0;
+        }
+        .quiz-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            position: sticky;
+            top: 1rem;
+        }
+        .quiz-sidebar h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .question-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        .question-nav-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .question-nav-btn:hover {
+            border-color: var(--accent);
+            background: var(--bg-elevated);
+        }
+        .question-nav-btn.active {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #000;
+        }
+        .question-nav-btn.answered {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+        .question-nav-btn.correct {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+        .question-nav-btn.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .question-nav-btn.answered.active,
+        .question-nav-btn.correct.active,
+        .question-nav-btn.incorrect.active {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            .quiz-layout {
+                flex-direction: column;
+            }
+            .quiz-sidebar {
+                width: 100%;
+                position: static;
+            }
+            .question-nav-grid {
+                grid-template-columns: repeat(10, 1fr);
+            }
+            .quiz-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <header class="section-header">
+                <h1>AZ-104 Practice Test</h1>
+                <p>10 questions covering Microsoft Azure Administrator (AZ-104) exam domains: Identity &amp; Governance, Storage, Compute, Networking, and Monitoring.</p>
+                <p class="section-stats">Passing score: <strong>70%</strong> | 10 questions</p>
+            </header>
+
+            <div class="post-featured-image">
+                <img src="../images/az-104.jpg" alt="AZ-104 Practice Test" loading="lazy" style="width:100%;border-radius:var(--radius-lg);margin-bottom:1.5rem;">
+            </div>
+
+            <div class="callout callout-tip" style="margin-bottom: 1.5rem; text-align: center; font-size: 0.95rem;">
+                Need more depth? Grab the <strong><a href="https://buymeacoffee.com/mattyhip/e/537655" target="_blank" rel="noopener">AZ-104 Exam Guide</a></strong> with practice questions, hands-on labs, and exam tips.
+            </div>
+
+            <div class="quiz-container" id="quiz-container">
+                <div class="quiz-layout">
+                    <div class="quiz-main">
+                        <div class="quiz-header">
+                            <span class="domain-badge" id="domain-badge">Identity & Governance</span>
+                            <span class="quiz-progress" id="quiz-progress">Question 1 of 10</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 10%"></div>
+                        </div>
+                        <div id="question-area"></div>
+                        <div id="review-area"></div>
+                        <div id="results-area" style="display:none"></div>
+                    </div>
+                    <aside class="quiz-sidebar" id="quiz-sidebar">
+                        <h3>Questions</h3>
+                        <div class="question-nav-grid" id="question-nav-grid"></div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+    <script>
+    const questions = [
+        { id: 1, domain: "Identity & Governance", question: "You need to grant a user permission to create virtual machines in a resource group, but prevent them from deleting any resources. Which built-in RBAC role should you assign?", options: ["Contributor", "Owner", "Virtual Machine Contributor", "User Access Administrator"], correct: 0, explanation: "The Contributor role allows creating and managing resources but cannot delegate permissions or delete resource groups. Owner has full access including RBAC management. Virtual Machine Contributor only covers VM operations, not the supporting resources (VNet, NIC, disks) needed for deployment. User Access Administrator manages access to resources." },
+
+        { id: 2, domain: "Identity & Governance", question: "Your organization has 15 Azure subscriptions across three departments. You need to enforce that all subscriptions use the same set of allowed VM SKUs. Which Azure feature should you use?", options: ["Azure Blueprints", "Azure Policy at the management group level", "RBAC assignments on each subscription", "Azure Resource Graph"], correct: 1, explanation: "Azure Policy can be assigned at the management group scope, and all subscriptions under that MG inherit the policy. This lets you enforce allowed VM SKUs across every subscription in one place. Azure Blueprints orchestrates policies, RBAC, and resource templates together. RBAC controls access, not configuration compliance. Resource Graph is a query tool, not an enforcement mechanism." },
+
+        { id: 3, domain: "Storage", question: "You deploy Azure Files for a line-of-business app that requires low-latency access from on-premises file servers over a private connection. The on-premises servers run Windows Server 2019. Which protocol should you use to mount the share?", options: ["SMB over QUIC", "NFS v4.1", "HTTPS with REST API", "Azure File Sync"], correct: 0, explanation: "SMB over QUIC provides low-latency SMB access to Azure Files from on-premises Windows clients over port 443, without needing a VPN or ExpressRoute. NFS is not supported with Windows Server. The REST API does not provide a mountable file system. Azure File Sync caches files on-premises but is designed for sync scenarios, not direct low-latency mounts over a private connection." },
+
+        { id: 4, domain: "Storage", question: "A storage account stores regulatory data that must be kept for seven years after creation. After seven years, the data must be deleted automatically. Which storage lifecycle management rule should you configure?", options: ["Delete blobs after 7 days from last modification", "Tier to archive after 7 years, then delete 30 days later", "Delete blobs 2555 days after creation", "Set a retention policy on a storage account"], correct: 2, explanation: "A lifecycle management rule with a 'Delete blob' action set to 2555 days after creation matches the seven-year retention requirement exactly. Tier to archive does not delete automatically (unless paired with a subsequent delete action). Seven days is too short. Retention policies on storage accounts prevent deletion — they do not trigger it." },
+
+        { id: 5, domain: "Compute", question: "You deploy a two-tier application across Azure VMs. The web tier needs to scale out during traffic spikes and scale in when demand drops, with no manual intervention. Which Azure service should you configure?", options: ["Virtual Machine Scale Sets with autoscale", "Availability Set with load balancer", "Azure App Service with manual scaling", "Azure Kubernetes Service with a single node pool"], correct: 0, explanation: "Virtual Machine Scale Sets (VMSS) with autoscale rules automatically adjust the number of VM instances based on CPU, memory, or custom metrics. An Availability Set provides high availability within a datacenter but does not scale. App Service auto-scales web apps, not VMs. AKS manages containers, not VMs — and a single node pool does not provide the VM-level autoscaling asked for here." },
+
+        { id: 6, domain: "Compute", question: "A critical database VM must remain available during planned Azure host maintenance. The VM runs on a single node and requires local disk storage. Which configuration ensures the VM stays running during host updates?", options: ["Deploy the VM in an Availability Set", "Deploy the VM in an Availability Zone", "Use Azure Site Recovery to replicate to another region", "Configure the VM with a reserved IP and managed disk"], correct: 0, explanation: "An Availability Set spreads VMs across multiple update and fault domains. During planned maintenance, Azure updates one update domain at a time, so VMs in other domains stay running. Availability Zones protect against datacenter failures, not host-level maintenance. Site Recovery is for disaster recovery. Reserved IP and managed disks do not affect host maintenance behavior." },
+
+        { id: 7, domain: "Networking", question: "You have two Azure VNets in the same region: VNet-A (10.0.0.0/16) and VNet-B (10.1.0.0/16). Each VNet contains a subnet named 'snet-app' (10.0.1.0/24 and 10.1.1.0/24). You need to enable direct connectivity between the two subnets using private IP addresses. What should you do?", options: ["Create a site-to-site VPN gateway between the VNets", "Configure VNet peering between VNet-A and VNet-B", "Deploy an Azure Load Balancer with backend pools from both VNets", "Add a route table on each subnet pointing to the other VNet's gateway"], correct: 1, explanation: "VNet peering connects two VNets using the Microsoft backbone, enabling direct private IP communication between resources in both VNets. The non-overlapping address ranges (10.0.0.0/16 and 10.1.0.0/16) make peering straightforward. A VPN gateway adds unnecessary latency and cost. A load balancer routes traffic, not connectivity. Route tables do not create connectivity unless a gateway or NVA exists." },
+
+        { id: 8, domain: "Networking", question: "You need to control inbound traffic to a subnet containing web servers. Only HTTP (80) and HTTPS (443) traffic from the internet should be allowed, and all other inbound traffic must be denied. What should you create and associate with the subnet?", options: ["Azure Firewall with an application rule", "A Network Security Group (NSG) allowing ports 80 and 443 from Any, and a default deny-all inbound rule", "Azure Front Door with WAF policy", "A route table with a default route to an NVA"], correct: 1, explanation: "An NSG associated with a subnet filters inbound traffic by rule. Add inbound rules to allow TCP 80 and 443 from Any (Internet), and the default NSG deny-all rule blocks everything else. Azure Firewall is a managed service better suited for outbound filtering and full inspection. Front Door is a global load balancer and WAF — overkill for basic subnet filtering. Route tables control routing, not access." },
+
+        { id: 9, domain: "Monitoring", question: "A web application on an Azure VM is running slowly. You need to identify whether the bottleneck is CPU, memory, disk I/O, or network utilization over the last 24 hours. Which tool should you use first?", options: ["Azure Monitor Metrics with VM Insights", "Azure Service Health", "Azure Advisor", "Azure Activity Log"], correct: 0, explanation: "VM Insights provides pre-configured charts and metrics for CPU, memory, disk, and network utilization. It surfaces performance bottlenecks quickly without manual metric configuration. Service Health tracks Azure platform incidents, not VM-level performance. Advisor gives optimization recommendations, not real-time troubleshooting data. Activity Log tracks control-plane operations (who created/deleted resources), not VM performance metrics." },
+
+        { id: 10, domain: "Monitoring", question: "You receive a critical alert when CPU on a production VM exceeds 90% for more than 5 minutes. You also need an email sent to the operations team when the alert triggers. Which Azure Monitor components must you configure?", options: ["A metric alert rule and an action group with an email action", "A log alert rule and a runbook action", "Service Health alerts and a webhook", "Azure Monitor Workbooks and a dashboard"], correct: 0, explanation: "A metric alert rule monitors the Percentage CPU metric and fires when the condition (over 90% for 5 minutes) is met. An action group linked to the alert sends the email notification to the operations team. A log alert would query Log Analytics — useful but not needed for CPU threshold alerts. Service Health alerts monitor Azure platform status. Workbooks and dashboards visualize data but do not send notifications." }
+    ];
+
+    const domainLabels = {
+        "Identity & Governance": "domain-identity",
+        "Storage": "domain-storage",
+        "Compute": "domain-compute",
+        "Networking": "domain-networking",
+        "Monitoring": "domain-monitoring"
+    };
+
+    let currentQ = 0;
+    let answers = new Array(questions.length).fill(null);
+    let reviewed = new Array(questions.length).fill(false);
+
+    function renderSidebar() {
+        const grid = document.getElementById("question-nav-grid");
+        grid.innerHTML = questions.map((q, i) => {
+            let cls = "question-nav-btn";
+            if (currentQ === i) cls += " active";
+            if (reviewed[i]) {
+                cls += answers[i] === q.correct ? " correct" : " incorrect";
+            } else if (answers[i] !== null) {
+                cls += " answered";
+            }
+            const label = answers[i] !== null ? "\u2713" : (i + 1);
+            return `<button class="${cls}" data-idx="${i}">${label}</button>`;
+        }).join("");
+
+        grid.querySelectorAll(".question-nav-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                goToQuestion(parseInt(this.dataset.idx));
+            });
+        });
+    }
+
+    function goToQuestion(idx) {
+        if (idx < 0 || idx >= questions.length) return;
+        currentQ = idx;
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQ];
+        const area = document.getElementById("question-area");
+        const reviewArea = document.getElementById("review-area");
+        const resultsArea = document.getElementById("results-area");
+
+        resultsArea.style.display = "none";
+        document.getElementById("domain-badge").textContent = q.domain;
+        document.getElementById("domain-badge").className = "domain-badge " + (domainLabels[q.domain] || "");
+        document.getElementById("quiz-progress").textContent = "Question " + (currentQ + 1) + " of " + questions.length;
+        document.getElementById("progress-fill").style.width = ((currentQ + 1) / questions.length * 100) + "%";
+
+        let optionsHtml = q.options.map((opt, i) => {
+            let labelClass = "";
+            if (reviewed[currentQ]) {
+                if (i === q.correct) labelClass = "correct disabled";
+                else if (i === answers[currentQ] && i !== q.correct) labelClass = "incorrect disabled";
+                else labelClass = "disabled";
+            } else if (answers[currentQ] === i) {
+                labelClass = "selected";
+            }
+            const checked = answers[currentQ] === i ? "checked" : "";
+            const disabled = reviewed[currentQ] ? "disabled" : "";
+            return `<li><label class="${labelClass}"><input type="radio" name="q" value="${i}" ${checked} ${disabled}> ${opt}</label></li>`;
+        }).join("");
+
+        area.innerHTML = `
+            <div class="question-text">${q.question}</div>
+            <ul class="options-list">${optionsHtml}</ul>
+            <div class="quiz-actions" id="quiz-actions">
+                <button class="btn btn-secondary" id="prev-btn" ${currentQ === 0 ? "disabled" : ""}>&larr; Back</button>
+                <button class="btn btn-secondary" id="review-btn" ${answers[currentQ] === null ? "disabled" : ""}>Review</button>
+                <button class="btn btn-primary" id="next-btn">${currentQ === questions.length - 1 ? "See Results" : "Next Question"}</button>
+            </div>
+        `;
+
+        reviewArea.innerHTML = "";
+        if (reviewed[currentQ]) {
+            const isCorrect = answers[currentQ] === q.correct;
+            reviewArea.innerHTML = `
+                <div class="review-box ${isCorrect ? 'correct' : 'incorrect'}">
+                    <h4>${isCorrect ? '\u2713 Correct' : '\u2717 Incorrect'}</h4>
+                    <div class="explanation"><strong>Correct answer:</strong> ${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}</div>
+                    <div class="explanation" style="margin-top:0.75rem"><strong>Explanation:</strong> ${q.explanation}</div>
+                </div>
+            `;
+        }
+
+        document.querySelectorAll('input[name="q"]').forEach(radio => {
+            radio.addEventListener("change", function() {
+                if (!reviewed[currentQ]) {
+                    answers[currentQ] = parseInt(this.value);
+                    document.getElementById("review-btn").disabled = false;
+                    document.querySelectorAll(".options-list label").forEach(l => l.classList.remove("selected"));
+                    this.closest("label").classList.add("selected");
+                    renderSidebar();
+                }
+            });
+        });
+
+        document.getElementById("review-btn").addEventListener("click", function() {
+            if (answers[currentQ] === null) return;
+            reviewed[currentQ] = true;
+            renderQuestion();
+        });
+
+        document.getElementById("next-btn").addEventListener("click", function() {
+            if (currentQ === questions.length - 1) {
+                showResults();
+            } else {
+                currentQ++;
+                renderQuestion();
+            }
+        });
+
+        document.getElementById("prev-btn").addEventListener("click", function() {
+            if (currentQ > 0) {
+                currentQ--;
+                renderQuestion();
+            }
+        });
+
+        renderSidebar();
+    }
+
+    function showResults() {
+        document.getElementById("question-area").innerHTML = "";
+        document.getElementById("review-area").innerHTML = "";
+        document.getElementById("quiz-sidebar").style.display = "none";
+        document.getElementById("results-area").style.display = "block";
+
+        const totalCorrect = answers.filter((a, i) => a === questions[i].correct).length;
+        const pct = Math.round(totalCorrect / questions.length * 100);
+        const passed = pct >= 70;
+
+        const domains = {};
+        questions.forEach((q, i) => {
+            if (!domains[q.domain]) domains[q.domain] = { correct: 0, total: 0 };
+            domains[q.domain].total++;
+            if (answers[i] === q.correct) domains[q.domain].correct++;
+        });
+
+        let domainHtml = Object.entries(domains).map(([name, d]) => {
+            const p = Math.round(d.correct / d.total * 100);
+            return `<div class="domain-row"><span class="domain-name">${name}</span><span class="domain-score">${d.correct}/${d.total} (${p}%)</span></div>`;
+        }).join("");
+
+        document.getElementById("results-area").innerHTML = `
+            <div class="results-container">
+                <h2>AZ-104 Practice Test Results</h2>
+                <div class="results-score ${passed ? 'pass' : 'fail'}">${pct}%</div>
+                <div class="results-pass-fail ${passed ? 'pass' : 'fail'}">${passed ? '\u2713 PASSED' : '\u2717 NOT PASSED'}</div>
+                <p>You answered <strong>${totalCorrect}</strong> out of <strong>${questions.length}</strong> questions correctly. Microsoft Azure Administrator (AZ-104) requires a passing score of approximately 70%.</p>
+                <div class="domain-breakdown">
+                    <h3>Domain Breakdown</h3>
+                    ${domainHtml}
+                </div>
+                <div class="retake-area">
+                    <button class="btn btn-success" onclick="location.reload()">Retake Test</button>
+                </div>
+                <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md); border: 1px solid rgba(245, 158, 11, 0.2);">
+                    <p style="margin: 0; font-size: 1rem;"><strong>Need more practice?</strong> Get the <a href="https://buymeacoffee.com/mattyhip/e/537655" target="_blank" rel="noopener">AZ-104 Exam Guide</a> with additional practice questions, hands-on labs, and exam tips.</p>
+                </div>
+            </div>
+        `;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderQuestion();
+    });
+    </script>
+</body>
+</html>
