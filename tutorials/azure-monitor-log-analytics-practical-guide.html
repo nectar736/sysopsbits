@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Monitor and Log Analytics: A Practical Guide for AZ-104 - SysOpsBits</title>
+    <meta name="description" content="Practical guide to Azure Monitor and Log Analytics for AZ-104. Covers workspaces, KQL, DCRs, alerts, action groups, workbooks, and cost management.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/azure-monitor-log-analytics-practical-guide.html">
+    <meta property="og:title" content="Azure Monitor and Log Analytics: A Practical Guide for AZ-104">
+    <meta property="og:description" content="Practical guide to Azure Monitor and Log Analytics for AZ-104. Covers workspaces, KQL, DCRs, alerts, action groups, workbooks, and cost management.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/azure-monitor-log-analytics-practical-guide.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/azure-monitor-log-analytics-guide.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-07-20">July 20, 2026</time>
+                    </div>
+                    <h1>Azure Monitor and Log Analytics: A Practical Guide for AZ-104</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/azure-monitor-log-analytics-guide.jpg" alt="Azure Monitor and Log Analytics Architecture" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>Monitoring is not optional in Azure. Every VM, database, and application generates telemetry, and you need a unified system to collect, query, and act on it. Azure Monitor is that system. Log Analytics is its data store.</p>
+                    <p>This guide covers the practical setup, querying, and alerting patterns that AZ-104 expects you to know for Domain 5 (Monitoring).</p>
+
+                    <h2>Azure Monitor Overview</h2>
+                    <p>Azure Monitor collects, analyzes, and responds to telemetry from Azure resources, on-premises infrastructure, and third-party services. It has two data platforms:</p>
+                    <ul>
+                        <li><strong>Metrics</strong> - Numeric time-series data (CPU percentage, disk IOPS, HTTP 4xx count). Stored for 93 days by default. Supports near-real-time alerting at 1-minute granularity.</li>
+                        <li><strong>Logs</strong> - All other telemetry including application traces, audit events, performance counters, and custom data. Stored in a Log Analytics workspace. Retention is configurable from 30 days to 730 days for interactive retention, plus up to 12 years for long-term retention.</li>
+                    </ul>
+
+                    <div class="callout callout-info">
+                        <strong>AZ-104 Tip:</strong> Metrics are best for real-time dashboards and quick threshold alerts (CPU > 90%). Logs are best for troubleshooting, correlation across resources, and custom queries. Know when to use each.
+                    </div>
+
+                    <h2>Log Analytics Workspace</h2>
+                    <p>A Log Analytics workspace is a container for log data. Every Azure subscription can have multiple workspaces. The workspace is both a storage boundary and a security boundary - cross-workspace queries are possible but require explicit configuration.</p>
+
+                    <h3>Creating a Workspace</h3>
+                    <pre><code># Create a Log Analytics workspace with PowerShell
+$workspace = @{
+    Name              = "la-prod-eastus-001"
+    ResourceGroupName = "rg-monitoring"
+    Location          = "EastUS"
+    Sku               = "PerGB2018"
+    RetentionInDays   = 365
+}
+
+New-AzOperationalInsightsWorkspace @workspace
+
+# Create with Azure CLI
+az monitor log-analytics workspace create \
+    --resource-group rg-monitoring \
+    --workspace-name la-prod-eastus-001 \
+    --location eastus \
+    --sku PerGB2018 \
+    --retention-time 365</code></pre>
+
+                    <h3>Table Plans and Retention</h3>
+                    <p>Log Analytics tables support two plans. The plan determines the cost structure and available features.</p>
+                    <ul>
+                        <li><strong>Analytics</strong> (default) - Full KQL query capability, near real-time ingestion, interactive retention up to 730 days. You pay for data ingested.</li>
+                        <li><strong>Basic</strong> - Lower ingestion cost, lower query frequency, 30-day interactive retention. Best for verbose debug logs that you rarely query.</li>
+                    </ul>
+                    <p>After interactive retention expires, you can configure long-term retention up to 12 years. Data moves to a low-cost archive tier with 30-day restoration windows.</p>
+
+                    <h2>Data Collection</h2>
+                    <p>There are three main paths for getting data into Log Analytics. AZ-104 expects you to know when to use each.</p>
+
+                    <h3>1. Diagnostic Settings</h3>
+                    <p>Diagnostic settings capture platform logs and metrics from Azure resources. They are configured per-resource and can stream to Log Analytics, Storage Account, Event Hubs, or a partner integration.</p>
+
+                    <pre><code># Enable diagnostic settings for a VM
+$settings = @{
+    Name                = "vm-diagnostics-to-la"
+    ResourceId          = (Get-AzVM -Name web01 -ResourceGroupName rg-prod).Id
+    WorkspaceId         = (Get-AzOperationalInsightsWorkspace -Name la-prod-eastus-001).ResourceId
+    Enabled             = $true
+}
+
+Set-AzDiagnosticSetting @settings
+
+# Azure CLI equivalent
+az monitor diagnostic-settings create \
+    --name "vm-diagnostics-to-la" \
+    --resource "/subscriptions/.../resourceGroups/rg-prod/providers/Microsoft.Compute/virtualMachines/web01" \
+    --workspace "la-prod-eastus-001" \
+    --logs '[{"category":"Administrative","enabled":true}]' \
+    --metrics '[{"category":"AllMetrics","enabled":true}]'</code></pre>
+
+                    <h3>2. Azure Monitor Agent (AMA)</h3>
+                    <p>The Azure Monitor Agent collects OS-level logs and performance counters from VMs. It replaces the legacy Log Analytics Agent (MMA/OMS). The AMA uses Data Collection Rules (DCRs) to define what to collect and where to send it.</p>
+
+                    <pre><code># Create a DCR for collecting Windows event logs
+$dcrBody = @"
+{
+    "properties": {
+        "dataSources": {
+            "performanceCounters": [
+                {
+                    "name": "perfCounter1",
+                    "streams": ["Microsoft-Perf"],
+                    "samplingFrequencyInSeconds": 60,
+                    "counterSpecifiers": [
+                        "\\Processor(_Total)\\% Processor Time",
+                        "\\Memory\\Available MBytes",
+                        "\\LogicalDisk(_Total)\\% Free Space"
+                    ]
+                }
+            ],
+            "windowsEventLogs": [
+                {
+                    "name": "eventLogs1",
+                    "streams": ["Microsoft-Event"],
+                    "xPathQueries": [
+                        "System!*[System[(Level=1 or Level=2 or Level=3)]]",
+                        "Application!*[System[(Level=1 or Level=2 or Level=3)]]"
+                    ]
+                }
+            ]
+        },
+        "destinations": {
+            "logAnalytics": [
+                {
+                    "workspaceResourceId": "/subscriptions/.../resourcegroups/rg-monitoring/providers/microsoft.operationalinsights/workspaces/la-prod-eastus-001",
+                    "name": "la-destination"
+                }
+            ]
+        },
+        "dataFlows": [
+            {
+                "streams": ["Microsoft-Perf", "Microsoft-Event"],
+                "destinations": ["la-destination"]
+            }
+        ]
+    }
+}
+"@
+
+$dcrBody | Out-File dcr-win-vms.json
+New-AzDataCollectionRule `
+    -ResourceGroupName rg-monitoring `
+    -Name "dcr-windows-vms" `
+    -Location eastus `
+    -RuleFile dcr-win-vms.json</code></pre>
+
+                    <h3>3. Logs Ingestion API</h3>
+                    <p>For custom or third-party data, use the Logs Ingestion API. You create a DCR with a JSON schema, then send data over HTTPS with Azure AD authentication. This supports custom tables and custom JSON payloads.</p>
+
+                    <h2>Kusto Query Language (KQL)</h2>
+                    <p>KQL is the query language for Log Analytics. AZ-104 expects you to read and interpret basic KQL queries, not write complex ones. These patterns cover the scenarios you will see.</p>
+
+                    <h3>Basic Queries</h3>
+                    <pre><code>// Get the last 100 errors from a specific VM
+Event
+| where Computer == "web01.contoso.com"
+| where EventLevelName == "Error"
+| project TimeGenerated, Computer, EventID, Message
+| take 100
+
+// Show CPU usage trends for all VMs over the last hour
+Perf
+| where CounterName == "% Processor Time"
+| where TimeGenerated > ago(1h)
+| summarize avg(CounterValue) by Computer, bin(TimeGenerated, 5m)
+| render timechart
+
+// Count failed logon attempts per user
+SecurityEvent
+| where EventID == 4625
+| where TimeGenerated > ago(24h)
+| summarize FailedLogons = count() by TargetUserName
+| top 10 by FailedLogons desc
+
+// Billable data by table
+Usage
+| where TimeGenerated > ago(24h)
+| where IsBillable == true
+| summarize BillableGB = sum(Quantity) by DataType
+| sort by BillableGB desc</code></pre>
+
+                    <h3>Creating Alert Rules from Queries</h3>
+                    <pre><code>// Alert when billable data exceeds 50 GB in 24 hours
+Usage
+| where TimeGenerated > ago(24h)
+| where IsBillable == true
+| summarize TotalBillableGB = sum(Quantity)
+| where TotalBillableGB > 50</code></pre>
+
+                    <h2>Alerts and Action Groups</h2>
+                    <p>An alert rule monitors a data source (metric or log query) and fires when conditions are met. When an alert fires, it triggers one or more action groups.</p>
+
+                    <h3>Action Groups</h3>
+                    <p>An action group defines how to notify operators and whether to run automated responses. Each action group can include multiple action types:</p>
+                    <ul>
+                        <li><strong>Email/SMS/Push/Voice</strong> - Direct notifications. Up to 10 email addresses, 10 SMS numbers.</li>
+                        <li><strong>Webhook</strong> - HTTP POST to a URL. Supports secure webhooks with Azure AD authentication.</li>
+                        <li><strong>ITSM Connector</strong> - Creates incidents in ServiceNow, Cherwell, or other ITSM systems.</li>
+                        <li><strong>Automation Runbook</strong> - Runs an Azure Automation runbook to auto-remediate.</li>
+                        <li><strong>Azure Function</strong> - Invokes a serverless function.</li>
+                        <li><strong>Logic App</strong> - Triggers a workflow with conditional logic.</li>
+                        <li><strong>Event Hubs</strong> - Streams the alert to a SIEM or custom integration.</li>
+                    </ul>
+
+                    <pre><code># Create an action group with email and webhook
+$actionGroup = @{
+    Name                = "ag-oncall-prod"
+    ResourceGroupName   = "rg-monitoring"
+    ShortName           = "oncall-prod"
+    EmailReceiver       = @(
+        @{
+            Name          = "oncall-email"
+            EmailAddress  = "oncall@contoso.com"
+        }
+    )
+    WebhookReceiver     = @(
+        @{
+            Name            = "pagerduty-webhook"
+            ServiceUri      = "https://events.pagerduty.com/integration/..."
+            UseCommonAlertSchema = $true
+        }
+    )
+}
+
+New-AzActionGroup @actionGroup
+
+# Create a log search alert
+$alert = @{
+    Name                = "alert-high-cpu"
+    ResourceGroupName   = "rg-monitoring"
+    ActionGroupId       = (Get-AzActionGroup -Name "ag-oncall-prod").Id
+    Condition           = @{
+        Query           = "Perf | where CounterName == '% Processor Time' | where CounterValue > 90"
+        TimeGranularity = "PT5M"
+        Frequency       = "PT5M"
+        Threshold       = 5
+    }
+    Description         = "Alert when CPU > 90% for 5 consecutive minutes"
+    Enabled             = $true
+}
+
+New-AzScheduledQueryRule @alert</code></pre>
+
+                    <h2>Workbooks and Dashboards</h2>
+                    <p>Azure Monitor Workbooks are interactive reports built on KQL queries. They combine text, charts, grids, and parameters into reusable monitoring templates. Common use cases include:</p>
+                    <ul>
+                        <li>VM performance overview with selectable time ranges</li>
+                        <li>Failed request analysis across application components</li>
+                        <li>Cost and usage breakdown by workspace</li>
+                        <li>Availability reports with SLA calculations</li>
+                    </ul>
+                    <p>Workbooks can be pinned to Azure dashboards and shared across teams. You can also export them as ARM templates for version control.</p>
+
+                    <h2>Cost Management</h2>
+                    <p>Log Analytics costs come from two sources: data ingestion and data retention. Pay-as-you-go pricing is approximately $2.76 per GB ingested for Analytics tables, with lower rates for Basic tables.</p>
+
+                    <h3>Controlling Costs</h3>
+                    <ul>
+                        <li><strong>Set a daily cap</strong> - Stops data collection when the cap is reached. Does not retroactively delete data. Use this as a safety net, not a budget tool.</li>
+                        <li><strong>Use Basic tables</strong> - Route high-volume debug logs to Basic tables instead of Analytics tables.</li>
+                        <li><strong>Workspace transformations</strong> - Filter out unwanted data at ingestion time using a KQL transformation. This is the most powerful cost control because you never store data you do not need.</li>
+                        <li><strong>Set appropriate retention</strong> - Most compliance requirements are 90-365 days. Do not use 730-day retention for high-volume tables unless required.</li>
+                    </ul>
+
+                    <pre><code># Set daily cap for a workspace
+$workspace = Get-AzOperationalInsightsWorkspace `
+    -Name la-prod-eastus-001 `
+    -ResourceGroupName rg-monitoring
+
+$workspace | Set-AzOperationalInsightsWorkspace `
+    -DailyQuotaGb 10
+
+# Check current usage
+Usage
+| where TimeGenerated > ago(24h)
+| where IsBillable == true
+| summarize BillableGB = sum(Quantity) by DataType
+| sort by BillableGB desc
+
+# Azure CLI equivalent for daily cap
+az monitor log-analytics workspace update \
+    --resource-group rg-monitoring \
+    --workspace-name la-prod-eastus-001 \
+    --daily-quota-gb 10</code></pre>
+
+                    <div class="callout callout-warning">
+                        <strong>Warning:</strong> The daily cap stops all data ingestion, including security logs and event data. If you have compliance requirements, set the cap higher than your expected usage rather than using it as a strict budget. Workspace transformations are a safer cost control mechanism.
+                    </div>
+
+                    <h2>How AZ-104 Tests Monitoring</h2>
+                    <p>Domain 5 (Monitoring) of the AZ-104 exam covers Azure Monitor through multiple question types:</p>
+                    <ul>
+                        <li>"You need to collect performance data from 50 VMs. What should you use?" - Azure Monitor Agent with a DCR.</li>
+                        <li>"How do you send activity logs to Log Analytics?" - Diagnostic settings on the subscription.</li>
+                        <li>"You need to be notified when CPU exceeds 90%." - A metric alert with an action group.</li>
+                        <li>"Your Log Analytics costs are too high. What should you do?" - Workspace transformation or Basic table plan.</li>
+                        <li>"How do you create a custom dashboard for your application?" - Azure Monitor Workbooks.</li>
+                        <li>"What is the difference between a metric and a log?" - Metrics are numeric time-series; logs contain structured text data.</li>
+                    </ul>
+                    <p>AZ-104 tests your understanding of Azure Monitor architecture, Log Analytics workspaces, and alert configuration. Our <a href="https://buymeacoffee.com/mattyhip/e/538078" target="_blank" rel="noopener">AZ-104 practice test</a> includes monitoring scenario questions that mirror the exam format with detailed explanations.</p>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>What is the difference between Azure Monitor Metrics and Logs?</h3>
+                                <p>Metrics store numeric time-series data with 93-day retention. They support near-real-time alerting at 1-minute frequency. Logs store all other telemetry in a Log Analytics workspace with configurable retention. Metrics are for fast dashboards and threshold alerts. Logs are for detailed troubleshooting and cross-resource queries.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>How do I send Azure platform logs to Log Analytics?</h3>
+                                <p>Configure diagnostic settings at the resource level. Each Azure resource type supports different log categories. You can send the same data to multiple destinations including Log Analytics, Storage Account, and Event Hubs.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What is a Data Collection Rule?</h3>
+                                <p>A DCR defines what data to collect from a VM (performance counters, event logs), how to transform it, and where to send it. The Azure Monitor Agent uses DCRs for configuration. DCRs can also apply workspace-level transformations for filtering data at ingestion time.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>How long does Log Analytics retain data?</h3>
+                                <p>Interactive retention is 30-730 days depending on the table plan. Long-term retention extends up to 12 years with data stored in an archive tier that requires a 30-day restoration window before querying.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Can I query across multiple Log Analytics workspaces?</h3>
+                                <p>Yes. Use the <code>workspace()</code> expression in KQL to include tables from another workspace. You need read access on the workspace you are querying.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#monitor</span>
+                        <span class="tag">#loganalytics</span>
+                        <span class="tag">#az104</span>
+                        <span class="tag">#kql</span>
+                        <span class="tag">#monitoring</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

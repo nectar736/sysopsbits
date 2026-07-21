@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure RBAC vs Entra ID Roles: What AZ-104 Expects You to Know - SysOpsBits</title>
+    <meta name="description" content="Compare Azure RBAC and Microsoft Entra ID roles. Learn the scope hierarchy, built-in roles, custom roles, PIM integration, and classic admin retirement for AZ-104.">
+    
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/azure-rbac-vs-entra-id-roles.html">
+    <meta property="og:title" content="Azure RBAC vs Entra ID Roles: What AZ-104 Expects You to Know">
+    <meta property="og:description" content="Compare Azure RBAC and Microsoft Entra ID roles. Learn the scope hierarchy, built-in roles, custom roles, PIM integration, and classic admin retirement for AZ-104.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/azure-rbac-vs-entra-id-roles.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/azure-rbac-vs-entra-id-roles.jpg">
+    
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B67YJF8565');
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
+     crossorigin="anonymous"></script></head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-07-18">July 18, 2026</time>
+                    </div>
+                    <h1>Azure RBAC vs Entra ID Roles: What AZ-104 Expects You to Know</h1>
+                    <div class="post-featured-image">
+                        <img src="../images/azure-rbac-vs-entra-id-roles.jpg" alt="Azure RBAC vs Entra ID Roles Comparison" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <p>If you are studying for the AZ-104 exam or managing Azure day-to-day, the difference between Azure RBAC and Entra ID roles is one of the most confusing concepts to nail down. Both control access. Both use roles. They share a portal and some terminology. But they are completely separate authorization systems.</p>
+                    <p>This guide breaks down exactly what each system controls, where they overlap, and what AZ-104 expects you to know.</p>
+
+                    <h2>What Each System Controls</h2>
+                    <p>Azure RBAC (Role-Based Access Control) governs access to Azure resources through Azure Resource Manager. That includes VMs, storage accounts, virtual networks, subscriptions, and resource groups. It is the authorization system that answers: "Who can create, read, update, or delete this Azure resource?"</p>
+                    <p>Entra ID roles (formerly Azure AD roles) govern access to Microsoft Entra ID itself and some Microsoft 365 services. These roles control who can manage users, groups, applications, conditional access policies, and security settings inside the Entra ID tenant. They answer: "Who can modify this user account or this application registration?"</p>
+                    <p>Both systems use different underlying APIs. Azure RBAC operates through Azure Resource Manager. Entra ID roles operate through Microsoft Graph. A role assignment in one system has no effect in the other.</p>
+
+                    <div class="callout callout-info">
+                        <strong>Key Point for AZ-104:</strong> Azure RBAC and Entra ID roles are independent. You need to understand both to pass Domain 1 (Identity). Expect scenario questions that test whether you know which role type applies to which resource.
+                    </div>
+
+                    <h2>Scope Hierarchy</h2>
+                    <p>The scope at which you assign a role fundamentally affects its impact. The two systems use different scope models.</p>
+
+                    <h3>Azure RBAC Scopes</h3>
+                    <p>Azure RBAC supports four scope levels. Assignments flow downward through the hierarchy unless overridden.</p>
+                    <ul>
+                        <li><strong>Management Group</strong> - A container for subscriptions. Role assignments here apply to all subscriptions within the management group.</li>
+                        <li><strong>Subscription</strong> - The most common scope for broad assignments. Applies to all resource groups and resources in the subscription.</li>
+                        <li><strong>Resource Group</strong> - Applies only to resources within that group.</li>
+                        <li><strong>Resource</strong> - The most granular scope. Applies to a single resource like a specific VM or storage account.</li>
+                    </ul>
+
+                    <h3>Entra ID Scopes</h3>
+                    <p>Entra ID roles use a different scope model with three options:</p>
+                    <ul>
+                        <li><strong>Tenant-wide (Org-wide)</strong> - The default scope. Applies to all users, groups, apps, and settings in the tenant. Roles like Global Administrator use this scope.</li>
+                        <li><strong>Administrative Unit</strong> - A subset of users, groups, and devices. You create administrative units (AUs) to delegate management of specific departments or regions without granting tenant-wide permissions.</li>
+                        <li><strong>Application (for app management roles)</strong> - Some roles can be scoped to a single application registration or enterprise application.</li>
+                    </ul>
+
+                    <h2>Fundamental Azure RBAC Roles</h2>
+                    <p>AZ-104 tests on these four built-in roles heavily. You must know what each can do.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                                <th>Full Access</th>
+                                <th>Create Resources</th>
+                                <th>Read Only</th>
+                                <th>Manage Access</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Owner</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>Contributor</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>No</td>
+                            </tr>
+                            <tr>
+                                <td>Reader</td>
+                                <td>No</td>
+                                <td>No</td>
+                                <td>Yes</td>
+                                <td>No</td>
+                            </tr>
+                            <tr>
+                                <td>User Access Administrator</td>
+                                <td>No</td>
+                                <td>No</td>
+                                <td>No</td>
+                                <td>Yes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>Owner and User Access Administrator can grant access to others, which is why they are considered privileged roles. AZ-104 questions frequently test the distinction between Contributor and Owner - the single difference is the ability to manage role assignments.</p>
+
+                    <h2>Key Entra ID Roles</h2>
+                    <p>Entra ID has 60+ built-in roles. AZ-104 focuses on these:</p>
+                    <ul>
+                        <li><strong>Global Administrator</strong> - Full access to all Entra ID features and Microsoft 365 services (Exchange Online, SharePoint Online, Microsoft Entra). Can also elevate to Azure RBAC access.</li>
+                        <li><strong>User Administrator</strong> - Can create and manage users and groups, reset passwords, and manage support tickets. Cannot modify conditional access or app registrations.</li>
+                        <li><strong>Billing Administrator</strong> - Can make purchases, manage subscriptions, and view billing. No user management or security access.</li>
+                    </ul>
+
+                    <div class="callout callout-warning">
+                        <strong>Important for AZ-104:</strong> A Global Administrator does NOT automatically have access to Azure resources. They only have tenant-level access to Entra ID and Microsoft 365. To access Azure resources, they must either be assigned an Azure RBAC role or use the "Access management for Azure resources" elevation feature.
+                    </div>
+
+                    <h2>The Overlap: Where They Meet</h2>
+                    <p>By default, Azure RBAC and Entra ID roles operate completely independently. There is exactly one bridge: the Global Administrator can enable the "Access management for Azure resources" toggle in the Azure portal. This assigns them the Azure RBAC User Access Administrator role at the tenant root scope, giving them access to all subscriptions in the tenant.</p>
+                    <p>This is often used to recover a tenant when all other administrators have been locked out. Once you enable this toggle, you can assign other Azure RBAC roles at the top-level management group or individual subscription.</p>
+                    <p>AZ-104 exam questions test this scenario regularly. Expect a question where someone is a Global Administrator but cannot see VMs in a subscription - the answer is always that Entra ID roles do not grant Azure resource access by default.</p>
+
+                    <h3>Classic Subscription Administrator Retirement</h3>
+                    <p>Before Azure RBAC existed, Azure used three classic administrator roles: Account Administrator, Service Administrator, and Co-Administrator. These roles have been deprecated.</p>
+                    <ul>
+                        <li><strong>Account Administrator</strong> - The billing owner. Has full access to all subscriptions in the account. Retired August 2024.</li>
+                        <li><strong>Service Administrator</strong> - Has Contributor-level access to the subscription. Equivalent to Owner but without role management.</li>
+                        <li><strong>Co-Administrator</strong> - Same as Service Administrator but assigned per-subscription.</li>
+                    </ul>
+                    <p>As of May 2026, all classic administrator roles are fully retired. You must use Azure RBAC roles instead. If you have legacy processes depending on these roles, migrate them to Owner or Contributor role assignments immediately.</p>
+
+                    <h2>Custom Roles</h2>
+                    <p>Both systems support custom roles for when built-in roles do not provide the right level of access.</p>
+
+                    <h3>Azure RBAC Custom Roles</h3>
+                    <p>Azure RBAC custom roles are JSON-defined collections of Resource Provider operations. Each operation takes the form <code>Microsoft.Compute/virtualMachines/read</code> or uses wildcards like <code>Microsoft.Compute/*/read</code>. You can assign a custom role at any scope.</p>
+                    <p>The tenant limit is 5,000 custom roles. Each role can include assignableScopes to restrict where it is available.</p>
+
+                    <pre><code># Create a custom Azure RBAC role that allows starting and stopping VMs only
+$customRole = @"
+{
+    "Name": "VM Operator (Start/Stop)",
+    "Description": "Can start and stop virtual machines",
+    "Actions": [
+        "Microsoft.Compute/virtualMachines/start/action",
+        "Microsoft.Compute/virtualMachines/deallocate/action",
+        "Microsoft.Compute/virtualMachines/read",
+        "Microsoft.Compute/virtualMachines/instanceView/read"
+    ],
+    "NotActions": [],
+    "AssignableScopes": ["/subscriptions/00000000-0000-0000-0000-000000000000"]
+}
+"@
+
+$customRole | Out-File vmOperatorRole.json
+New-AzRoleDefinition -InputFile vmOperatorRole.json
+
+# Assign the custom role at resource group scope
+New-AzRoleAssignment `
+    -SignInName user@contoso.com `
+    -RoleDefinitionName "VM Operator (Start/Stop)" `
+    -ResourceGroupName prodVMs</code></pre>
+
+                    <h3>Entra ID Custom Roles</h3>
+                    <p>Entra ID custom roles are defined using a JSON template with permissions scoped to Microsoft Graph directory permissions. They can be assigned at tenant scope, administrative unit scope, or application scope.</p>
+
+                    <pre><code># Create a custom Entra ID role
+$customEntraRole = @"
+{
+    "displayName": "Helpdesk (Limited Password Reset)",
+    "description": "Can reset passwords for users in assigned AU only",
+    "permissions": [
+        "microsoft.directory/users/password/update"
+    ],
+    "allowedPrincipalTypes": ["User"],
+    "version": 1
+}
+"@
+
+$customEntraRole | Out-File helpdeskRole.json
+
+# Apply requires Microsoft Graph PowerShell
+Connect-MgGraph -Scopes "RoleManagement.ReadWrite.Directory"
+New-MgRoleManagementDirectoryRoleDefinition `
+    -DisplayName "Helpdesk (Limited Password Reset)" `
+    -Description "Can reset passwords for users in assigned AU only" `
+    -RolePermissions @(@{AllowedResourceActions=@("microsoft.directory/users/password/update")})</code></pre>
+
+                    <h2>Privileged Identity Management (PIM)</h2>
+                    <p>Both Azure RBAC and Entra ID roles integrate with Microsoft Entra Privileged Identity Management (PIM). PIM provides just-in-time activation of privileged roles, requiring approval and multi-factor authentication before a user gains elevated permissions.</p>
+                    <p>For Azure RBAC roles, PIM supports time-bound assignments to roles like Owner or Contributor at subscription or resource group scope. For Entra ID roles, PIM supports the same for Global Administrator, User Administrator, and other directory roles.</p>
+                    <p>AZ-104 expects you to know that PIM can be used for both role types, and that it supports both permanent assignments and eligible (time-bound) assignments.</p>
+
+                    <h2>Attribute-Based Access Control (ABAC)</h2>
+                    <p>ABAC extends Azure RBAC by adding conditions to role assignments. Instead of granting blanket access, you can restrict access based on resource or request attributes such as tags, IP address ranges, or the caller's principal type.</p>
+                    <p>For example, you can grant Contributor access but only for resources tagged <code>Environment=Development</code>, or grant read access only from a specific IP range.</p>
+
+                    <pre><code># Assign Contributor role with ABAC condition (tag-based)
+$condition = @"
+(
+    (
+        !(ActionMatches{'Microsoft.Resources/tags/write'})
+    )
+    OR
+    (
+        @Request[Microsoft.Resources/tags/subscriptions/security/status] eq 'Development'
+    )
+)
+"@
+
+New-AzRoleAssignment `
+    -SignInName user@contoso.com `
+    -RoleDefinitionName Contributor `
+    -ResourceGroupName myRG `
+    -Condition $condition `
+    -ConditionVersion "2.0"</code></pre>
+
+                    <h2>Practical PowerShell and CLI Commands</h2>
+                    <p>You will need these for both the AZ-104 exam and real administration.</p>
+
+                    <h3>Azure RBAC</h3>
+                    <pre><code># List all role assignments for a user (Az PowerShell)
+Get-AzRoleAssignment -SignInName user@contoso.com
+
+# List all role definitions
+Get-AzRoleDefinition | Select Name, IsCustom
+
+# Assign Reader role at subscription scope (Azure CLI)
+az role assignment create \
+    --assignee user@contoso.com \
+    --role Reader \
+    --scope /subscriptions/00000000-0000-0000-0000-000000000000
+
+# Check effective permissions (Azure CLI)
+az role assignment list \
+    --assignee user@contoso.com \
+    --all \
+    --output table
+
+# Remove a role assignment
+Remove-AzRoleAssignment \
+    -SignInName user@contoso.com \
+    -RoleDefinitionName Reader \
+    -ResourceGroupName myRG</code></pre>
+
+                    <h3>Entra ID Roles</h3>
+                    <pre><code># List all Entra ID role assignments (Microsoft Graph)
+Connect-MgGraph -Scopes "RoleManagement.Read.All"
+Get-MgRoleManagementDirectoryRoleAssignment | `
+    Format-Table -AutoSize
+
+# Assign a role to a user
+$roleId = "f2ef992c-3afb-46b9-b7cf-a126efb6a4b2" # User Administrator
+$userId = "user@contoso.com"
+
+New-MgRoleManagementDirectoryRoleAssignment `
+    -PrincipalId $userId `
+    -RoleDefinitionId $roleId `
+    -DirectoryScopeId "/"
+
+# Get your own directory role memberships
+az rest --method GET \
+    --uri "https://graph.microsoft.com/v1.0/me/memberOf"</code></pre>
+
+                    <h2>How AZ-104 Tests This</h2>
+                    <p>Domain 1 (Identity) of the AZ-104 exam covers Azure RBAC and Entra ID roles through scenario-based questions. Expect these question types:</p>
+                    <ul>
+                        <li>"A user is a Global Administrator but cannot see VMs in a subscription. What is the issue?" - Entra ID roles do not grant Azure RBAC access.</li>
+                        <li>"A user needs to create VMs but not manage access for others. Which role?" - Contributor.</li>
+                        <li>"You need to delegate user management for the Sales department only. What should you use?" - An administrative unit with the User Administrator role scoped to it.</li>
+                        <li>"You need to grant someone access to all resources in multiple subscriptions. What scope?" - Management group.</li>
+                        <li>"Your organization uses classic Co-Administrators. What should you do?" - Migrate to Azure RBAC roles.</li>
+                        <li>"You need users to approve role activation requests. What should you use?" - PIM (Privileged Identity Management).</li>
+                    </ul>
+                    <p>This topic is tested heavily in AZ-104 Domain 1. Our <a href="https://buymeacoffee.com/mattyhip/e/538078" target="_blank" rel="noopener">AZ-104 practice test</a> covers 50+ RBAC scenario questions across all five domains, including detailed explanations for every answer.</p>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Can an Entra ID Global Administrator access Azure resources?</h3>
+                                <p>No, not by default. They must either enable the "Access management for Azure resources" toggle (which grants User Access Administrator at tenant root scope) or be assigned an Azure RBAC role directly.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What is the difference between Owner and Contributor?</h3>
+                                <p>Owner can delegate access to others (manage role assignments). Contributor has the same resource permissions as Owner but cannot grant access to anyone else.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>How many Azure RBAC custom roles can I create?</h3>
+                                <p>Up to 5,000 per tenant. Each custom role can be scoped to specific subscriptions or management groups via AssignableScopes.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Are classic administrator roles still in use?</h3>
+                                <p>No. Account Administrator, Service Administrator, and Co-Administrator were retired in August 2024 and fully removed in May 2026. Use Azure RBAC roles instead.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What is the difference between an administrative unit and a management group?</h3>
+                                <p>An administrative unit is an Entra ID construct used to scope Entra ID role assignments to a subset of users, groups, or devices. A management group is an Azure RBAC construct used to organize subscriptions for policy and access management. They operate in different layers.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#rbac</span>
+                        <span class="tag">#entraid</span>
+                        <span class="tag">#az104</span>
+                        <span class="tag">#identity</span>
+                        <span class="tag">#security</span>
+                    </div>
+                    
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
