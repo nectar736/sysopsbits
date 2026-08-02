@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical Path Method (CPM) vs PERT: Which One to Use on the PMP Exam</title>
+    <meta name="description" content="Critical Path Method (CPM) vs PERT explained with the same project solved both ways. Learn the forward and backward pass, float, and the three-point estimate formula the PMP exam tests.">
+
+    <link rel="canonical" href="https://sysopsbits.com/project-management/cpm-vs-pert-pmp.html">
+    <meta property="og:title" content="Critical Path Method (CPM) vs PERT: Which One to Use on the PMP Exam">
+    <meta property="og:description" content="Critical Path Method (CPM) vs PERT explained with the same project solved both ways. Learn the forward and backward pass, float, and the three-point estimate formula the PMP exam tests.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/project-management/cpm-vs-pert-pmp.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/cpm_pert.jpg">
+
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-B67YJF8565');
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="project-management">
+    <div id="header-placeholder"></div>
+
+    <main>
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <a href="../project-management.html" class="category">Project Management</a>
+                    <time datetime="2026-08-02">August 2, 2026</time>
+                </div>
+                <h1>Critical Path Method (CPM) vs PERT: Which One to Use on the PMP Exam</h1>
+                <div class="post-featured-image">
+                    <img src="../images/cpm_pert.jpg" alt="Network diagram comparing Critical Path Method and PERT schedule calculations" loading="lazy">
+                </div>
+            </header>
+
+            <div class="post-content">
+
+                <p>Critical Path Method (CPM) and PERT both find the longest sequence of dependent activities in a schedule. They differ in how they estimate activity duration. CPM uses a single duration. PERT uses three estimates and averages them. The PMP exam expects you to know both, when each applies, and the formula PERT uses.</p>
+
+                <p>This post solves the same project both ways. You see the critical path calculation once with fixed durations, once with three-point estimates. Then you get the exam rules for choosing between them.</p>
+
+                <h2>What Is the Critical Path?</h2>
+
+                <p>The critical path is the longest path through a network diagram from start to finish. It determines the earliest the project can complete. Activities on the critical path have zero float, so any delay to one of them delays the whole project.</p>
+
+                <p>Every project has at least one critical path. Some have several. When multiple paths share the same total duration, each one is critical, and each one needs the same attention.</p>
+
+                <p>PMBOK 8 lists the critical path method among its scheduling methods alongside critical chain, location-based scheduling, Last Planner System, Gantt charts, and Kanban. The critical path method itself is the backbone of the network diagram questions you will face.</p>
+
+                <div class="callout callout-info">
+                    <strong>One sentence to keep:</strong> The critical path is the longest path through the network, and it sets the earliest possible completion date for the project.
+                </div>
+
+                <h2>What Is CPM?</h2>
+
+                <p>Critical Path Method treats each activity as a single, deterministic duration. You estimate one number per activity, build the network diagram, and run two passes to find the path.</p>
+
+                <p>The forward pass computes the Early Start (ES) and Early Finish (EF) for every activity. You move left to right. Each activity starts when its latest predecessor finishes.</p>
+
+                <ul>
+                    <li>ES = the latest EF of all predecessors</li>
+                    <li>EF = ES + duration</li>
+                </ul>
+
+                <p>The backward pass computes the Late Start (LS) and Late Finish (LF). You move right to left. Each activity finishes before its earliest successor must start.</p>
+
+                <ul>
+                    <li>LF = the earliest LS of all successors</li>
+                    <li>LS = LF - duration</li>
+                </ul>
+
+                <p>Float (also called slack) is the difference between the late and early values.</p>
+
+                <ul>
+                    <li>Total float = LS - ES, or LF - EF</li>
+                </ul>
+
+                <p>Activities with zero total float sit on the critical path. The path with the longest duration, and therefore the least float, is the critical path.</p>
+
+                <h2>What Is PERT?</h2>
+
+                <p>PERT, the Program Evaluation and Review Technique, handles uncertainty. Each activity gets three estimates instead of one: optimistic (tO), most likely (tM), and pessimistic (tP). The technique combines them into a single expected duration.</p>
+
+                <p>PMBOK 8 covers this as three-point estimating. The triangular distribution uses a straight average:</p>
+
+                <pre><code>tE = (tO + tM + tP) / 3</code></pre>
+
+                <p>The PERT (beta) distribution weights the most likely estimate four times:</p>
+
+                <pre><code>tE = (tO + 4tM + tP) / 6</code></pre>
+
+                <p>Use the triangular average when you lack historical data and the estimate is a guess. Use the PERT weighted average when you want the most likely value to dominate the result. The exam states the distribution, and the distribution dictates the formula.</p>
+
+                <div class="callout callout-trap">
+                    <strong>Exam trap:</strong> Many questions present three-point estimates and ask for the expected duration. Read the distribution. Beta distribution means (tO + 4tM + tP) / 6. Triangular distribution means (tO + tM + tP) / 3. Mixing the two is the most common calculation error on this topic.
+                </div>
+
+                <h2>Same Project, Solved Both Ways</h2>
+
+                <p>Consider a small project with four activities.</p>
+
+                <figure class="chart-figure">
+                    <div class="chart-diagram">
+                        <svg viewBox="0 0 520 360" role="img" aria-label="Critical path network diagram with two parallel paths of nine days each">
+                            <defs>
+                                <marker id="cpm-arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                                    <path d="M0,0 L8,4 L0,8 Z" fill="var(--accent-color)"/>
+                                </marker>
+                            </defs>
+
+                            <!-- Formula pill -->
+                            <rect x="100" y="10" width="320" height="30" rx="15" fill="var(--bg-secondary)" stroke="var(--border-color)" stroke-width="1"/>
+                            <text x="260" y="29" text-anchor="middle" fill="var(--text-primary)" font-size="12" font-family="var(--font-mono)">PERT: tE = (tO + 4tM + tP) / 6</text>
+
+                            <!-- Start node -->
+                            <rect x="30" y="150" width="60" height="40" rx="8" fill="var(--accent-color)" opacity="0.9"/>
+                            <text x="60" y="175" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">Start</text>
+
+                            <!-- Activity nodes -->
+                            <rect x="160" y="60" width="70" height="40" rx="8" fill="var(--bg-card)" stroke="var(--accent-color)" stroke-width="2"/>
+                            <text x="195" y="83" text-anchor="middle" fill="var(--text-primary)" font-size="13" font-weight="bold">A · 3d</text>
+
+                            <rect x="160" y="230" width="70" height="40" rx="8" fill="var(--bg-card)" stroke="var(--accent-color)" stroke-width="2"/>
+                            <text x="195" y="253" text-anchor="middle" fill="var(--text-primary)" font-size="13" font-weight="bold">B · 5d</text>
+
+                            <rect x="320" y="60" width="70" height="40" rx="8" fill="var(--bg-card)" stroke="var(--accent-color)" stroke-width="2"/>
+                            <text x="355" y="83" text-anchor="middle" fill="var(--text-primary)" font-size="13" font-weight="bold">C · 6d</text>
+
+                            <rect x="320" y="230" width="70" height="40" rx="8" fill="var(--bg-card)" stroke="var(--accent-color)" stroke-width="2"/>
+                            <text x="355" y="253" text-anchor="middle" fill="var(--text-primary)" font-size="13" font-weight="bold">D · 4d</text>
+
+                            <!-- Finish node -->
+                            <rect x="450" y="150" width="60" height="40" rx="8" fill="var(--accent-color)" opacity="0.9"/>
+                            <text x="480" y="175" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">Finish</text>
+
+                            <!-- Arrows: Start to A and B -->
+                            <line x1="90" y1="170" x2="155" y2="88" stroke="var(--accent-color)" stroke-width="2" marker-end="url(#cpm-arrow)"/>
+                            <line x1="90" y1="170" x2="155" y2="242" stroke="var(--accent-color)" stroke-width="2" marker-end="url(#cpm-arrow)"/>
+
+                            <!-- Arrows: A to C, B to D -->
+                            <line x1="230" y1="80" x2="315" y2="80" stroke="var(--accent-color)" stroke-width="2" marker-end="url(#cpm-arrow)"/>
+                            <line x1="230" y1="250" x2="315" y2="250" stroke="var(--accent-color)" stroke-width="2" marker-end="url(#cpm-arrow)"/>
+
+                            <!-- Arrows: C and D to Finish -->
+                            <line x1="390" y1="88" x2="445" y2="162" stroke="var(--accent-color)" stroke-width="2" marker-end="url(#cpm-arrow)"/>
+                            <line x1="390" y1="242" x2="445" y2="178" stroke="var(--accent-color)" stroke-width="2" marker-end="url(#cpm-arrow)"/>
+
+                            <!-- Path totals -->
+                            <text x="260" y="315" text-anchor="middle" fill="var(--text-primary)" font-size="12" font-weight="bold">Path A → C: 3 + 6 = 9 days</text>
+                            <text x="260" y="335" text-anchor="middle" fill="var(--text-primary)" font-size="12" font-weight="bold">Path B → D: 5 + 4 = 9 days</text>
+                            <text x="260" y="352" text-anchor="middle" fill="var(--text-muted)" font-size="11">Both paths are critical: zero float on all four activities</text>
+                        </svg>
+                    </div>
+                    <figcaption>Figure: The sample project drawn as a network diagram. Path A to C totals 3 + 6 = 9 days, and path B to D totals 5 + 4 = 9 days. Both paths tie for the longest duration, so both are critical and every activity carries zero float.</figcaption>
+                </figure>
+
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Activity</th>
+                                <th>Predecessor</th>
+                                <th>Optimistic (tO)</th>
+                                <th>Most Likely (tM)</th>
+                                <th>Pessimistic (tP)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>A</td>
+                                <td>None</td>
+                                <td>2</td>
+                                <td>3</td>
+                                <td>4</td>
+                            </tr>
+                            <tr>
+                                <td>B</td>
+                                <td>None</td>
+                                <td>3</td>
+                                <td>5</td>
+                                <td>7</td>
+                            </tr>
+                            <tr>
+                                <td>C</td>
+                                <td>A</td>
+                                <td>4</td>
+                                <td>6</td>
+                                <td>8</td>
+                            </tr>
+                            <tr>
+                                <td>D</td>
+                                <td>B</td>
+                                <td>2</td>
+                                <td>4</td>
+                                <td>6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>CPM with Most Likely Durations</h3>
+
+                <p>Use the most likely durations as the single CPM estimate: A = 3, B = 5, C = 6, D = 4.</p>
+
+                <p>Path A-C runs 3 + 6 = 9. Path B-D runs 5 + 4 = 9. Both paths total 9, so both are critical. The project finishes no earlier than day 9. Any delay to A, B, C, or D pushes the completion date.</p>
+
+                <p>If you added a third path at 8 days, it would hold one day of float. That path is non-critical, and a one-day slip on it would not move the project end date.</p>
+
+                <h3>PERT with Three-Point Estimates</h3>
+
+                <p>Compute the expected duration for each activity using the beta formula.</p>
+
+                <ul>
+                    <li>A: (2 + 4(3) + 4) / 6 = (2 + 12 + 4) / 6 = 18 / 6 = 3</li>
+                    <li>B: (3 + 4(5) + 7) / 6 = (3 + 20 + 7) / 6 = 30 / 6 = 5</li>
+                    <li>C: (4 + 4(6) + 8) / 6 = (4 + 24 + 8) / 6 = 36 / 6 = 6</li>
+                    <li>D: (2 + 4(4) + 6) / 6 = (2 + 16 + 6) / 6 = 24 / 6 = 4</li>
+                </ul>
+
+                <p>The expected durations match the most likely values, so the paths stay at 9 days each. That symmetry is a coincidence of the example. When the distribution skews, the expected duration shifts away from the most likely value, and the critical path can change.</p>
+
+                <div class="callout callout-tip">
+                    <strong>Why this matters:</strong> With skewed estimates, the PERT expected duration changes the path totals. An activity with wide optimism and pessimism swings can pull its path above another path that looked longer under single-point estimates. The critical path under PERT is not always the critical path under CPM.
+                </div>
+
+                <h2>CPM vs PERT: Key Differences</h2>
+
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dimension</th>
+                                <th>CPM</th>
+                                <th>PERT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Duration estimate</td>
+                                <td>Single, deterministic</td>
+                                <td>Three-point (optimistic, most likely, pessimistic)</td>
+                            </tr>
+                            <tr>
+                                <td>Uncertainty handling</td>
+                                <td>None built in</td>
+                                <td>Explicit, probabilistic</td>
+                            </tr>
+                            <tr>
+                                <td>Formula</td>
+                                <td>None required</td>
+                                <td>tE = (tO + 4tM + tP) / 6, or triangular tE = (tO + tM + tP) / 3</td>
+                            </tr>
+                            <tr>
+                                <td>Best used when</td>
+                                <td>Durations are known and stable</td>
+                                <td>Durations are uncertain, first-time work, research tasks</td>
+                            </tr>
+                            <tr>
+                                <td>Critical path</td>
+                                <td>Longest path by fixed durations</td>
+                                <td>Longest path by expected durations</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>CPM suits repetitive work where you have history. PERT suits novel work where estimates carry wide ranges. The exam picks the technique from the scenario, not from your preference.</p>
+
+                <h2>When to Use Each on the Exam</h2>
+
+                <p>The exam frames the choice with context clues.</p>
+
+                <ul>
+                    <li><strong>Use CPM</strong> when the question gives one duration per activity and asks for the critical path, float, or the impact of delaying an activity.</li>
+                    <li><strong>Use PERT</strong> when the question gives three values per activity and asks for the expected duration, or when it mentions uncertain, research, or first-time work.</li>
+                    <li><strong>Use float formulas</strong> when the question names early and late dates and asks how much an activity can slip.</li>
+                </ul>
+
+                <p>A question that asks "how much delay can this activity absorb before the project slips?" is asking for total float. Compute LS - ES (or LF - EF). A zero answer means the activity sits on the critical path.</p>
+
+                <h2>Critical Chain: The Related Method</h2>
+
+                <p>PMBOK 8 groups critical chain method (CCPM) with CPM because both rest on critical path analysis. CCPM adds buffers. It removes safety from individual tasks, pools that safety into a project buffer, and protects the critical chain from variation.</p>
+
+                <p>The exam compares CPM and CCPM in one common way: CPM manages float on individual activities, CCPM manages buffers on the chain. A question about feeding buffers and project buffers points at critical chain, not CPM.</p>
+
+                <p>This distinction pairs with the <a href="burnup-vs-burndown-charts-pmp.html">burnup vs burndown post</a> for schedule-tracking questions. Those charts show progress against the plan. The critical path explains why the plan holds the duration it does.</p>
+
+                <h2>PMP Exam Traps</h2>
+
+                <ul>
+                    <li><strong>Beta vs triangular.</strong> The formula changes with the distribution. Beta weights tM four times. Triangular averages all three.</li>
+                    <li><strong>Float on the critical path.</strong> Critical path activities have zero total float. A question that asks for float on a critical activity expects zero.</li>
+                    <li><strong>Delays off the path.</strong> A delay to a non-critical activity only matters once it consumes the float. Compute the float before assuming the project slips.</li>
+                    <li><strong>Multiple critical paths.</strong> When two paths share the longest duration, both are critical. The exam tests this directly.</li>
+                    <li><strong>PERT is an estimating technique.</strong> PMBOK 8 lists PERT among estimating tools. Questions asking which technique to use for uncertain work expect PERT or three-point estimating as the answer.</li>
+                </ul>
+
+                <div class="callout callout-question">
+                    <strong>Quick self-check:</strong> An activity has an Early Start of day 4 and a Late Start of day 9. How much can it slip before the project end date moves? Answer: 5 days of total float. On the critical path, that answer would be zero.
+                </div>
+
+                <h2>Frequently Asked Questions</h2>
+
+                <p><strong>Is PERT the same as the critical path method?</strong> No. PERT is an estimating technique that produces expected durations. CPM is a scheduling method that finds the longest path. You can run a critical path analysis on PERT-derived durations, which is how the two combine.</p>
+
+                <p><strong>What is the PERT formula?</strong> The beta distribution uses tE = (tO + 4tM + tP) / 6. The triangular distribution uses tE = (tO + tM + tP) / 3.</p>
+
+                <p><strong>How do I find the critical path?</strong> Run the forward pass to get early dates, the backward pass to get late dates, and identify activities with zero total float. The path connecting them is critical.</p>
+
+                <p><strong>Can a project have more than one critical path?</strong> Yes. Any path whose total duration equals the longest duration is critical.</p>
+
+                <p><strong>Does the PMP exam test PERT calculations?</strong> Yes. Three-point estimating appears in the Schedule performance domain, and calculation questions with the beta formula are common.</p>
+
+                <hr>
+
+                <p><em>Last updated: August 2, 2026</em></p>
+
+                <div class="bottom-resource-cta">
+                    <p><strong>Want the full study system?</strong> The <a href="https://buymeacoffee.com/mattyhip/e/537680" target="_blank" rel="noopener">PMP Exam Cracker</a> delivers 64 pages of compressed study guide, 80 practice questions, and an annotated answer key, built for the 8th Edition exam. Pair it with the <a href="https://buymeacoffee.com/mattyhip/e/552628" target="_blank" rel="noopener">PMP Charts &amp; Data Visualizations Study Guide</a> for the network diagram and schedule visuals.</p>
+                </div>
+            </div>
+
+            <div class="post-footer">
+                <p>Categories: <a href="../project-management.html">Project Management</a>, <a href="../terms.html">PMP</a>, <a href="../terms.html">CPM</a>, <a href="../terms.html">PERT</a>, <a href="../terms.html">Critical Path</a></p>
+            </div>
+        </article>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
