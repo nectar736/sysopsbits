@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZ-140 Core Resources and Services for Azure Virtual Desktop Explained | SysOpsBits</title>
+    <meta name="description" content="The Azure resources and services behind Azure Virtual Desktop: host pools, session hosts, workspaces, app groups, FSLogix, Entra ID, networking, storage, and monitoring. How each piece connects and what AZ-140 tests.">
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/az-140-avd-resources-services-guide.html">
+    <meta property="og:title" content="AZ-140 Core Resources and Services for Azure Virtual Desktop Explained">
+    <meta property="og:description" content="Host pools, session hosts, FSLogix, Entra ID, RDP Shortpath, Azure Files, and more. A map of every AVD resource and the service it depends on.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/az-140-avd-resources-services-guide.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/avd-image.png">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../tutorials.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-09-01">September 1, 2026</time>
+                    </div>
+                    <h1>AZ-140 Core Resources and Services for Azure Virtual Desktop Explained</h1>
+                    <p style="color:var(--text-secondary);max-width:700px;margin:0 auto;">Host pools and workspaces confuse newcomers because they sound similar. Add FSLogix, Entra ID flavours, and RDP Shortpath and the map gets messy. This guide lays out each resource, the service it depends on, and how AZ-140 tests the connections.</p>
+                    <div class="post-featured-image">
+                        <img src="../images/avd-image.png" alt="Azure Virtual Desktop resources and supporting services" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <div class="callout callout-info">
+                        <strong>How to use this guide</strong>
+                        Use it as a companion to the hands-on lab. When the exam describes a resource, you should know where it lives, what it controls, and which service breaks if it is misconfigured. Each section ends with an exam angle.
+                    </div>
+
+                    <p>Azure Virtual Desktop is not a single product. It is a control plane that orchestrates Azure resources you already know: VMs, virtual networks, storage, and identity. AZ-140 tests whether you can choose the right type of each resource and wire them together. The study guide splits this across all four domains, with the heaviest weight on infrastructure. Start with the resource map, then learn the dependencies.</p>
+
+                    <h2>The four layers</h2>
+                    <p>Think of AVD in four layers.</p>
+                    <ol>
+                        <li><strong>Access layer:</strong> workspace and application groups. Users see this.</li>
+                        <li><strong>Compute layer:</strong> host pool and session hosts. Sessions run here.</li>
+                        <li><strong>User data layer:</strong> FSLogix and storage. Profiles roam here.</li>
+                        <li><strong>Foundation layer:</strong> identity, networking, and monitoring. Everything depends on it.</li>
+                    </ol>
+                    <p>When a user double-clicks a desktop icon, the client queries the workspace, checks application group assignment, the service picks a host from the pool based on load balancing, the host mounts the FSLogix container from storage, and identity plus network policies decide if the connection is allowed. One failure in that chain and you troubleshoot by layer.</p>
+
+                    <figure class="chart-figure">
+                        <div class="chart-diagram" style="max-width:580px">
+                            <svg viewBox="0 0 580 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AVD resource dependencies">
+                                <rect x="0" y="0" width="580" height="280" rx="12" fill="rgba(6,182,212,0.06)" stroke="rgba(6,182,212,0.18)"/>
+                                <!-- access -->
+                                <rect x="20" y="20" width="170" height="75" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="105" y="38" text-anchor="middle" fill="#22d3ee" font-family="Outfit" font-size="10" font-weight="700">ACCESS</text>
+                                <text x="105" y="54" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="11" font-weight="600">Workspace</text>
+                                <text x="105" y="68" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">App Groups (Desktop / RemoteApp)</text>
+                                <text x="105" y="82" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">feed, user assignment</text>
+                                <!-- compute -->
+                                <rect x="205" y="20" width="170" height="75" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="290" y="38" text-anchor="middle" fill="#f59e0b" font-family="Outfit" font-size="10" font-weight="700">COMPUTE</text>
+                                <text x="290" y="54" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="11" font-weight="600">Host Pool</text>
+                                <text x="290" y="68" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">Session Hosts (VMs)</text>
+                                <text x="290" y="82" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">pooled / personal, config</text>
+                                <!-- user data -->
+                                <rect x="390" y="20" width="170" height="75" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="475" y="38" text-anchor="middle" fill="#a855f7" font-family="Outfit" font-size="10" font-weight="700">USER DATA</text>
+                                <text x="475" y="54" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="11" font-weight="600">FSLogix</text>
+                                <text x="475" y="68" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">Azure Files / NetApp Files</text>
+                                <text x="475" y="82" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">VHD containers, Cloud Cache</text>
+                                <!-- foundation -->
+                                <rect x="20" y="115" width="540" height="75" rx="8" fill="#0d0d14" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="290" y="133" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="11" font-weight="600">FOUNDATION</text>
+                                <text x="290" y="149" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">Identity: Entra ID • AD DS • Entra Domain Services</text>
+                                <text x="290" y="163" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">Network: VNet • NSG • Firewall • RDP Shortpath • Private Link</text>
+                                <text x="290" y="177" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">Monitor: Log Analytics • Azure Monitor • Insights workbook</text>
+                                <rect x="20" y="205" width="265" height="55" rx="8" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.2)"/>
+                                <text x="152" y="222" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="10" font-weight="600">App delivery</text>
+                                <text x="152" y="236" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">MSIX app attach • Image Builder • Compute Gallery</text>
+                                <text x="152" y="248" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">dynamic apps, golden images</text>
+                                <rect x="295" y="205" width="265" height="55" rx="8" fill="rgba(6,182,212,0.08)" stroke="rgba(6,182,212,0.2)"/>
+                                <text x="427" y="222" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="10" font-weight="600">Operations</text>
+                                <text x="427" y="236" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">Scaling plans • Autoscale • Backup • BCDR</text>
+                                <text x="427" y="248" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">cost, updates, disaster recovery</text>
+                            </svg>
+                        </div>
+                        <figcaption>Group resources by what breaks when they fail. The exam describes symptoms and expects you to trace them to the right layer.</figcaption>
+                    </figure>
+
+                    <h2>Access layer: workspaces and application groups</h2>
+                    <h3>Workspace</h3>
+                    <p>The workspace is the feed. Users subscribe to it in Windows App or the web client. It holds references to application groups, not desktops directly. One workspace can aggregate groups from multiple host pools, so a user sees one feed even if you split pools by workload or region. Workspaces cost nothing.</p>
+                    <h3>Application groups</h3>
+                    <p>Application groups control what a user can launch. Two types:</p>
+                    <ul>
+                        <li><strong>Desktop:</strong> publishes the full Windows desktop from the hosts in one pool. Use it when users need the shell, Explorer, and freedom to run installed apps.</li>
+                        <li><strong>RemoteApp:</strong> publishes individual apps. The user sees Word or a line-of-business app as if it were local. Available only with pooled host pools. You can create multiple RemoteApp groups per pool to segment apps by role.</li>
+                    </ul>
+                    <p>Users gain access when you assign them the <strong>Desktop Virtualization User</strong> role on the application group. Groups are better than direct user assignment for scale.</p>
+                    <div class="callout callout-tip">
+                        <strong>Exam angle:</strong> The exam gives a requirement like “users need only Excel and SAP, not the full desktop” and expects RemoteApp. “One feed for two pools” points to one workspace with two application groups registered to it.
+                    </div>
+
+                    <h2>Compute layer: host pools and session hosts</h2>
+                    <h3>Host pool</h3>
+                    <p>The host pool is the container for session hosts and the policy for how sessions land.</p>
+                    <ul>
+                        <li><strong>Type:</strong> <strong>Pooled</strong> hosts are shared, multiple users per VM on multi-session OS, or one user per VM in a pool that reassigns VMs. Good for cost efficiency. <strong>Personal</strong> hosts are dedicated, one VM per user, persistent assignment. Good for admins or users who install drivers or need guaranteed resources.</li>
+                        <li><strong>Assignment:</strong> Pooled pools assign automatically. Personal pools assign automatically or direct, where you map a specific user to a specific VM.</li>
+                        <li><strong>Load balancing:</strong> <strong>Breadth-first</strong> spreads sessions across hosts, better for performance. <strong>Depth-first</strong> fills one host before using the next, better for cost, pairs well with scaling plans.</li>
+                    </ul>
+                    <h3>Session host configuration and management</h3>
+                    <p>New pools use a session host configuration. It stores VM size, OS image, name prefix, virtual network, availability zones, identity join, and local admin credentials via Key Vault. A companion session host management policy handles updates: maintenance window, logoff message, how many VMs to update at once. This replaces manual golden image swaps for many shops.</p>
+                    <h3>Session hosts</h3>
+                    <p>Session hosts are Azure VMs running Windows 10 or 11 Enterprise multi-session, or Windows Server with the Remote Desktop Session Host role. Multi-session lets you host many users on one VM, cuts cost per user, but apps must tolerate session sharing. Single-session suits GPU or legacy apps that need exclusivity. Every host in a pool must use the same image, size family, and identity join. Do not mix Entra ID joined and AD DS joined hosts in one pool.</p>
+                    <div class="callout callout-info">
+                        <strong>Related services:</strong> Azure Compute Gallery stores versioned golden images. VM Image Builder automates sysprep and capture. Both appear in the image lifecycle questions.
+                    </div>
+
+                    <h2>User data layer: FSLogix and storage</h2>
+                    <p>Pooled hosts are stateless by design. When you reimage a host, you lose local profiles. FSLogix fixes this.</p>
+                    <h3>Profile Containers</h3>
+                    <p>FSLogix Profile Container redirects the whole Windows profile into a VHD stored on an SMB file share. At sign-in, the service attaches the VHD. The user sees a local profile experience, but the data lives off the VM. Include Microsoft 365 data in the same container to avoid a separate Office Container unless a specific scenario demands two.</p>
+                    <h3>ODFC and application masking</h3>
+                    <p>FSLogix ODFC containers isolate Office data alone. You need them only if you keep profile and Office data on separate stores or handle a migration. Application masking hides apps from certain users on a shared host without separate images, useful for role-based visibility.</p>
+                    <h3>Cloud Cache</h3>
+                    <p>Cloud Cache replicates the profile to multiple locations and treats the cache as authoritative. Use it for business continuity across regions or when you need resilience against storage blips. It adds complexity and latency, so reserve it for multi-region active-active or critical users.</p>
+                    <h3>Storage choices that map to FSLogix</h3>
+                    <table>
+                        <thead><tr><th>Service</th><th>When to use</th><th>What it gives you</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Azure Files Standard (HDD)</strong></td><td>Small lab, low cost, prototype</td><td>SMB share, pay-as-you-go, moderate IOPS</td></tr>
+                            <tr><td><strong>Azure Files Premium (SSD)</strong></td><td>Production pooled hosts under 1000 users per share</td><td>Low latency, provisioned IOPS and throughput, supports thousands of concurrent users</td></tr>
+                            <tr><td><strong>Azure NetApp Files</strong></td><td>Large or latency-sensitive workloads</td><td>Sub-millisecond latency, high throughput, snapshot-based backup</td></tr>
+                            <tr><td><strong>Azure Files with AD DS or Entra Domain Services</strong></td><td>AD DS joined hosts, traditional NTFS permissions</td><td>Domain-joined storage account, Kerberos auth with RC4 or AES</td></tr>
+                            <tr><td><strong>Azure Files with Entra ID (hybrid identities)</strong></td><td>Entra ID joined hosts with hybrid users</td><td>Profile on Azure Files using Entra Kerberos, users synced from AD DS to Entra ID</td></tr>
+                        </tbody>
+                    </table>
+                    <p>Entra ID joined hosts still need a hybrid story for file share auth. Use hybrid users synced via Entra Connect with the storage account joined to AD DS, or Entra Kerberos on Azure Files. Note the 2026 Kerberos shift from RC4 to AES-SHA1. Shares that still expect RC4 fail after you patch.</p>
+                    <div class="callout callout-trap">
+                        <strong>Common mistake:</strong> You need both share-level and NTFS permissions. A share that opens in Storage Explorer but fails at logon usually has NTFS wrong.
+                    </div>
+
+                    <h2>Foundation: identity</h2>
+                    <p>AZ-140 tests three identity scenarios:</p>
+                    <ul>
+                        <li><strong>Entra ID joined.</strong> No domain join, modern auth, Conditional Access, single sign-on. Needs Virtual Machine User Login and hybrid identities for FSLogix.</li>
+                        <li><strong>AD DS.</strong> Hosts joined to AD DS, Group Policy applies, line-of-sight to domain controllers. Needed for on-prem resources or existing GPOs.</li>
+                        <li><strong>Entra Domain Services.</strong> Managed domain without running controllers. Simpler, but less GPO control.</li>
+                    </ul>
+                    <p>Conditional Access applies to AVD. If you require MFA on the <strong>Azure Windows VM Sign-In</strong> app without excluding it or using Hello for Business, Entra ID logons fail. The domain join account cannot have MFA because provisioning runs non-interactively.</p>
+
+                    <h2>Foundation: networking</h2>
+                    <p>Hosts live in your VNet while the control plane lives in Microsoft’s cloud. That split causes the trickiest failures.</p>
+                    <ul>
+                        <li><strong>VNet and subnets.</strong> Use a dedicated subnet for hosts. Verify outbound to the safe URL list, then apply NSGs. Start open, then restrict.</li>
+                        <li><strong>RDP Shortpath.</strong> Default reverse connect uses TCP. Shortpath adds direct UDP. Managed networks need inbound UDP 3390 and a listener enabled via Intune or Group Policy. Public networks use STUN or TURN with no inbound rule. The exam tests which case needs the port.</li>
+                        <li><strong>Private Link, Bastion, JIT.</strong> Private Link puts AVD traffic on private endpoints for compliance. Bastion gives RDP without public IPs. JIT narrows admin access windows via Defender for Cloud.</li>
+                    </ul>
+
+                    <h2>App delivery: images and MSIX app attach</h2>
+                    <p>Three options cover most scenarios:</p>
+                    <ol>
+                        <li><strong>Baked image.</strong> Sysprep a golden image, store versions in Compute Gallery, deploy hosts from it. Stable but slow to update.</li>
+                        <li><strong>MSIX app attach.</strong> Packages stay on a file share and attach at logon. Update the app without reimaging. Create the package, stage it on Azure Files, register it to the host pool.</li>
+                        <li><strong>Microsoft 365 and Teams.</strong> Use shared computer activation for Microsoft 365 Apps. Teams needs the WebRTC Redirector Service on the host. OneDrive needs Files On-Demand for multi-session.</li>
+                    </ol>
+
+                    <h2>Operations: monitoring, scaling, and resilience</h2>
+                    <h3>Monitoring</h3>
+                    <p>Send diagnostics from host pool, workspace, and app groups to a Log Analytics workspace. Insights is a workbook on that data. It shows duration, errors, and host health. Key tables: <code>WVDConnections</code>, <code>WVDErrors</code>, <code>WVDManagement</code>.</p>
+                    <h3>Scaling and BCDR</h3>
+                    <p>Scaling plans start and stop hosts by schedule. Start VM on Connect wakes a host when a user signs in. Back up FSLogix shares via Recovery Services vault. For DR, replicate images via Compute Gallery and keep a second host pool in the paired region with replicated profile storage.</p>
+
+                    <h2>How it all connects</h2>
+                    <ol>
+                        <li>User subscribes to <strong>ws01</strong> in Windows App.</li>
+                        <li>Entra ID and Conditional Access allow the connection, service checks <strong>Desktop Virtualization User</strong> on the app group.</li>
+                        <li>Control plane picks a host from <strong>hp01</strong> per load balancing policy.</li>
+                        <li>Transport negotiates Shortpath UDP or fallback TCP. Private Link keeps it private if set.</li>
+                        <li>Host mounts the <strong>FSLogix VHD</strong> from Azure Files and loads MSIX apps.</li>
+                        <li>Metrics flow to Log Analytics.</li>
+                    </ol>
+                    <p>Slow Teams points to Shortpath. Slow logon points to FSLogix share. Empty feed points to app group assignment.</p>
+
+                    <h2>Quick exam checklist</h2>
+                    <table>
+                        <thead><tr><th>Resource</th><th>Key choice</th><th>Service it depends on</th></tr></thead>
+                        <tbody>
+                            <tr><td>Host pool</td><td>Pooled vs personal, breadth vs depth</td><td>Load balancer policy, session host config</td></tr>
+                            <tr><td>Session host</td><td>Multi-session vs single-session, image</td><td>Compute Gallery, VM Image Builder, VM size</td></tr>
+                            <tr><td>Workspace</td><td>One feed for many groups</td><td>Application group registration</td></tr>
+                            <tr><td>Application group</td><td>Desktop vs RemoteApp</td><td>Host pool type, user RBAC</td></tr>
+                            <tr><td>FSLogix</td><td>Profile vs Cloud Cache</td><td>Azure Files / NetApp Files, hybrid identity, NTFS + share perms</td></tr>
+                            <tr><td>Identity</td><td>Entra ID vs AD DS vs Entra DS</td><td>Entra ID, Conditional Access, VM login roles</td></tr>
+                            <tr><td>Network</td><td>Shortpath managed vs public</td><td>VNet, NSG, Firewall, Private Link</td></tr>
+                            <tr><td>Monitoring</td><td>Diagnostics to LAW</td><td>Log Analytics, Azure Monitor, Insights</td></tr>
+                            <tr><td>Apps</td><td>Image vs MSIX app attach</td><td>MSIX package, file share, host pool scope</td></tr>
+                            <tr><td>Scaling</td><td>Scaling plan vs Start VM on Connect</td><td>Host pool capacity, autoscale, scaling plan schedule</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Where to go next</h2>
+                    <p>Build the lab from the companion post, then add one layer at a time. First FSLogix on Azure Files Premium with a hybrid user, then RDP Shortpath for managed networks with a UDP 3390 rule, then an MSIX app attach package. Each addition maps to a skills-measured bullet and gives you a failure mode to troubleshoot, which is exactly how AZ-140 tests you.</p>
+
+                    <h2>Resources</h2>
+                    <ul>
+                        <li><a href="https://learn.microsoft.com/credentials/certifications/resources/study-guides/az-140" target="_blank" rel="noopener">AZ-140 study guide – skills measured as of July 2026</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/prerequisites" target="_blank" rel="noopener">Prerequisites for Azure Virtual Desktop</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/authentication" target="_blank" rel="noopener">Supported identities and authentication methods</a></li>
+                        <li><a href="https://learn.microsoft.com/fslogix/overview-what-is-fslogix" target="_blank" rel="noopener">What is FSLogix</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile" target="_blank" rel="noopener">Storage options for FSLogix profile containers</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/network-connectivity" target="_blank" rel="noopener">Azure Virtual Desktop network connectivity</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/configure-rdp-shortpath" target="_blank" rel="noopener">Configure RDP Shortpath</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/insights" target="_blank" rel="noopener">Azure Virtual Desktop Insights</a></li>
+                    </ul>
+
+                    <hr>
+                    <p><em>Updated September 2026. Portal names shift. When a blade moves, search the Learn path for the current navigation.</em></p>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#avd</span>
+                        <span class="tag">#az-140</span>
+                        <span class="tag">#fslogix</span>
+                        <span class="tag">#entra-id</span>
+                    </div>
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a sysadmin and Azure engineer who maps AVD dependencies for AZ-140 candidates so troubleshooting points to the right layer, not a guess.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+    <div id="footer-placeholder"></div>
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
