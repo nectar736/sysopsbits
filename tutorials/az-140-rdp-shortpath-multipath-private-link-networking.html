@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop | SysOpsBits</title>
+    <meta name="description" content="AZ-140 networking guide for Azure Virtual Desktop: latency and bandwidth assessment, session host network design, RDP Shortpath and RDP Multipath, QoS with DSCP 46, Azure Private Link setup, and connectivity troubleshooting.">
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">
+    <meta property="og:title" content="RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop">
+    <meta property="og:description" content="Plan AVD networking for AZ-140: assess capacity, design the session host subnet, configure RDP Shortpath, Multipath, and QoS, implement Private Link, and troubleshoot connections.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/avd-image.png">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-10-21">October 21, 2026</time>
+                    </div>
+                    <h1>RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop</h1>
+                    <p style="color:var(--text-secondary);max-width:700px;margin:0 auto;">Most “AVD is slow” tickets are network tickets. This guide covers what AZ-140 expects you to design and fix: latency targets, the session host subnet, UDP transports, QoS, Private Link, and a troubleshooting order that finds the problem fast.</p>
+                    <div class="post-featured-image">
+                        <img src="../images/avd-image.png" alt="Azure Virtual Desktop network paths with RDP Shortpath, Multipath, and Private Link" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <div class="callout callout-info">
+                        <strong>Where this fits in AZ-140</strong>
+                        Networking lives in the largest domain, “Plan and implement an Azure Virtual Desktop infrastructure.” The study guide lists capacity and speed assessment, session host network design, RDP Shortpath and QoS, Private Link, and connectivity troubleshooting. Each one gets a section below.
+                    </div>
+
+                    <h2>How an AVD connection actually travels</h2>
+                    <p>Every connection starts the same way. The client talks to the AVD gateway over TCP 443, and the session host has already opened an outbound connection to the same service. This is <strong>reverse connect</strong>. No inbound ports open on the session host, and no public IP is needed. After that first TCP connection, the client and host try to upgrade to a UDP transport called <strong>RDP Shortpath</strong>. If UDP works, graphics, input, and redirection move to it. If not, the session stays on TCP.</p>
+
+                    <figure class="chart-figure">
+                        <div class="chart-diagram" style="max-width:560px">
+                            <svg viewBox="0 0 560 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AVD transport options">
+                                <rect x="0" y="0" width="560" height="250" rx="12" fill="rgba(6,182,212,0.06)" stroke="rgba(6,182,212,0.2)"/>
+                                <rect x="20" y="85" width="120" height="70" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="80" y="112" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="11" font-weight="600">CLIENT</text>
+                                <text x="80" y="128" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">Windows App</text>
+                                <text x="80" y="142" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">home or office</text>
+                                <rect x="420" y="85" width="120" height="70" rx="8" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.25)"/>
+                                <text x="480" y="112" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="11" font-weight="600">SESSION HOST</text>
+                                <text x="480" y="128" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">private IP only</text>
+                                <text x="480" y="142" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">no inbound from internet</text>
+                                <rect x="190" y="18" width="180" height="40" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="280" y="36" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="10" font-weight="600">REVERSE CONNECT (TCP 443)</text>
+                                <text x="280" y="50" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">AVD gateway, always first</text>
+                                <rect x="190" y="72" width="180" height="40" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="280" y="90" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="10" font-weight="600">STUN: direct UDP</text>
+                                <text x="280" y="104" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">public networks, 49152-65535</text>
+                                <rect x="190" y="126" width="180" height="40" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="280" y="144" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="10" font-weight="600">TURN: relayed UDP</text>
+                                <text x="280" y="158" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">UDP 3478, 51.5.0.0/16</text>
+                                <rect x="190" y="180" width="180" height="40" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="280" y="198" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="10" font-weight="600">MANAGED: UDP 3390</text>
+                                <text x="280" y="212" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">VPN / ExpressRoute, QoS capable</text>
+                                <line x1="140" y1="120" x2="190" y2="38" stroke="rgba(255,255,255,0.15)"/>
+                                <line x1="140" y1="120" x2="190" y2="92" stroke="rgba(255,255,255,0.15)"/>
+                                <line x1="140" y1="120" x2="190" y2="146" stroke="rgba(255,255,255,0.15)"/>
+                                <line x1="140" y1="120" x2="190" y2="200" stroke="rgba(255,255,255,0.15)"/>
+                                <line x1="370" y1="38" x2="420" y2="120" stroke="rgba(255,255,255,0.15)"/>
+                                <line x1="370" y1="92" x2="420" y2="120" stroke="rgba(255,255,255,0.15)"/>
+                                <line x1="370" y1="146" x2="420" y2="120" stroke="rgba(255,255,255,0.15)"/>
+                                <line x1="370" y1="200" x2="420" y2="120" stroke="rgba(255,255,255,0.15)"/>
+                                <text x="280" y="240" text-anchor="middle" fill="#06b6d4" font-family="JetBrains Mono" font-size="9" font-weight="600">RDP Multipath keeps several of these alive and fails over between them</text>
+                            </svg>
+                        </div>
+                        <figcaption>TCP reverse connect always comes first. UDP transports are upgrades, and Multipath keeps backups ready.</figcaption>
+                    </figure>
+
+                    <h2>Step 1: Assess capacity and speed</h2>
+                    <p>Before you pick a region or a VM size, measure the user side.</p>
+                    <ul>
+                        <li><strong>Latency target:</strong> Microsoft recommends round-trip time under 150 ms from the client network to the Azure region hosting the pool. 150 to 200 ms is acceptable for text work. Above 200 ms, users notice. Use the Azure network round-trip latency statistics to pick the closest region and recheck every few months.</li>
+                        <li><strong>Bandwidth:</strong> RDP adapts to available bandwidth, so there's no fixed number per user. Video, multiple monitors, and high resolutions push it up. Size the office uplink for peak concurrent users and their workload, not for the average.</li>
+                        <li><strong>Measure real sessions:</strong> send host pool diagnostics to Log Analytics. The <code>WVDConnectionNetworkData</code> table records estimated RTT and available bandwidth every two minutes per connection.</li>
+                    </ul>
+                    <pre><code>// Top 10 users by average RTT, with p95
+WVDConnectionNetworkData
+| join kind=leftouter (WVDConnections | distinct CorrelationId, UserName) on CorrelationId
+| summarize AvgRTT=avg(EstRoundTripTimeInMs), RTT_P95=percentile(EstRoundTripTimeInMs,95) by UserName
+| top 10 by AvgRTT desc</code></pre>
+                    <div class="callout callout-tip">
+                        <strong>Exam angle:</strong> “Users in Europe report lag, session hosts are in East US.” The fix is a host pool in a region near the users, not a bigger VM. Bandwidth and VM size don't fix physics.
+                    </div>
+
+                    <h2>Step 2: Design the session host network</h2>
+                    <ul>
+                        <li><strong>VNet in the same region as the hosts.</strong> Create it before the host pool so it appears in the deployment wizard.</li>
+                        <li><strong>Size the subnet for growth.</strong> One IP per session host, plus room for scaling and image rebuilds. A /24 holds about 250 hosts after Azure's five reserved addresses. Keep private endpoints in their own subnet.</li>
+                        <li><strong>Hub-spoke.</strong> Put session hosts in a spoke and peer it to a hub with Azure Firewall, VPN or ExpressRoute gateway, and DNS. AD DS joined hosts need DNS that resolves the domain and line of sight to domain controllers.</li>
+                        <li><strong>Outbound access.</strong> Hosts must reach the required URL list over TCP 443. In Azure Firewall, use the <code>WindowsVirtualDesktop</code> FQDN tag and service tags (<code>WindowsVirtualDesktop</code>, <code>AzureMonitor</code>, <code>AzureFrontDoor.Frontend</code>). Don't route AVD traffic through a TLS-inspecting proxy.</li>
+                        <li><strong>NAT gateway.</strong> Gives hosts a predictable outbound IP and plenty of SNAT ports. RDP Multipath can open up to five transport paths per session, so SNAT exhaustion is a real risk on large pools behind a single public IP.</li>
+                        <li><strong>NSG.</strong> No inbound rule from the internet is needed. Allow outbound TCP 443, outbound UDP for Shortpath, and inbound UDP 3390 only from your corporate ranges if you use Shortpath for managed networks.</li>
+                        <li><strong>Admin access.</strong> Use Azure Bastion, not public IPs with RDP open.</li>
+                    </ul>
+                    <div class="callout callout-tip">
+                        <strong>Cost control:</strong> NAT gateway and Azure Firewall both bill hourly plus per GB processed. Azure Firewall is usually the larger line item. For a lab, skip the firewall and use NSGs. In production, a shared hub firewall serving several spokes spreads the cost.
+                    </div>
+
+                    <h2>Step 3: RDP Shortpath (four options)</h2>
+                    <table>
+                        <thead><tr><th>Option</th><th>Network</th><th>What you configure</th></tr></thead>
+                        <tbody>
+                            <tr><td>Managed networks</td><td>VPN or ExpressRoute private peering</td><td>Enable the UDP listener on hosts (port 3390), allow it inbound</td></tr>
+                            <tr><td>Managed networks with ICE/STUN</td><td>VPN or ExpressRoute</td><td>Nothing by default. Optional port range limit</td></tr>
+                            <tr><td>Public networks with ICE/STUN</td><td>Internet, direct UDP through NAT</td><td>Nothing by default. Outbound UDP to STUN servers</td></tr>
+                            <tr><td>Public networks via TURN</td><td>Internet, relayed UDP</td><td>Outbound UDP 3478 to 51.5.0.0/16</td></tr>
+                        </tbody>
+                    </table>
+                    <p>All four are enabled by default at the host pool level. You can control each one in the host pool's networking settings (<code>ManagedPrivateUdp</code>, <code>DirectUdp</code>, <code>PublicUdp</code>, <code>RelayUdp</code>). Only the managed listener needs host configuration:</p>
+                    <pre><code># Enable the RDP Shortpath for managed networks listener (or use Intune / GPO)
+$ts = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services"
+New-Item -Path $ts -Force | Out-Null
+Set-ItemProperty -Path $ts -Name fUseUdpPortRedirector -Type DWord -Value 1
+Set-ItemProperty -Path $ts -Name UdpRedirectorPort -Type DWord -Value 3390
+
+New-NetFirewallRule -DisplayName "RDP Shortpath (UDP 3390)" -Direction Inbound `
+  -Protocol UDP -LocalPort 3390 -Action Allow -Profile Domain,Private
+
+# Host pool view of Shortpath settings
+Get-AzWvdHostPool -Name hp01 -ResourceGroupName rg-avd-lab | FL ManagedPrivateUdp, DirectUdp, PublicUdp, RelayUdp</code></pre>
+                    <p>When both managed and public paths are available, the client uses whichever connects first. Microsoft says to keep TURN enabled unless you're troubleshooting, because it's the fallback when direct UDP fails behind symmetric NAT.</p>
+                    <div class="callout callout-trap">
+                        <strong>Exam trap:</strong> Shortpath for managed networks needs <em>direct line of sight</em>, meaning a VPN or ExpressRoute <strong>private</strong> peering. ExpressRoute Microsoft peering or plain internet is public-network Shortpath (STUN/TURN). Also, Shortpath doesn't replace reverse connect. The TCP connection always comes first.
+                    </div>
+
+                    <h2>Step 4: RDP Multipath</h2>
+                    <p>RDP Multipath went GA in July 2025 and finished rolling out in November 2025. It keeps several transport paths alive at once and switches when the active one degrades. Paths can include several UDP routes (STUN and TURN) plus redundant TCP reverse connect paths. Redundant TCP began its GA rollout in May 2026.</p>
+                    <ul>
+                        <li><strong>No configuration switch.</strong> It works automatically when RDP Shortpath is available and the client supports it.</li>
+                        <li><strong>Client support:</strong> Windows App for Windows 2.0.559.0+ for multiple UDP paths, 2.0.1069.0+ for redundant TCP. macOS has beta support. Other platforms aren't supported yet.</li>
+                        <li><strong>Plan for ports:</strong> up to three UDP and two TCP outbound paths per session. Check firewall state tables and NAT capacity.</li>
+                        <li><strong>Verify:</strong> the connection bar in the client shows Multipath, and AVD Insights shows it in connection reliability.</li>
+                    </ul>
+                    <div class="callout callout-tip">
+                        <strong>Exam angle:</strong> Shortpath improves <em>performance</em> (UDP, lower latency). Multipath improves <em>reliability</em> (failover between paths). If the scenario is “sessions drop when Wi-Fi blips,” think Multipath plus Shortpath.
+                    </div>
+
+                    <h2>Step 5: QoS for RDP Shortpath</h2>
+                    <p>QoS lets routers move RDP ahead of bulk traffic like downloads. It reduces jitter, packet loss, and delay on congested links. Two rules decide whether it works:</p>
+                    <ol>
+                        <li><strong>QoS needs RDP Shortpath for managed networks.</strong> It isn't supported over the reverse connect transport.</li>
+                        <li><strong>Every hop has to honor it.</strong> Mark packets on the session host, then configure switches, routers, and WAN links to queue on that marking. A VPN from home only gets priority inside your managed network.</li>
+                    </ol>
+                    <p>Microsoft recommends DSCP <strong>46 (Expedited Forwarding)</strong>. On Entra joined hosts, use PowerShell or Intune. On domain-joined hosts, use the Policy-based QoS node in Group Policy.</p>
+                    <pre><code>New-NetQosPolicy -Name "RDP Shortpath for managed networks" `
+  -AppPathNameMatchCondition "svchost.exe" -IPProtocolMatchCondition UDP `
+  -IPSrcPortStartMatchCondition 3390 -IPSrcPortEndMatchCondition 3390 `
+  -DSCPAction 46 -NetworkProfile All
+
+# Optional: cap per-session bandwidth on metered links (same Shortpath requirement)
+# -ThrottleRateActionBitsPerSecond 10mb</code></pre>
+                    <div class="callout callout-trap">
+                        <strong>Exam trap:</strong> A question asks you to prioritize RDP traffic for office users and lists “configure QoS” and “enable RDP Shortpath for managed networks” as separate steps. You need both, and Shortpath comes first. QoS on reverse connect does nothing.
+                    </div>
+
+                    <h2>Step 6: Azure Private Link</h2>
+                    <p>Private Link puts AVD service traffic on private IPs in your VNet so clients and hosts don't use public routes for the TCP side. Three sub-resources map to three workflows:</p>
+                    <table>
+                        <thead><tr><th>Workflow</th><th>Resource</th><th>Sub-resource</th><th>How many</th><th>Private DNS zone</th></tr></thead>
+                        <tbody>
+                            <tr><td>Initial feed discovery</td><td>Workspace</td><td><code>global</code></td><td>One for your entire deployment</td><td><code>privatelink-global.wvd.microsoft.com</code></td></tr>
+                            <tr><td>Feed download</td><td>Workspace</td><td><code>feed</code></td><td>One per workspace</td><td><code>privatelink.wvd.microsoft.com</code></td></tr>
+                            <tr><td>Connections to host pools</td><td>Host pool</td><td><code>connection</code></td><td>One per host pool</td><td><code>privatelink.wvd.microsoft.com</code></td></tr>
+                        </tbody>
+                    </table>
+                    <p>The setup order:</p>
+                    <ol>
+                        <li><strong>Enable the feature</strong> on each subscription by re-registering the <code>Microsoft.DesktopVirtualization</code> resource provider.</li>
+                        <li><strong>Create the endpoints</strong> above in a dedicated subnet, integrated with the private DNS zones. Link the zones to every VNet that resolves AVD, or forward to them from on-premises DNS.</li>
+                        <li><strong>Use a placeholder workspace for <code>global</code>.</strong> It has no app groups, and you never delete it. Deleting it breaks feed discovery for every workspace.</li>
+                        <li><strong>Set public network access</strong> on host pools (Enabled, Disabled, or enabled for only clients or only session hosts) and workspaces.</li>
+                        <li><strong>Restart <code>RDAgentBootLoader</code></strong> on each session host, or reboot them, after changing a host pool's private endpoint or network settings.</li>
+                    </ol>
+                    <pre><code>Register-AzResourceProvider -ProviderNamespace Microsoft.DesktopVirtualization
+
+$wsId = (Get-AzWvdWorkspace -Name ws01 -ResourceGroupName rg-avd-lab).Id
+$conn = New-AzPrivateLinkServiceConnection -Name pls-ws01-feed -PrivateLinkServiceId $wsId -GroupId 'feed'
+$subnet = Get-AzVirtualNetwork -Name vnet-avd -ResourceGroupName rg-avd-lab | Get-AzVirtualNetworkSubnetConfig -Name snet-endpoints
+New-AzPrivateEndpoint -Name pe-ws01-feed -ResourceGroupName rg-avd-lab -Location eastus `
+  -Subnet $subnet -PrivateLinkServiceConnection $conn
+# Repeat with GroupId 'connection' on the host pool, and 'global' once on the placeholder workspace</code></pre>
+                    <div class="callout callout-trap">
+                        <strong>Exam traps:</strong> Only one <code>global</code> endpoint exists across all deployments. The global workspace is always reachable publicly, even if you set it to private. If you restrict ports to the host pool's connection endpoint, you must allow the whole TCP range 1 to 65535, because Azure maps gateway traffic across it. Private Link covers the TCP path. RDP Shortpath still runs separately over UDP.
+                    </div>
+                    <p>Private Link and Shortpath work together. A common enterprise design is Private Link for TCP over ExpressRoute, with Shortpath for managed networks and QoS on top. If you use Entra Kerberos for FSLogix over a storage private endpoint, add the privatelink FQDN to the storage account's app registration, or users see error 1326.</p>
+                    <div class="callout callout-tip">
+                        <strong>Cost control:</strong> Each private endpoint bills hourly plus per GB. One per host pool and one per workspace adds up across many pools. Use the narrowest scenario that meets the requirement, such as host pool connections only.
+                    </div>
+
+                    <h2>Step 7: Troubleshoot connectivity in order</h2>
+                    <ol>
+                        <li><strong>Host health:</strong> host shows Unavailable or Needs assistance? Run the Azure Virtual Desktop Agent URL Tool (<code>WVDAgentUrlTool.exe</code>) on the host to find blocked required URLs.</li>
+                        <li><strong>Name resolution:</strong> with Private Link, run <code>Resolve-DnsName rdweb.wvd.microsoft.com</code> from client and host. A public IP means the private DNS zone isn't linked or forwarded.</li>
+                        <li><strong>Path:</strong> Network Watcher <em>Connection troubleshoot</em> and <em>IP flow verify</em> show whether an NSG or route blocks the host's outbound traffic. Virtual network flow logs show what was allowed or denied.</li>
+                        <li><strong>Transport:</strong> check the client's connection information. TCP only means UDP is blocked. Check outbound UDP 3478 and the 49152-65535 range, or the 3390 listener and firewall for managed networks.</li>
+                        <li><strong>Quality:</strong> query <code>WVDConnectionNetworkData</code> for RTT and bandwidth, and use AVD Insights for gateway region and connection reliability.</li>
+                    </ol>
+                    <table>
+                        <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+                        <tbody>
+                            <tr><td>Hosts Unavailable after firewall change</td><td>Required URLs blocked</td><td>Allow the WindowsVirtualDesktop FQDN tag and service tags</td></tr>
+                            <tr><td>Connection works but always TCP</td><td>UDP blocked outbound or listener missing</td><td>Open STUN/TURN ranges or enable listener and NSG rule</td></tr>
+                            <tr><td>Feed empty on private network</td><td>DNS resolves public IPs, or global endpoint missing</td><td>Link private DNS zones, create the global endpoint</td></tr>
+                            <tr><td>Private Link change, hosts stop connecting</td><td>Agent didn't pick up new config</td><td>Restart RDAgentBootLoader or reboot</td></tr>
+                            <tr><td>Lag for one region's users</td><td>RTT above 150 ms</td><td>Deploy hosts closer to those users</td></tr>
+                            <tr><td>Random drops on large pool</td><td>SNAT exhaustion</td><td>Add a NAT gateway or more public IPs</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout callout-info">
+                        <strong>Related labs:</strong> Build the pool first with the <a href="az-140-deploy-host-pool-step-by-step.html">host pool lab</a>, then add profiles with the <a href="az-140-fslogix-profile-containers-guide.html">FSLogix guide</a>. For NSG design patterns, see <a href="azure-nsg-best-practices.html">Azure NSG best practices</a>.
+                    </div>
+
+                    <h2>Resources</h2>
+                    <ul>
+                        <li><a href="https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/" target="_blank" rel="noopener">Implement and manage networking for Azure Virtual Desktop – Microsoft Learn training module</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/rdp-shortpath" target="_blank" rel="noopener">RDP Shortpath for Azure Virtual Desktop</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/rdp-multipath" target="_blank" rel="noopener">Use RDP Multipath to improve connection reliability</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/rdp-quality-of-service-qos" target="_blank" rel="noopener">Implement Quality of Service (QoS) for Azure Virtual Desktop</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/private-link-overview" target="_blank" rel="noopener">Azure Private Link with Azure Virtual Desktop</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/virtual-desktop/safe-url-list" target="_blank" rel="noopener">Required FQDNs and endpoints for Azure Virtual Desktop</a></li>
+                        <li><a href="https://learn.microsoft.com/credentials/certifications/resources/study-guides/az-140" target="_blank" rel="noopener">AZ-140 study guide – skills measured</a></li>
+                    </ul>
+
+                    <hr>
+                    <p><em>Checked against Microsoft Learn documentation as of October 2026. RDP Multipath client support is changing quickly, so check the Learn page for current client versions.</em></p>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#avd</span>
+                        <span class="tag">#az-140</span>
+                        <span class="tag">#networking</span>
+                        <span class="tag">#rdp-shortpath</span>
+                        <span class="tag">#private-link</span>
+                    </div>
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a sysadmin and Azure engineer who builds labs for AZ-140 and AZ-104 candidates. He prefers labs you can run in an hour over slides you can skim in five minutes.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+    <div id="footer-placeholder"></div>
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

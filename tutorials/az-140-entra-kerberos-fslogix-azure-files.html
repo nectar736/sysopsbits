@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained) | SysOpsBits</title>
+    <meta name="description" content="Configure Microsoft Entra Kerberos so Entra joined Azure Virtual Desktop session hosts can mount FSLogix profiles on Azure Files. Line-by-line walkthrough of the registry script, CloudKerberosTicketRetrievalEnabled, LoadCredKeyFromProfile, and AZ-140 exam traps.">
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/az-140-entra-kerberos-fslogix-azure-files.html">
+    <meta property="og:title" content="AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)">
+    <meta property="og:description" content="Get FSLogix profiles working on Entra joined AVD hosts without domain controller line of sight. Storage setup, the session host registry script line by line, and the two settings that break everything when missing.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/az-140-entra-kerberos-fslogix-azure-files.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/avd-image.png">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"></div>
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-10-21">October 21, 2026</time>
+                    </div>
+                    <h1>AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)</h1>
+                    <p style="color:var(--text-secondary);max-width:700px;margin:0 auto;">Entra joined session hosts, FSLogix profiles on Azure Files, and no domain controller in sight. Here is the storage setup, the registry script that makes it work, and why two lines in that script decide whether users get a profile or a temp desktop.</p>
+                    <div class="post-featured-image">
+                        <img src="../images/avd-image.png" alt="Microsoft Entra Kerberos ticket flow from AVD session host to Azure Files" loading="lazy">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <div class="callout callout-info">
+                        <strong>What you build</strong>
+                        An Azure Files share enabled for Microsoft Entra Kerberos, permissions for your AVD users, and Entra joined session hosts configured with one PowerShell script. Users sign in, Entra ID issues a Kerberos ticket for the storage account, and FSLogix attaches their VHDX. Plan 30 to 45 minutes if your host pool already exists.
+                    </div>
+
+                    <p>Entra joined session hosts are the default for new AVD deployments. They skip domain join, they work with Intune, and they remove the need for a VPN or ExpressRoute to a domain controller. The catch shows up the moment you add FSLogix. An SMB share needs Kerberos, and classic Kerberos needs a KDC. Microsoft Entra Kerberos solves that: Entra ID acts as the KDC for the storage account and hands the session host a cloud ticket during sign-in.</p>
+
+                    <h2>How the ticket flow works</h2>
+                    <figure class="chart-figure">
+                        <div class="chart-diagram" style="max-width:560px">
+                            <svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entra Kerberos ticket flow">
+                                <rect x="0" y="0" width="560" height="220" rx="12" fill="rgba(6,182,212,0.06)" stroke="rgba(6,182,212,0.2)"/>
+                                <rect x="20" y="30" width="150" height="80" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="95" y="56" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="11" font-weight="600">SESSION HOST</text>
+                                <text x="95" y="74" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">Entra joined, FSLogix</text>
+                                <text x="95" y="90" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">CloudKerberos = 1</text>
+                                <rect x="205" y="30" width="150" height="80" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="280" y="56" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="11" font-weight="600">MICROSOFT ENTRA ID</text>
+                                <text x="280" y="74" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">acts as cloud KDC</text>
+                                <text x="280" y="90" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">TGT + service ticket</text>
+                                <rect x="390" y="30" width="150" height="80" rx="8" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.25)"/>
+                                <text x="465" y="56" text-anchor="middle" fill="#f0f0f5" font-family="Outfit" font-size="11" font-weight="600">AZURE FILES</text>
+                                <text x="465" y="74" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">Entra Kerberos enabled</text>
+                                <text x="465" y="90" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">SMB 445, profile VHDX</text>
+                                <line x1="170" y1="60" x2="205" y2="60" stroke="rgba(255,255,255,0.25)"/>
+                                <line x1="355" y1="60" x2="390" y2="60" stroke="rgba(255,255,255,0.25)" stroke-dasharray="4 4"/>
+                                <text x="280" y="140" text-anchor="middle" fill="#06b6d4" font-family="JetBrains Mono" font-size="9" font-weight="600">1. user signs in → 2. host requests cloud TGT → 3. ticket for storage SPN → 4. SMB mount</text>
+                                <rect x="20" y="160" width="520" height="40" rx="8" fill="#0d0d14" stroke="rgba(255,255,255,0.08)"/>
+                                <text x="280" y="178" text-anchor="middle" fill="#a0a0b8" font-family="Plus Jakarta Sans" font-size="9">No domain controller needed at sign-in. NTFS ACLs still use SIDs (hybrid or cloud-only).</text>
+                                <text x="280" y="192" text-anchor="middle" fill="#6b6b80" font-family="JetBrains Mono" font-size="8">storage app must be excluded from MFA Conditional Access</text>
+                            </svg>
+                        </div>
+                        <figcaption>Entra ID replaces the domain controller as the ticket issuer. The session host only asks for the ticket if the registry tells it to.</figcaption>
+                    </figure>
+
+                    <h2>Before you start: what has to be true</h2>
+                    <ul>
+                        <li><strong>Session hosts are Entra joined or Entra hybrid joined.</strong> Hosts joined only to AD DS or to Entra Domain Services are not supported for this flow.</li>
+                        <li><strong>Supported OS.</strong> Windows 11 Enterprise single or multi-session, Windows 10 Enterprise 2004+, or Windows Server 2022/2025 with current cumulative updates. Cloud-only identities need newer builds (recent Windows 11 24H2/25H2 updates or Server 2025), so check the Learn prerequisites before you pick an image.</li>
+                        <li><strong>Identity type.</strong> Hybrid identities (synced with Entra Connect or Cloud Sync) have been supported for years. FSLogix support for cloud-only and external identities became generally available in May 2026. Cloud-only needs an extra app manifest tag (covered below).</li>
+                        <li><strong>One identity source per storage account.</strong> A storage account can use AD DS, Entra Domain Services, or Entra Kerberos. Not two at once.</li>
+                        <li><strong>Services running.</strong> WinHTTP Web Proxy Auto-Discovery (<code>WinHttpAutoProxySvc</code>) and IP Helper (<code>iphlpsvc</code>) must be running. Hardened images that disable them break ticket retrieval.</li>
+                    </ul>
+
+                    <div class="callout callout-tip">
+                        <strong>Cost control:</strong> Use a Premium (SSD) file share for production profiles, because logon storms punish standard HDD shares. For a lab, a small provisioned premium share or a standard share is fine. You pay for what you provision on premium, not what you use, so start small and grow.
+                    </div>
+
+                    <h2>Step 1: Enable Entra Kerberos on the storage account</h2>
+                    <p>Create a storage account and file share (this example uses <code>fxlogics</code> and a share called <code>premium</code>). Then turn on Entra Kerberos. In the portal: storage account, <strong>File shares</strong>, <strong>Identity-based access</strong>, <strong>Microsoft Entra Kerberos</strong>, <strong>Set up</strong>. Or from PowerShell:</p>
+                    <pre><code>Set-AzStorageAccount -ResourceGroupName rg-avd-lab `
+  -StorageAccountName fxlogics `
+  -EnableAzureActiveDirectoryKerberosForFile $true
+
+# Hybrid identities only, optional: add your AD domain so you can set ACLs in File Explorer
+# -ActiveDirectoryDomainName contoso.com -ActiveDirectoryDomainGuid &lt;guid from Get-ADDomain&gt;</code></pre>
+                    <p>Enabling the feature creates an app registration named <code>[Storage Account] fxlogics.file.core.windows.net</code>. Three follow-up tasks live on that app:</p>
+                    <ol>
+                        <li><strong>Grant admin consent.</strong> Entra ID, App registrations, All applications, select the storage app, API permissions, <strong>Grant admin consent</strong> for openid, profile, and User.Read.</li>
+                        <li><strong>Exclude it from MFA.</strong> Any Conditional Access policy that requires MFA for all cloud apps must exclude the storage app. The ticket request happens silently at logon and has no way to prompt.</li>
+                        <li><strong>Cloud-only users:</strong> add the <code>kdc_enable_cloud_group_sids</code> tag to the app manifest so cloud group SIDs appear in the ticket. Skip it and permissions based on cloud groups fail.</li>
+                    </ol>
+                    <div class="callout callout-trap">
+                        <strong>Exam trap:</strong> “Users get System error 1327: Account restrictions are preventing this user from signing in” when mapping the share. That is Conditional Access requiring MFA on the storage app. The fix is the exclusion, not a new share permission.
+                    </div>
+
+                    <h2>Step 2: Assign share-level and NTFS permissions</h2>
+                    <p>Permissions work in two layers, same as any SMB share.</p>
+                    <ul>
+                        <li><strong>Share level (Azure RBAC):</strong> assign <strong>Storage File Data SMB Share Contributor</strong> to the AVD users group, and <strong>Storage File Data SMB Share Elevated Contributor</strong> to admins who set ACLs. Or set a default share-level permission for all authenticated identities.</li>
+                        <li><strong>Directory and file level (NTFS):</strong> apply the FSLogix recommended ACLs so each user can create their own folder but cannot read anyone else's. For hybrid identities, set ACLs from a machine with line of sight to a domain controller (icacls or File Explorer). For cloud-only identities, use the <strong>Manage access</strong> option on the file share in the portal.</li>
+                    </ul>
+                    <pre><code># Recommended FSLogix ACLs (run from a machine that can resolve the groups)
+icacls \\fxlogics.file.core.windows.net\premium /inheritance:r
+icacls \\fxlogics.file.core.windows.net\premium /grant "CREATOR OWNER:(OI)(CI)(IO)(M)"
+icacls \\fxlogics.file.core.windows.net\premium /grant "CONTOSO\AVD-Users:(M)"
+icacls \\fxlogics.file.core.windows.net\premium /grant "CONTOSO\AVD-Admins:(OI)(CI)(F)"</code></pre>
+                    <p>Note that the users group gets Modify on <em>this folder only</em>. CREATOR OWNER gives each user full control of the folder they create. That combination stops users from browsing other profiles.</p>
+
+                    <h2>Step 3: The session host script, line by line</h2>
+                    <p>Run this on every session host, elevated, or bake it into your golden image. You can also push the same values with Intune Settings Catalog or Group Policy. Replace the storage path with yours.</p>
+                    <pre><code># --- Entra Kerberos: CRITICAL for cloud Kerberos authentication ---
+reg add "HKLM\System\CurrentControlSet\Control\Lsa\Kerberos\Parameters" /v CloudKerberosTicketRetrievalEnabled /t REG_DWORD /d 1 /f
+reg add "HKLM\Software\Policies\Microsoft\AzureADAccount" /v LoadCredKeyFromProfile /t REG_DWORD /d 1 /f
+
+# --- FSLogix profile container settings ---
+$VHDLocations = "\\fxlogics.file.core.windows.net\premium"
+New-Item -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Force
+
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name Enabled -PropertyType dword -Value 1 -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name DeleteLocalProfileWhenVHDShouldApply -PropertyType dword -Value 1 -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name FlipFlopProfileDirectoryName -PropertyType dword -Value 1 -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name LockedRetryCount -PropertyType dword -Value 3 -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name LockedRetryInterval -PropertyType dword -Value 15 -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name ProfileType -PropertyType dword -Value 0 -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name ReAttachIntervalSeconds -PropertyType dword -Value 15 -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name ReAttachRetryCount -PropertyType dword -Value 3 -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name SizeInMBs -PropertyType dword -Value 30000 -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name VHDLocations -PropertyType string -Value $VHDLocations -Force
+New-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles\ -Name VolumeType -PropertyType string -Value vhdx -Force
+
+# Reboot (or gpupdate) so the Kerberos change takes effect
+Restart-Computer</code></pre>
+                    <div class="callout callout-info">
+                        <strong>Small cleanup:</strong> Some copies of this script run <code>New-Item</code> twice and leave <code>/f</code> off the second <code>reg add</code>. The duplicate is harmless. The missing <code>/f</code> makes the line prompt to overwrite if the value already exists, which hangs an unattended Custom Script Extension run.
+                    </div>
+
+                    <h3>The two lines that matter most</h3>
+                    <table>
+                        <thead><tr><th>Setting</th><th>What it does</th><th>What breaks without it</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>CloudKerberosTicketRetrievalEnabled = 1</code></td><td>Tells Windows to request a cloud Kerberos TGT from Entra ID during logon.</td><td>No ticket for the storage account. FSLogix cannot reach the share, the user gets a local or temporary profile, and the FSLogix log shows access denied.</td></tr>
+                            <tr><td><code>LoadCredKeyFromProfile = 1</code></td><td>Loads the Entra credential key from the roaming profile being attached instead of the local machine.</td><td>Profiles work on the first host, then fail or misbehave when the user lands on a different host in a pooled pool.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>The FSLogix values</h3>
+                    <table>
+                        <thead><tr><th>Value</th><th>Setting in script</th><th>Why</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>Enabled</code></td><td>1</td><td>Turns profile containers on. Nothing else matters if this is 0.</td></tr>
+                            <tr><td><code>VHDLocations</code></td><td>UNC path</td><td>Where VHDX files live. Use the FQDN, not an IP, or Kerberos cannot match the service principal.</td></tr>
+                            <tr><td><code>VolumeType</code></td><td>vhdx</td><td>Default is vhd. VHDX supports larger sizes and is more resilient. Always set it.</td></tr>
+                            <tr><td><code>SizeInMBs</code></td><td>30000</td><td>Max container size (about 30 GB). Disks are dynamic, so you pay for used space on standard, provisioned space on premium. You can grow it later, never shrink it.</td></tr>
+                            <tr><td><code>DeleteLocalProfileWhenVHDShouldApply</code></td><td>1</td><td>Deletes an existing local profile so the container wins. Without it, a user who signed in before FSLogix was configured keeps the local profile.</td></tr>
+                            <tr><td><code>FlipFlopProfileDirectoryName</code></td><td>1</td><td>Names folders <code>username_SID</code> instead of <code>SID_username</code>. Easier for admins to find a user's profile.</td></tr>
+                            <tr><td><code>ProfileType</code></td><td>0</td><td>Normal read-write behavior. One active session per profile.</td></tr>
+                            <tr><td><code>LockedRetryCount / Interval</code></td><td>3 / 15</td><td>Defaults are 12 retries every 5 seconds. This fails a locked-profile logon in about 45 seconds instead of 60.</td></tr>
+                            <tr><td><code>ReAttachRetryCount / IntervalSeconds</code></td><td>3 / 15</td><td>Defaults are 60 retries every 10 seconds. Fewer retries mean a faster, clearer failure if storage drops mid-session.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout callout-tip">
+                        <strong>Exam angle:</strong> If a question says “Entra joined session hosts, FSLogix on Azure Files, users get temporary profiles,” look for the answer that enables cloud Kerberos ticket retrieval on the hosts (Intune, GPO, or registry). If it says “no line of sight to domain controllers,” Entra Kerberos is the storage identity choice, not AD DS.
+                    </div>
+
+                    <h2>Step 4: Validate</h2>
+                    <p>Sign in as a test user who has never logged on to the pool. Then check from inside the session:</p>
+                    <pre><code># Should list a ticket for cifs/fxlogics.file.core.windows.net
+klist get cifs/fxlogics.file.core.windows.net
+
+# Should show the cloud TGT
+klist cloud_debug
+
+# FSLogix status and logs
+&amp; "C:\Program Files\FSLogix\Apps\frx.exe" list-redirects
+Get-Content "C:\ProgramData\FSLogix\Logs\Profile\Profile-$(Get-Date -f yyyyMMdd).log" -Tail 40</code></pre>
+                    <p>In the storage account, you should see a folder named like <code>jdoe_S-1-12-1-...</code>. Cloud-only SIDs start with <code>S-1-12-1</code>, synced hybrid users carry their on-premises SID.</p>
+
+                    <h2>Common failure points</h2>
+                    <table>
+                        <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+                        <tbody>
+                            <tr><td>Error 1327 mapping the share</td><td>MFA Conditional Access applies to the storage app</td><td>Exclude <code>[Storage Account] name.file.core.windows.net</code></td></tr>
+                            <tr><td>Error 1326 over a private endpoint</td><td>Private link FQDN not on the storage app</td><td>Add the privatelink FQDN to the app registration per the troubleshooting guide</td></tr>
+                            <tr><td>Temporary profile, no ticket in <code>klist</code></td><td>Registry value missing or host not rebooted</td><td>Set <code>CloudKerberosTicketRetrievalEnabled</code>, restart</td></tr>
+                            <tr><td>Works on host 1, fails on host 2</td><td><code>LoadCredKeyFromProfile</code> missing</td><td>Add it to every host or the image</td></tr>
+                            <tr><td>Access denied with valid ticket</td><td>No share-level RBAC role or wrong NTFS ACLs</td><td>Assign SMB Share Contributor, reapply ACLs</td></tr>
+                            <tr><td>Cloud group permissions ignored</td><td>Manifest tag missing</td><td>Add <code>kdc_enable_cloud_group_sids</code></td></tr>
+                            <tr><td>Hosts also can't reach an AD DS storage account</td><td>Cloud Kerberos takes precedence</td><td>Add host-to-realm mappings with <code>ksetup /addhosttorealmmap</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="callout callout-trap">
+                        <strong>Watch the RC4 change:</strong> The April 2026 Windows Server update changed the default Kerberos encryption type from RC4 to AES-SHA1. Microsoft warns that SMB storage holding FSLogix containers that wasn't moved to AES can hit access issues. Entra Kerberos tickets always use AES-256, but if you also run AD DS-joined storage accounts, check their encryption settings.
+                    </div>
+
+                    <h2>Intune instead of a script</h2>
+                    <p>For Entra joined hosts, Intune is the natural management plane. Use the <strong>Settings Catalog</strong> for <code>Kerberos/CloudKerberosTicketRetrievalEnabled</code>. Microsoft notes that the OMA-URI method doesn't work on AVD multi-session devices. FSLogix settings are also in the Settings Catalog under FSLogix. The registry script is still useful for images and labs, and it shows you exactly what the policy writes.</p>
+
+                    <h2>What AZ-140 asks about this</h2>
+                    <p>The exam treats this as part of the user environment and identity domains. Know which storage identity source fits which host join type: AD DS for domain-joined hosts, Entra Kerberos for Entra joined hosts, and that one storage account takes only one. Know the client-side requirement (cloud Kerberos ticket retrieval), the MFA exclusion on the storage app, the two-layer permission model, and that hybrid identities still need a DC-connected machine to set NTFS ACLs while sign-in itself does not.</p>
+
+                    <div class="callout callout-info">
+                        <strong>Next step:</strong> Go deeper on profile design with the <a href="az-140-fslogix-profile-containers-guide.html">FSLogix Profile Containers complete guide</a>: ODFC, Cloud Cache, application masking, and Azure Files versus Azure NetApp Files.
+                    </div>
+
+                    <h2>Resources</h2>
+                    <ul>
+                        <li><a href="https://learn.microsoft.com/fslogix/how-to-configure-profile-container-azure-ad" target="_blank" rel="noopener">Store FSLogix profile containers on Azure Files using Microsoft Entra ID – Microsoft Learn</a></li>
+                        <li><a href="https://learn.microsoft.com/azure/storage/files/storage-files-identity-auth-hybrid-identities-enable" target="_blank" rel="noopener">Enable Microsoft Entra Kerberos authentication on Azure Files</a></li>
+                        <li><a href="https://learn.microsoft.com/fslogix/reference-configuration-settings" target="_blank" rel="noopener">FSLogix configuration setting reference</a></li>
+                        <li><a href="https://learn.microsoft.com/fslogix/how-to-configure-storage-permissions" target="_blank" rel="noopener">Configure SMB storage permissions for FSLogix</a></li>
+                        <li><a href="https://learn.microsoft.com/credentials/certifications/resources/study-guides/az-140" target="_blank" rel="noopener">AZ-140 study guide – skills measured</a></li>
+                    </ul>
+
+                    <hr>
+                    <p><em>Checked against Microsoft Learn documentation as of October 2026. Prerequisite OS builds for cloud-only identities change often, so confirm them before building an image.</em></p>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#avd</span>
+                        <span class="tag">#az-140</span>
+                        <span class="tag">#fslogix</span>
+                        <span class="tag">#entra-id</span>
+                        <span class="tag">#kerberos</span>
+                    </div>
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p>Matthew is a sysadmin and Azure engineer who builds labs for AZ-140 and AZ-104 candidates. He prefers labs you can run in an hour over slides you can skim in five minutes.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+    <div id="footer-placeholder"></div>
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
