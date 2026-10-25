@@ -250,6 +250,8 @@ function initThemeToggle() {
 }
 
 function initAdSense() {
+    // No ads on error pages (AdSense policy: no ads on screens without publisher content)
+    if (document.body && document.body.dataset.noAds === 'true') return;
     if (document.getElementById('adsbygoogle-script') || document.querySelector('script[src*="adsbygoogle.js"]')) return;
     const script = document.createElement('script');
     script.id = 'adsbygoogle-script';
