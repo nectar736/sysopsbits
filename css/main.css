@@ -1,5 +1,5 @@
 /* Design System */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Fonts load via <link rel="stylesheet"> with preconnect in each page's <head> (faster than @import). */
 
 :root {
   --bg-primary: #0a0a0f;
@@ -12,8 +12,9 @@
   --border-hover: rgba(255, 255, 255, 0.12);
   --text-primary: #f0f0f5;
   --text-secondary: #a0a0b8;
-  --text-muted: #6b6b80;
+  --text-muted: #8b8ba3;
   --accent: #f59e0b;
+  --accent-text: #f59e0b;
   --accent-hover: #d97706;
   --accent-glow: rgba(245, 158, 11, 0.25);
   --accent-secondary: #06b6d4;
@@ -40,8 +41,11 @@
   --border-color: rgba(0, 0, 0, 0.08);
   --border-hover: rgba(0, 0, 0, 0.15);
   --text-primary: #1a1a2e;
-  --text-secondary: #5a5a72;
-  --text-muted: #9a9ab0;
+  --text-secondary: #4f4f66;
+  --text-muted: #6b6b80;
+  --accent-text: #b45309;
+  --accent-secondary: #0e7490;
+  --accent-secondary-hover: #155e75;
   --accent-glow: rgba(245, 158, 11, 0.15);
   --surface-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   --surface-shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
@@ -56,6 +60,11 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 body {
@@ -193,6 +202,12 @@ a:hover {
   border-radius: var(--radius-sm);
   transition: all var(--transition);
   position: relative;
+  white-space: nowrap;
+}
+
+.nav-menu a.nav-store {
+  color: var(--accent-text);
+  font-weight: 600;
 }
 
 .nav-menu a:hover,
@@ -422,7 +437,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #050510 0%, #0a0a15 40%, #0f0f1e 100%);
-  color: var(--text-primary);
+  color: #f0f0f5;
   overflow: hidden;
   text-align: center;
 }
@@ -512,17 +527,26 @@ a:hover {
   z-index: 10;
   max-width: 800px;
   padding: 2rem;
-  animation: fadeInUp 1.2s ease-out;
+  animation: fadeInUp 0.6s ease-out;
 }
 
+/* Slide only: animating opacity from 0 delays Largest Contentful Paint */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { transform: translateY(12px); }
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-content,
+  .tech-grid,
+  .particle {
+    animation: none;
+  }
 }
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-size: clamp(2.1rem, 5vw, 3.6rem);
   font-weight: 800;
   margin-bottom: 1rem;
   line-height: 1.05;
@@ -538,11 +562,16 @@ a:hover {
   margin-bottom: 2.5rem;
   opacity: 0.85;
   line-height: 1.6;
-  font-weight: 300;
-  max-width: 600px;
+  font-weight: 400;
+  max-width: 640px;
   margin-left: auto;
   margin-right: auto;
-  color: var(--text-secondary);
+  color: #c4c4d6;
+}
+
+.hero .btn-secondary {
+  color: #f0f0f5;
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .cta-buttons {
@@ -620,7 +649,7 @@ a:hover {
 }
 
 .post-count {
-  color: var(--accent);
+  color: var(--accent-text);
   font-weight: 600;
 }
 
@@ -674,7 +703,7 @@ a:hover {
 
 .category-badge-guided-labs {
   background: rgba(245, 158, 11, 0.15);
-  color: var(--accent);
+  color: var(--accent-text);
   border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
@@ -757,7 +786,7 @@ a:hover {
   letter-spacing: 0.06em;
   border-radius: 100px;
   background: rgba(245, 158, 11, 0.12);
-  color: var(--accent);
+  color: var(--accent-text);
   border: 1px solid rgba(245, 158, 11, 0.2);
   transition: all var(--transition);
 }
@@ -772,7 +801,7 @@ a:hover {
 .category[href*="guided"],
 .category[href*="guided"]:visited {
   background: rgba(245, 158, 11, 0.12);
-  color: var(--accent);
+  color: var(--accent-text);
   border-color: rgba(245, 158, 11, 0.2);
 }
 
@@ -810,7 +839,7 @@ a:hover {
 }
 
 .post-content h3 a:hover {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .read-more {
@@ -1156,7 +1185,7 @@ a:hover {
 
 .affiliate-disclosure p {
   margin: 0;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 0.875rem;
 }
 
@@ -1235,7 +1264,7 @@ a:hover {
 }
 
 .product-price .sale-price {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 1.25rem;
   font-weight: 700;
 }
@@ -1266,7 +1295,7 @@ a:hover {
 
 .category-nav-list a:hover,
 .category-nav-list a.active {
-  color: var(--accent);
+  color: var(--accent-text);
   border-bottom-color: var(--accent);
 }
 
@@ -1324,6 +1353,15 @@ a:hover {
   font-size: 0.85rem;
 }
 
+.footer-bottom .footer-legal {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.footer-section ul + .bmc-btn-footer {
+  margin-top: 1rem;
+}
+
 .social-links {
   display: flex;
   gap: 1rem;
@@ -1337,7 +1375,7 @@ a:hover {
 }
 
 .social-links a:hover {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .support-section p {
@@ -1403,7 +1441,7 @@ a:hover {
   font-weight: 700;
   line-height: 1;
   margin-bottom: 0.35rem;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .stat-label {
@@ -1474,7 +1512,7 @@ a:hover {
 }
 
 .category-info h2 a:hover {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .category-meta {
@@ -1792,4 +1830,16 @@ a:hover {
 
 .bmc-btn svg {
   flex-shrink: 0;
+}
+
+/* Keep the desktop nav on one line between tablet and wide desktop widths */
+@media (min-width: 769px) and (max-width: 1180px) {
+  .nav-menu a,
+  .dropdown-toggle {
+    padding: 0.5rem 0.55rem;
+    font-size: 0.82rem;
+  }
+  .site-tagline {
+    display: none;
+  }
 }

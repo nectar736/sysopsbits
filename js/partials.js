@@ -5,6 +5,17 @@ async function loadPartials() {
     if (_partialsLoaded) return;
     _partialsLoaded = true;
     const partialsPath = getPartialsPath();
+
+    // Pages ship with the header and footer inlined (scripts/sync_partials.py) so crawlers
+    // see the navigation. Only fetch partials for pages whose placeholders are still empty.
+    const headerPlaceholder = document.getElementById('header-placeholder');
+    if (headerPlaceholder && headerPlaceholder.children.length > 0) {
+        setActiveNav();
+        initNavToggle();
+        initThemeToggle();
+        initAdSense();
+        return;
+    }
     
     try {
         // Load header
@@ -216,25 +227,30 @@ function initThemeToggle() {
     const darkLabel = document.getElementById('theme-label-dark');
     const lightLabel = document.getElementById('theme-label-light');
 
-    const stored = localStorage.getItem('theme');
+    let stored = null;
+    try { stored = localStorage.getItem('theme'); } catch (e) {}
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+    // The inline script in <head> normally sets this before first paint; this covers pages without it.
+    const root = document.documentElement;
     if (stored === 'light' || (!stored && !prefersDark)) {
-        document.body.classList.add('light-mode');
+        root.classList.add('light-mode');
+    }
+    if (root.classList.contains('light-mode')) {
         if (darkLabel) darkLabel.dataset.active = 'false';
         if (lightLabel) lightLabel.dataset.active = 'true';
     }
 
     toggle.addEventListener('click', function() {
-        const isLight = document.body.classList.toggle('light-mode');
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        const isLight = root.classList.toggle('light-mode');
+        try { localStorage.setItem('theme', isLight ? 'light' : 'dark'); } catch (e) {}
         if (darkLabel) darkLabel.dataset.active = isLight ? 'false' : 'true';
         if (lightLabel) lightLabel.dataset.active = isLight ? 'true' : 'false';
     });
 }
 
 function initAdSense() {
-    if (document.getElementById('adsbygoogle-script')) return;
+    if (document.getElementById('adsbygoogle-script') || document.querySelector('script[src*="adsbygoogle.js"]')) return;
     const script = document.createElement('script');
     script.id = 'adsbygoogle-script';
     script.async = true;

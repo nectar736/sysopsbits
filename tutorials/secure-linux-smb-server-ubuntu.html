@@ -5,31 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>How to Set Up a Secure Linux SMB Server on Ubuntu - SysOpsBits</title>
     <meta name="description" content="Learn how to configure a secure Samba server with proper permissions, encryption, and access controls for your network.">
-    
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
     <link rel="canonical" href="https://sysopsbits.com/tutorials/secure-linux-smb-server-ubuntu.html">
+    <meta name="author" content="Matthew">
+    <meta property="og:site_name" content="SysOpsBits">
+    <meta property="og:type" content="article">
     <meta property="og:title" content="How to Set Up a Secure Linux SMB Server on Ubuntu">
     <meta property="og:description" content="Learn how to configure a secure Samba server with proper permissions and encryption.">
-    <meta property="og:type" content="article">
     <meta property="og:url" content="https://sysopsbits.com/tutorials/secure-linux-smb-server-ubuntu.html">
     <meta property="og:image" content="https://sysopsbits.com/images/secure-linux-smb-server-ubuntu.jpg">
-    
+    <meta property="og:locale" content="en_US">
+    <meta property="article:published_time" content="2026-01-15">
+    <meta property="article:modified_time" content="2026-10-24">
+    <meta property="article:section" content="Guided Labs">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How to Set Up a Secure Linux SMB Server on Ubuntu">
+    <meta name="twitter:description" content="Learn how to configure a secure Samba server with proper permissions and encryption.">
+    <meta name="twitter:image" content="https://sysopsbits.com/images/secure-linux-smb-server-ubuntu.jpg">
+    <meta name="theme-color" content="#0a0a0f">
+    <link rel="icon" href="../favicon.ico" sizes="32x32">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/syntax.css">
-    <link rel="icon" type="image/x-icon" href="../favicon.ico">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-B67YJF8565');
-</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
-     crossorigin="anonymous"></script>
-</script></head>
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "How to Set Up a Secure Linux SMB Server on Ubuntu", "name": "How to Set Up a Secure Linux SMB Server on Ubuntu", "description": "Learn how to configure a secure Samba server with proper permissions, encryption, and access controls for your network.", "image": ["https://sysopsbits.com/images/secure-linux-smb-server-ubuntu.jpg"], "datePublished": "2026-01-15", "dateModified": "2026-10-24", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/secure-linux-smb-server-ubuntu.html", "url": "https://sysopsbits.com/tutorials/secure-linux-smb-server-ubuntu.html", "articleSection": "Guided Labs", "inLanguage": "en-US", "keywords": "samba, ubuntu, security"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Guided Labs", "item": "https://sysopsbits.com/guided-labs.html"}, {"@type": "ListItem", "position": 3, "name": "How to Set Up a Secure Linux SMB Server on Ubuntu", "item": "https://sysopsbits.com/tutorials/secure-linux-smb-server-ubuntu.html"}]}]}</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
 <body data-page="tutorials">
-    <div id="header-placeholder"></div>
+    <div id="header-placeholder"><!-- partial:header:start -->
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="site-branding">
+                <a href="../index.html" class="site-title">SysOpsBits</a>
+                <p class="site-tagline">Your guide to better sysops</p>
+            </div>
+
+            <nav class="main-nav" aria-label="Main">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="../index.html" data-page="index">Home</a></li>
+                    <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                    <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle" aria-haspopup="true">
+                            Categories
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                            <li><a href="../guided-labs.html" data-page="guided-labs">Guided Labs</a></li>
+                            <li><a href="../comparisons.html" data-page="comparisons">Comparisons</a></li>
+                            <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                            <li><a href="../index.html#practice-tests">Free Practice Tests</a></li>
+                            <li><a href="../categories.html" data-page="categories">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../about.html" data-page="about">About</a></li>
+                    <li><a href="../store.html" data-page="store" class="nav-store">Study Guides</a></li>
+                    <li class="support-link"><a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn" title="Buy me a coffee">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                        </svg>
+                        <span>Support</span>
+                    </a></li>
+                </ul>
+                <button class="theme-toggle" aria-label="Toggle dark/light mode">
+                    <span class="theme-toggle-label" id="theme-label-dark" data-active="true">Dark</span>
+                    <span class="theme-toggle-track">
+                        <span class="theme-toggle-thumb"></span>
+                    </span>
+                    <span class="theme-toggle-label" id="theme-label-light" data-active="false">Light</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- partial:header:end --></div>
 
     <main>
         <article class="post">
@@ -38,53 +101,187 @@
                     <div class="post-meta">
                         <a href="../guided-labs.html" class="category" style="background:rgba(245,158,11,0.12);color:#f59e0b;border-color:rgba(245,158,11,0.2)">Guided Labs</a>
                         <time datetime="2026-01-15">January 15, 2026</time>
+                        <span class="post-updated">Updated <time datetime="2026-10-24">October 24, 2026</time></span>
                     </div>
                     <h1>How to Set Up a Secure Linux SMB Server on Ubuntu</h1>
                     <div class="post-featured-image">
-                        <img src="../images/secure-linux-smb-server-ubuntu.jpg" alt="Secure Linux SMB Server Ubuntu" loading="lazy">
+                        <img width="1200" height="630" src="../images/secure-linux-smb-server-ubuntu.jpg" alt="Secure Linux SMB Server Ubuntu" loading="eager" fetchpriority="high">
                     </div>
                 </header>
 
                 <div class="post-content">
-                    <p>Learn how to configure a secure Samba server with proper permissions, encryption, and access controls for your network.</p>
+                    <p>A Samba share is the quickest way to give Windows, macOS, and Linux clients a common file server. Installed with the defaults, though, it accepts old protocol versions and sends traffic in cleartext. This guide builds a share that requires SMB 3 encryption, admits only named users, stays off the internet, and logs who changed what.</p>
 
-                    <h2>What is Samba?</h2>
-                    <p>Samba is an open-source implementation of the SMB/CIFS protocol that allows file sharing between Linux and Windows systems.</p>
+                    <div class="callout callout-info">
+                        <p><strong>Tested on:</strong> Ubuntu Server 22.04 LTS (Samba 4.15) and 24.04 LTS (Samba 4.19). On Debian 12 the steps are the same. On older Samba releases, replace <code>server smb encrypt</code> with <code>smb encrypt</code>.</p>
+                    </div>
+
+                    <h2>What "secure" means for an SMB server</h2>
+                    <ul>
+                        <li><strong>No SMB1.</strong> SMB1 is the protocol WannaCry spread through. Require SMB 3 at minimum.</li>
+                        <li><strong>Encryption on the wire.</strong> SMB 3 can encrypt every packet with AES-GCM or AES-CCM. Make it mandatory, not optional.</li>
+                        <li><strong>No guest access.</strong> Every connection needs a named account with its own password.</li>
+                        <li><strong>Least privilege.</strong> Access is granted through a group, with Linux permissions that match the share settings.</li>
+                        <li><strong>Network scope.</strong> Port 445 is reachable only from your LAN and never exposed to the internet.</li>
+                        <li><strong>Audit trail.</strong> File creates, renames, and deletes are logged with the username and client IP.</li>
+                    </ul>
 
                     <h2>Prerequisites</h2>
                     <ul>
-                        <li>Ubuntu 20.04 or later</li>
-                        <li>sudo/root access</li>
+                        <li>Ubuntu Server 22.04 or 24.04 with sudo access</li>
+                        <li>A static IP or DHCP reservation for the server</li>
+                        <li>Your LAN subnet (examples use <code>192.168.1.0/24</code>)</li>
                     </ul>
 
                     <h2>Step 1: Install Samba</h2>
                     <pre><code>sudo apt update
-sudo apt install samba</code></pre>
+sudo apt install samba
+smbd --version</code></pre>
 
-                    <h2>Step 2: Configure Samba</h2>
-                    <pre><code>sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
+                    <h2>Step 2: Create the share directory and access group</h2>
+                    <pre><code>sudo groupadd smbusers
+sudo mkdir -p /srv/samba/shared
+sudo chown root:smbusers /srv/samba/shared
+sudo chmod 2770 /srv/samba/shared</code></pre>
+                    <p><code>2770</code> gives the owner and group full access and everyone else none. The leading <code>2</code> is the setgid bit, so new files inherit the <code>smbusers</code> group and stay accessible to the whole team.</p>
+
+                    <h2>Step 3: Create Samba users</h2>
+                    <p>Samba users must exist as Linux accounts, but they don't need a shell or a home directory:</p>
+                    <pre><code>sudo useradd -M -s /usr/sbin/nologin -G smbusers alice
+sudo smbpasswd -a alice    # sets the SMB password (separate from any Linux password)
+sudo smbpasswd -e alice    # enables the account
+sudo pdbedit -L            # lists Samba users</code></pre>
+                    <p>To give an existing Linux user access, add them to the group with <code>sudo usermod -aG smbusers bob</code>, then run <code>smbpasswd -a bob</code>.</p>
+
+                    <h2>Step 4: Write a hardened smb.conf</h2>
+                    <p>Back up the default file, then replace it:</p>
+                    <pre><code>sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
 sudo nano /etc/samba/smb.conf</code></pre>
+                    <pre><code>[global]
+   workgroup = WORKGROUP
+   server string = File Server
+   server role = standalone server
 
-                    <h2>Step 3: Create Users and Directories</h2>
-                    <pre><code>sudo mkdir -p /srv/sambasecured
-sudo groupadd sambashare
-sudo useradd -m -G sambashare username
-sudo smbpasswd -a username</code></pre>
+   # Protocol and transport security
+   server min protocol = SMB3
+   server smb encrypt = required
+   server signing = mandatory
 
-                    <h2>Step 4: Enable SMBv3 Encryption</h2>
-                    <pre><code>min protocol = SMB2
-max protocol = SMB3</code></pre>
+   # No anonymous or guest access
+   map to guest = never
+   restrict anonymous = 2
 
-                    <h2>Step 5: Restart and Test</h2>
-                    <pre><code>sudo systemctl restart smbd
-sudo testparm</code></pre>
+   # Network scope: LAN only, SMB over 445 only
+   hosts allow = 192.168.1.0/24 127.0.0.1
+   hosts deny = 0.0.0.0/0
+   smb ports = 445
+   disable netbios = yes
 
-                    <h2>Security Best Practices</h2>
+   # Not a print server
+   load printers = no
+   printing = bsd
+   printcap name = /dev/null
+   disable spoolss = yes
+
+   # Logging
+   logging = file
+   log file = /var/log/samba/log.%m
+   max log size = 1000
+   log level = 1
+
+[shared]
+   path = /srv/samba/shared
+   browseable = yes
+   read only = no
+   valid users = @smbusers
+   force group = smbusers
+   create mask = 0660
+   directory mask = 2770
+
+   # Audit file changes to syslog
+   vfs objects = full_audit
+   full_audit:prefix = %u|%I|%S
+   full_audit:success = mkdirat renameat unlinkat pwrite
+   full_audit:failure = connect
+   full_audit:facility = local5
+   full_audit:priority = notice</code></pre>
+                    <p>What the important lines do:</p>
                     <ul>
-                        <li>Disable SMBv1</li>
-                        <li>Use strong passwords</li>
-                        <li>Enable encryption</li>
-                        <li>Use firewall rules</li>
+                        <li><code>server min protocol = SMB3</code> refuses SMB1 and SMB2 clients. Every supported version of Windows, macOS, and Linux speaks SMB 3.</li>
+                        <li><code>server smb encrypt = required</code> rejects any client that can't encrypt. Use <code>desired</code> only if you must support a legacy device, and document why.</li>
+                        <li><code>valid users = @smbusers</code> limits the share to the group. The <code>@</code> means "group".</li>
+                        <li><code>create mask</code> and <code>directory mask</code> keep files group-readable and group-writable, matching the setgid directory.</li>
+                    </ul>
+
+                    <h2>Step 5: Validate and restart</h2>
+                    <pre><code>testparm                      # syntax check; read any warnings
+sudo systemctl restart smbd
+sudo systemctl disable --now nmbd   # NetBIOS is off, so nmbd isn't needed
+systemctl status smbd --no-pager</code></pre>
+
+                    <h2>Step 6: Allow SMB through the firewall from the LAN only</h2>
+                    <pre><code>sudo ufw allow from 192.168.1.0/24 to any port 445 proto tcp
+sudo ufw enable
+sudo ufw status numbered</code></pre>
+                    <div class="callout callout-trap">
+                        <p><strong>Never port-forward 445 to the internet.</strong> For remote access, connect over a VPN first (WireGuard, Tailscale, or your firewall's VPN) and use the share as if you were on the LAN.</p>
+                    </div>
+
+                    <h2>Step 7: Test the share and confirm encryption</h2>
+                    <pre><code>smbclient //localhost/shared -U alice -m SMB3 -c 'ls'
+sudo smbstatus</code></pre>
+                    <p>While a client is connected, <code>smbstatus</code> lists the protocol version and an <strong>Encryption</strong> column showing the cipher (for example <code>AES-128-GCM</code>). If that column says <code>-</code>, encryption isn't active. Recheck <code>server smb encrypt</code>.</p>
+
+                    <h2>Step 8: Connect clients</h2>
+                    <h3>Windows</h3>
+                    <pre><code>net use S: \\192.168.1.20\shared /user:alice /persistent:yes</code></pre>
+                    <p>Then verify from PowerShell:</p>
+                    <pre><code>Get-SmbConnection | Select-Object ServerName, ShareName, Dialect, Encrypted, Signed</code></pre>
+                    <p>You want <code>Dialect</code> 3.1.1 and <code>Encrypted</code> True.</p>
+
+                    <h3>Linux</h3>
+                    <pre><code>sudo apt install cifs-utils
+sudo mkdir -p /mnt/shared
+printf 'username=alice\npassword=CHANGE_ME\n' | sudo tee /etc/samba/creds-alice &gt;/dev/null
+sudo chmod 600 /etc/samba/creds-alice</code></pre>
+                    <p>Add to <code>/etc/fstab</code> (<code>seal</code> requests SMB 3 encryption from the client side):</p>
+                    <pre><code>//192.168.1.20/shared  /mnt/shared  cifs  credentials=/etc/samba/creds-alice,vers=3.1.1,seal,uid=1000,gid=1000,_netdev  0  0</code></pre>
+                    <pre><code>sudo mount -a &amp;&amp; df -h /mnt/shared</code></pre>
+
+                    <h3>macOS</h3>
+                    <p>In Finder, press <kbd>Cmd</kbd>+<kbd>K</kbd> and connect to <code>smb://192.168.1.20/shared</code>. macOS negotiates SMB 3 encryption automatically when the server requires it.</p>
+
+                    <h2>Step 9: Read the audit log</h2>
+                    <p>The <code>full_audit</code> module writes to syslog facility <code>local5</code>. Send it to its own file:</p>
+                    <pre><code>echo 'local5.*  /var/log/samba/audit.log' | sudo tee /etc/rsyslog.d/50-samba-audit.conf
+sudo systemctl restart rsyslog
+sudo tail -f /var/log/samba/audit.log</code></pre>
+                    <p>Each line shows the user, client IP, share, action, and path, which is what you need when someone asks who deleted a folder.</p>
+
+                    <h2>Troubleshooting</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Error</th><th>Usual cause</th><th>Fix</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>NT_STATUS_LOGON_FAILURE</code></td><td>No Samba password, or the account is disabled</td><td><code>sudo smbpasswd -a user</code>, then <code>sudo smbpasswd -e user</code></td></tr>
+                                <tr><td><code>NT_STATUS_ACCESS_DENIED</code></td><td>User isn't in <code>smbusers</code>, or Linux permissions are wrong</td><td><code>id user</code>; <code>ls -ld /srv/samba/shared</code> should show <code>drwxrws---</code></td></tr>
+                                <tr><td><code>NT_STATUS_CONNECTION_REFUSED</code></td><td>Firewall, <code>hosts allow</code>, or smbd not running</td><td><code>sudo ufw status</code>; <code>ss -tlnp | grep 445</code></td></tr>
+                                <tr><td>Old client can't connect</td><td>The device only speaks SMB1 or SMB2, or can't encrypt</td><td>Replace or update it. Don't lower the server minimum for one device.</td></tr>
+                                <tr><td>Server doesn't appear in Windows "Network"</td><td>NetBIOS is disabled (on purpose)</td><td>Connect by <code>\\IP\share</code>, or install <code>wsdd</code> for WS-Discovery</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h2>Security checklist</h2>
+                    <ul>
+                        <li>SMB1 and SMB2 refused (<code>server min protocol = SMB3</code>)</li>
+                        <li>Encryption required, and <code>smbstatus</code> shows a cipher</li>
+                        <li>Guest access off and anonymous access restricted</li>
+                        <li>Port 445 open to the LAN subnet only</li>
+                        <li>Share access granted through a group, with a setgid directory</li>
+                        <li>Audit log enabled and rotated</li>
+                        <li>Security updates automatic: <code>sudo apt install unattended-upgrades</code></li>
+                        <li>Share contents backed up offsite (see <a href="automated-linux-backups-restic.html">automated Linux backups with Restic</a>)</li>
                     </ul>
                 </div>
 
@@ -94,17 +291,74 @@ sudo testparm</code></pre>
                         <span class="tag">#ubuntu</span>
                         <span class="tag">#security</span>
                     </div>
-                    
+
                     <div class="author-bio">
                         <h3>About the Author</h3>
-                        <p>Matthew is a DevOps engineer with over 10 years of experience.</p>
+                        <p><a href="../about.html">Matthew</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
             </div>
         </article>
     </main>
 
-    <div id="footer-placeholder"></div>
+    <div id="footer-placeholder"><!-- partial:footer:start -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SysOpsBits</h3>
+                <p>Azure, Microsoft 365, and PMP exam guides, hands-on labs, and honest tool comparisons for system administrators.</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395" target="_blank" rel="noopener">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../contact.html">Contact</a></li>
+                    <li><a href="../store.html">Study Guides</a></li>
+                    <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="../terms.html">Terms of Service</a></li>
+                    <li><a href="../affiliate-disclosure.html">Affiliate Disclosure</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="../categories.html">All Categories</a></li>
+                    <li><a href="../microsoft.html">Microsoft</a></li>
+                    <li><a href="../guided-labs.html">Guided Labs</a></li>
+                    <li><a href="../comparisons.html">Comparisons</a></li>
+                    <li><a href="../project-management.html">Project Management</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section support-section">
+                <h3>Free Practice Tests</h3>
+                <ul>
+                    <li><a href="../tutorials/az-900-practice-test.html">AZ-900 Practice Test</a></li>
+                    <li><a href="../tutorials/az-104-practice-test.html">AZ-104 Practice Test</a></li>
+                    <li><a href="../project-management/pmp-practice-test.html">PMP Practice Test</a></li>
+                </ul>
+                <a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn bmc-btn-footer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                    </svg>
+                    <span>Buy me a coffee</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 SysOpsBits. All rights reserved. As an Amazon Associate I earn from qualifying purchases.</p>
+            <p class="footer-legal">Microsoft, Azure, and related marks are trademarks of the Microsoft group of companies. PMP and PMBOK are registered marks of the Project Management Institute, Inc. SysOpsBits is independent and not affiliated with or endorsed by either.</p>
+        </div>
+    </div>
+</footer>
+<!-- partial:footer:end --></div>
 
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>

@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /docs/
+Disallow: /scripts/
+Disallow: /.omo/
 
 Sitemap: https://sysopsbits.com/sitemap.xml

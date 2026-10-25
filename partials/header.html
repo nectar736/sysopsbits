@@ -1,4 +1,4 @@
-<!-- This file is dynamically loaded via JavaScript -->
+<!-- Source for the site header. Inlined into every page by scripts/sync_partials.py; js/partials.js loads it into pages whose placeholder is empty. -->
 <header class="site-header">
     <div class="container">
         <div class="header-content">
@@ -6,8 +6,8 @@
                 <a href="index.html" class="site-title">SysOpsBits</a>
                 <p class="site-tagline">Your guide to better sysops</p>
             </div>
-            
-            <nav class="main-nav">
+
+            <nav class="main-nav" aria-label="Main">
                 <button class="nav-toggle" aria-label="Toggle navigation">
                     <span></span>
                     <span></span>
@@ -18,7 +18,7 @@
                     <li><a href="microsoft.html" data-page="microsoft">Microsoft</a></li>
                     <li><a href="project-management.html" data-page="project-management">Project Management</a></li>
                     <li class="nav-dropdown">
-                        <button class="dropdown-toggle">
+                        <button class="dropdown-toggle" aria-haspopup="true">
                             Categories
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                         </button>
@@ -27,11 +27,12 @@
                             <li><a href="guided-labs.html" data-page="guided-labs">Guided Labs</a></li>
                             <li><a href="comparisons.html" data-page="comparisons">Comparisons</a></li>
                             <li><a href="project-management.html" data-page="project-management">Project Management</a></li>
+                            <li><a href="index.html#practice-tests">Free Practice Tests</a></li>
+                            <li><a href="categories.html" data-page="categories">All Categories</a></li>
                         </ul>
                     </li>
                     <li><a href="about.html" data-page="about">About</a></li>
-                    <li><a href="contact.html" data-page="contact">Contact</a></li>
-                    <li><a href="store.html" data-page="store">Store</a></li>
+                    <li><a href="store.html" data-page="store" class="nav-store">Study Guides</a></li>
                     <li class="support-link"><a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn" title="Buy me a coffee">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>

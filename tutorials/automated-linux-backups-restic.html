@@ -5,31 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>How to Set Up Automated Linux Backups with Restic - SysOpsBits</title>
     <meta name="description" content="Complete guide to implementing automated, encrypted backups for Linux servers using Restic. Step-by-step commands with real-world examples.">
-    
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
     <link rel="canonical" href="https://sysopsbits.com/tutorials/automated-linux-backups-restic.html">
+    <meta name="author" content="Matthew">
+    <meta property="og:site_name" content="SysOpsBits">
+    <meta property="og:type" content="article">
     <meta property="og:title" content="How to Set Up Automated Linux Backups with Restic">
     <meta property="og:description" content="Complete guide to implementing automated, encrypted backups for Linux servers using Restic.">
-    <meta property="og:type" content="article">
     <meta property="og:url" content="https://sysopsbits.com/tutorials/automated-linux-backups-restic.html">
     <meta property="og:image" content="https://sysopsbits.com/images/automated-linux-backups-restic.jpg">
-    
+    <meta property="og:locale" content="en_US">
+    <meta property="article:published_time" content="2026-01-18">
+    <meta property="article:modified_time" content="2026-10-24">
+    <meta property="article:section" content="Guided Labs">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How to Set Up Automated Linux Backups with Restic">
+    <meta name="twitter:description" content="Complete guide to implementing automated, encrypted backups for Linux servers using Restic.">
+    <meta name="twitter:image" content="https://sysopsbits.com/images/automated-linux-backups-restic.jpg">
+    <meta name="theme-color" content="#0a0a0f">
+    <link rel="icon" href="../favicon.ico" sizes="32x32">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/syntax.css">
-    <link rel="icon" type="image/x-icon" href="../favicon.ico">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-B67YJF8565');
-</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694"
-     crossorigin="anonymous"></script>
-</script></head>
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "How to Set Up Automated Linux Backups with Restic", "name": "How to Set Up Automated Linux Backups with Restic", "description": "Complete guide to implementing automated, encrypted backups for Linux servers using Restic. Step-by-step commands with real-world examples.", "image": ["https://sysopsbits.com/images/automated-linux-backups-restic.jpg"], "datePublished": "2026-01-18", "dateModified": "2026-10-24", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/automated-linux-backups-restic.html", "url": "https://sysopsbits.com/tutorials/automated-linux-backups-restic.html", "articleSection": "Guided Labs", "inLanguage": "en-US", "keywords": "backups, restic, linux"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Guided Labs", "item": "https://sysopsbits.com/guided-labs.html"}, {"@type": "ListItem", "position": 3, "name": "How to Set Up Automated Linux Backups with Restic", "item": "https://sysopsbits.com/tutorials/automated-linux-backups-restic.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How long does a Restic backup take?", "acceptedAnswer": {"@type": "Answer", "text": "The first backup is limited by disk read speed and upload bandwidth. After that, only changed chunks are uploaded, so nightly runs on a typical web server finish in under a few minutes."}}, {"@type": "Question", "name": "How secure are Restic backups?", "acceptedAnswer": {"@type": "Answer", "text": "Data is encrypted and authenticated on the client with AES-256 and Poly1305, using a key derived from your password with scrypt. The storage backend never sees plaintext or your password."}}, {"@type": "Question", "name": "What happens if I forget the repository password?", "acceptedAnswer": {"@type": "Answer", "text": "The data can't be recovered. Store the password in at least two places, and never only on the server being backed up."}}, {"@type": "Question", "name": "Restic vs Borg: which should I use?", "acceptedAnswer": {"@type": "Answer", "text": "Both deduplicate and encrypt. Borg is very efficient but works best over SSH to a host running Borg. Restic writes directly to cloud object storage with no server component, which makes it the easier choice for S3, B2, or Azure Blob."}}]}]}</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
 <body data-page="tutorials">
-    <div id="header-placeholder"></div>
+    <div id="header-placeholder"><!-- partial:header:start -->
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="site-branding">
+                <a href="../index.html" class="site-title">SysOpsBits</a>
+                <p class="site-tagline">Your guide to better sysops</p>
+            </div>
+
+            <nav class="main-nav" aria-label="Main">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="../index.html" data-page="index">Home</a></li>
+                    <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                    <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle" aria-haspopup="true">
+                            Categories
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                            <li><a href="../guided-labs.html" data-page="guided-labs">Guided Labs</a></li>
+                            <li><a href="../comparisons.html" data-page="comparisons">Comparisons</a></li>
+                            <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                            <li><a href="../index.html#practice-tests">Free Practice Tests</a></li>
+                            <li><a href="../categories.html" data-page="categories">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../about.html" data-page="about">About</a></li>
+                    <li><a href="../store.html" data-page="store" class="nav-store">Study Guides</a></li>
+                    <li class="support-link"><a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn" title="Buy me a coffee">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                        </svg>
+                        <span>Support</span>
+                    </a></li>
+                </ul>
+                <button class="theme-toggle" aria-label="Toggle dark/light mode">
+                    <span class="theme-toggle-label" id="theme-label-dark" data-active="true">Dark</span>
+                    <span class="theme-toggle-track">
+                        <span class="theme-toggle-thumb"></span>
+                    </span>
+                    <span class="theme-toggle-label" id="theme-label-light" data-active="false">Light</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- partial:header:end --></div>
 
     <main>
         <article class="post">
@@ -38,93 +101,227 @@
                     <div class="post-meta">
                         <a href="../guided-labs.html" class="category" style="background:rgba(245,158,11,0.12);color:#f59e0b;border-color:rgba(245,158,11,0.2)">Guided Labs</a>
                         <time datetime="2026-01-18">January 18, 2026</time>
+                        <span class="post-updated">Updated <time datetime="2026-10-24">October 24, 2026</time></span>
                     </div>
                     <h1>How to Set Up Automated Linux Backups with Restic</h1>
                     <div class="post-featured-image">
-                        <img src="../images/automated-linux-backups-restic.jpg" alt="Automated Linux Backups with Restic" loading="lazy">
+                        <img width="1200" height="630" src="../images/automated-linux-backups-restic.jpg" alt="Automated Linux Backups with Restic" loading="eager" fetchpriority="high">
                     </div>
                 </header>
 
                 <div class="post-content">
-                    <div class="affiliate-disclosure">
-                        <p><strong>Affiliate Disclosure:</strong> This article contains affiliate links.</p>
+                    <p>Restic is a fast, open-source backup tool that encrypts everything on the client and stores each file chunk only once, no matter how many snapshots reference it. This guide takes a Linux server from zero to automated, verified, offsite backups: install, repository setup, a backup script, a systemd timer, retention, integrity checks, and the restore drill most guides skip.</p>
+
+                    <div class="callout callout-info">
+                        <p><strong>What you'll build:</strong> a nightly backup of <code>/etc</code>, <code>/home</code>, <code>/var/www</code>, and database dumps to an encrypted Restic repository, pruned to 7 daily, 4 weekly, and 12 monthly snapshots, with a weekly integrity check. Plan on about 30 minutes.</p>
                     </div>
 
-                    <p>Restic is a modern backup solution that's fast, secure, and deduplicated. In this guide, you'll learn to set up automated, encrypted backups for your Linux servers.</p>
-
-                    <h2>What is Restic?</h2>
-                    <p>Restic is an open-source backup tool that offers:</p>
+                    <h2>Why Restic</h2>
                     <ul>
-                        <li><strong>Client-side encryption</strong> before data leaves your server</li>
-                        <li><strong>Deduplication</strong> across backup snapshots</li>
-                        <li><strong>Multiple storage backends</strong> (local, S3, Backblaze, etc.)</li>
+                        <li><strong>Client-side encryption.</strong> Data is encrypted with AES-256 (with Poly1305 authentication) before it leaves the server. The storage provider only ever sees ciphertext.</li>
+                        <li><strong>Deduplication.</strong> Files are split into content-defined chunks, so a 1 GB log file that grows by 10 MB only uploads the new 10 MB.</li>
+                        <li><strong>Snapshots.</strong> Every run creates a point-in-time snapshot you can browse, diff, or mount.</li>
+                        <li><strong>Many backends.</strong> Local disk, SFTP, S3 and S3-compatible storage (Backblaze B2, Wasabi, MinIO), Azure Blob Storage, Google Cloud Storage, Restic's own REST server, and anything rclone supports.</li>
+                        <li><strong>One static binary.</strong> No agent, no database, nothing to keep running between backups.</li>
                     </ul>
 
                     <h2>Prerequisites</h2>
                     <ul>
-                        <li>Linux server (Ubuntu 20.04+, CentOS 8+, or similar)</li>
-                        <li>sudo/root access</li>
-                        <li>Backup storage destination</li>
+                        <li>Ubuntu 22.04/24.04, Debian 12, or RHEL 9 family (commands below use Ubuntu)</li>
+                        <li>sudo access</li>
+                        <li>A backup destination: a second disk, a NAS reachable over SFTP, or an S3-compatible / Azure Blob bucket</li>
                     </ul>
 
                     <h2>Step 1: Install Restic</h2>
                     <pre><code>sudo apt update
-sudo apt install restic</code></pre>
+sudo apt install restic
+restic version</code></pre>
+                    <p>Distribution packages lag behind upstream. For the newest release, download the binary from the <a href="https://github.com/restic/restic/releases" target="_blank" rel="noopener">Restic GitHub releases</a> page into <code>/usr/local/bin</code>; after that, <code>sudo restic self-update</code> keeps it current. (The Debian/Ubuntu package disables self-update.) On RHEL-family systems, Restic is in EPEL: <code>sudo dnf install restic</code>.</p>
 
-                    <h2>Step 2: Initialize Repository</h2>
-                    <pre><code>export RESTIC_REPOSITORY=/backup/my-backups
-export RESTIC_PASSWORD_FILE=~/.restic-password
-echo "YourSuperSecurePasswordHere" > ~/.restic-password
-chmod 600 ~/.restic-password
+                    <h2>Step 2: Create a protected config and password</h2>
+                    <p>Keep repository settings in one root-only file so the backup script, the systemd unit, and your interactive shell all use the same values.</p>
+                    <pre><code>sudo mkdir -p /etc/restic
+sudo sh -c 'openssl rand -base64 32 &gt; /etc/restic/password'
+sudo chmod 600 /etc/restic/password</code></pre>
+                    <div class="callout callout-trap">
+                        <p><strong>Copy that password somewhere safe now</strong>, such as a password manager or a sealed envelope. Restic has no recovery mechanism. Lose the password and the backups are permanently unreadable, which is exactly the point of the encryption.</p>
+                    </div>
+                    <p>Now create <code>/etc/restic/restic.env</code> with the variables for your backend. Pick one block:</p>
+                    <pre><code># Local disk or mounted NAS
+RESTIC_REPOSITORY=/mnt/backup/restic
+
+# SFTP to a NAS or another server (uses root's SSH key)
+RESTIC_REPOSITORY=sftp:backup@nas.lan:/srv/restic/web01
+
+# S3 or S3-compatible (Backblaze B2's S3 endpoint, Wasabi, MinIO)
+RESTIC_REPOSITORY=s3:https://s3.us-west-004.backblazeb2.com/my-backup-bucket/web01
+AWS_ACCESS_KEY_ID=your-key-id
+AWS_SECRET_ACCESS_KEY=your-application-key
+
+# Azure Blob Storage
+RESTIC_REPOSITORY=azure:restic-backups:/web01
+AZURE_ACCOUNT_NAME=mystorageaccount
+AZURE_ACCOUNT_KEY=your-storage-account-key
+
+# Always required
+RESTIC_PASSWORD_FILE=/etc/restic/password</code></pre>
+                    <pre><code>sudo chmod 600 /etc/restic/restic.env</code></pre>
+
+                    <h2>Step 3: Initialize the repository</h2>
+                    <pre><code>sudo -i
+set -a; . /etc/restic/restic.env; set +a
 restic init</code></pre>
+                    <p><code>set -a</code> exports every variable in the file, so Restic sees them. You should see <code>created restic repository ... at ...</code>. Run this once per repository.</p>
 
-                    <h2>Step 3: Create Your First Backup</h2>
-                    <pre><code>restic backup /var/www/html /etc/nginx \
-    --tag "web" \
-    --tag "production"</code></pre>
+                    <h2>Step 4: Run and inspect your first backup</h2>
+                    <p>Create an exclude list so caches and temporary files don't waste space:</p>
+                    <pre><code>cat &gt; /etc/restic/excludes &lt;&lt;'EOF'
+/home/*/.cache
+/var/cache
+/var/tmp
+*.tmp
+node_modules
+EOF</code></pre>
+                    <pre><code>restic backup /etc /home /var/www \
+    --exclude-file=/etc/restic/excludes \
+    --exclude-caches \
+    --one-file-system \
+    --tag nightly</code></pre>
+                    <p>The first run uploads everything. Later runs only upload changed chunks, so they're usually done in seconds to minutes. Check what you have:</p>
+                    <pre><code>restic snapshots                  # list snapshots
+restic ls latest /etc/nginx       # browse a snapshot
+restic diff &lt;old-id&gt; &lt;new-id&gt;     # what changed between two runs
+restic stats --mode raw-data      # real space used after dedup</code></pre>
 
-                    <h2>Step 4: Automation with Cron</h2>
-                    <pre><code>sudo crontab -e</code></pre>
-                    <pre><code>0 2 * * * /usr/local/bin/restic-backup.sh</code></pre>
+                    <h2>Step 5: Back up databases the right way</h2>
+                    <p>Copying the live files of a running database gives you a backup that may not restore. Dump first, then let Restic back up the dump:</p>
+                    <pre><code># PostgreSQL
+sudo -u postgres pg_dumpall | restic backup --stdin --stdin-filename postgres.sql --tag db
 
-                    <h2>Best Practices</h2>
+# MySQL / MariaDB (InnoDB)
+mysqldump --all-databases --single-transaction --routines --events \
+    | restic backup --stdin --stdin-filename mysql.sql --tag db</code></pre>
+                    <p>Streaming with <code>--stdin</code> means the dump never touches local disk, and deduplication still works between nights.</p>
+
+                    <h2>Step 6: Write the backup script</h2>
+                    <p>Save as <code>/usr/local/sbin/restic-backup.sh</code>:</p>
+                    <pre><code>#!/usr/bin/env bash
+set -euo pipefail
+
+set -a; . /etc/restic/restic.env; set +a
+
+# 1. Files
+restic backup /etc /home /var/www \
+    --exclude-file=/etc/restic/excludes \
+    --exclude-caches --one-file-system \
+    --tag nightly
+
+# 2. Databases (delete the lines you don't need)
+if command -v pg_dumpall &gt;/dev/null; then
+    sudo -u postgres pg_dumpall | restic backup --stdin --stdin-filename postgres.sql --tag db
+fi
+
+# 3. Retention: 7 daily, 4 weekly, 12 monthly, then reclaim space
+restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune
+
+# 4. Integrity: read 5% of the data on Sundays, metadata only otherwise
+if [ "$(date +%u)" -eq 7 ]; then
+    restic check --read-data-subset=5%
+else
+    restic check
+fi</code></pre>
+                    <pre><code>sudo chmod 700 /usr/local/sbin/restic-backup.sh
+sudo /usr/local/sbin/restic-backup.sh</code></pre>
+                    <p><code>set -euo pipefail</code> makes the script stop on the first failure, including a failed <code>pg_dumpall</code> in a pipe, so a broken dump never quietly becomes "last night's backup".</p>
+
+                    <h2>Step 7: Schedule it with a systemd timer</h2>
+                    <p>A systemd timer beats cron here. It logs to the journal, catches up after the server was off (<code>Persistent=true</code>), and won't start a second run while one is still going.</p>
+                    <p><code>/etc/systemd/system/restic-backup.service</code>:</p>
+                    <pre><code>[Unit]
+Description=Restic backup
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/restic-backup.sh
+Nice=10
+IOSchedulingClass=idle</code></pre>
+                    <p><code>/etc/systemd/system/restic-backup.timer</code>:</p>
+                    <pre><code>[Unit]
+Description=Nightly Restic backup
+
+[Timer]
+OnCalendar=*-*-* 02:00:00
+RandomizedDelaySec=15m
+Persistent=true
+
+[Install]
+WantedBy=timers.target</code></pre>
+                    <pre><code>sudo systemctl daemon-reload
+sudo systemctl enable --now restic-backup.timer
+systemctl list-timers restic-backup.timer
+journalctl -u restic-backup.service -n 50   # read the last run</code></pre>
+                    <p>Prefer cron? <code>0 2 * * * /usr/local/sbin/restic-backup.sh &gt;&gt; /var/log/restic.log 2&gt;&amp;1</code> in root's crontab does the same job without the catch-up behavior.</p>
+
+                    <h2>Step 8: Practice a restore (don't skip this)</h2>
+                    <p>A backup you've never restored is a hope, not a backup. Restore into a scratch directory, never on top of live data:</p>
+                    <pre><code># Restore one directory from the latest snapshot
+restic restore latest --tag nightly --target /tmp/restore --include /etc/nginx
+
+# Restore a database dump
+restic dump latest --tag db /postgres.sql &gt; /tmp/postgres.sql
+
+# Browse every snapshot as a filesystem (needs fuse)
+mkdir -p /mnt/restic &amp;&amp; restic mount /mnt/restic</code></pre>
+                    <p>The <code>--tag</code> filter matters. Files and database dumps are separate snapshots, so plain <code>latest</code> means whichever ran last. Put a monthly restore test on your calendar. Restore a random directory and one database dump, and confirm the files open.</p>
+
+                    <h2>Hardening and best practices</h2>
                     <ul>
-                        <li>Store password file with 600 permissions</li>
-                        <li>Use separate backup user account</li>
-                        <li>Test restore procedures regularly</li>
+                        <li><strong>Follow 3-2-1.</strong> Three copies, two kinds of media, one offsite. A local repository plus a cloud repository is easy: run the script twice with two env files, or use <code>restic copy</code>.</li>
+                        <li><strong>Protect against ransomware.</strong> If an attacker gets root, they get your repository credentials. Use an append-only REST server (<code>rest-server --append-only</code>) or object lock / immutability on the bucket, and run <code>forget --prune</code> from a separate trusted machine.</li>
+                        <li><strong>Alert on failure.</strong> Add <code>OnFailure=</code> to the service, or ping a dead-man's-switch monitor such as Healthchecks.io at the end of the script. Silent failures are how backups die.</li>
+                        <li><strong>One repository, many hosts.</strong> Several servers can share a repository, and deduplication works across them. Filter with <code>restic snapshots --host web01</code>.</li>
+                        <li><strong>Keep the password offline too.</strong> If the server dies, the password file dies with it.</li>
                     </ul>
+
+                    <h2>Where to store the repository</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Destination</th><th>Good for</th><th>Watch out for</th></tr></thead>
+                            <tbody>
+                                <tr><td>Second local disk</td><td>Fast restores, no egress cost</td><td>Not offsite; dies in the same fire or ransomware event</td></tr>
+                                <tr><td>NAS over SFTP</td><td>Home labs and small offices</td><td>Use a dedicated SSH key restricted to the backup path</td></tr>
+                                <tr><td>Backblaze B2 / Wasabi (S3 API)</td><td>Cheap offsite storage</td><td>Check minimum retention and egress terms before you choose</td></tr>
+                                <tr><td>Azure Blob Storage</td><td>Teams already in Azure</td><td>Use the Cool tier; enable immutability policies for ransomware protection</td></tr>
+                                <tr><td>AWS S3</td><td>Teams already in AWS</td><td>Restores incur egress charges; consider S3 Object Lock</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <section class="faq-section">
                         <h2>Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
-                                <h3>How long does a typical backup take?</h3>
-                                <p>For 10GB of data: Local storage takes 2-5 minutes, S3 takes 5-15 minutes depending on bandwidth.</p>
+                                <h3>How long does a Restic backup take?</h3>
+                                <p>The first backup is limited by disk read speed and upload bandwidth. After that, only changed chunks are uploaded, so nightly runs on a typical web server finish in under a few minutes.</p>
                             </div>
                             <div class="faq-item">
-                                <h3>How secure are the backups?</h3>
-                                <p>Restic uses AES-256 encryption with a key derived from your password using scrypt.</p>
+                                <h3>How secure are Restic backups?</h3>
+                                <p>Data is encrypted and authenticated on the client with AES-256 and Poly1305, using a key derived from your password with scrypt. The storage backend never sees plaintext or your password.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What happens if I forget the repository password?</h3>
+                                <p>The data can't be recovered. Store the password in at least two places, and never only on the server being backed up.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Restic vs Borg: which should I use?</h3>
+                                <p>Both deduplicate and encrypt. Borg is very efficient but works best over SSH to a host running Borg. Restic writes directly to cloud object storage with no server component, which makes it the easier choice for S3, B2, or Azure Blob.</p>
                             </div>
                         </div>
                     </section>
 
-                    <section class="related-products">
-                        <h2>Recommended Tools</h2>
-                        <div class="products-grid">
-                            <div class="product-card">
-                                <h3>AWS S3 Storage</h3>
-                                <p>Reliable object storage with 99.999999999% durability.</p>
-                                <div class="product-rating">⭐⭐⭐⭐⭐</div>
-                                <a href="https://aws.amazon.com/s3/" class="btn btn-primary" target="_blank" rel="sponsored">Get Started →</a>
-                            </div>
-                            <div class="product-card">
-                                <h3>Backblaze B2</h3>
-                                <p>Cost-effective cloud storage perfect for backups.</p>
-                                <div class="product-rating">⭐⭐⭐⭐</div>
-                                <a href="https://www.backblaze.com/b2/cloud-storage.html" class="btn btn-primary" target="_blank" rel="sponsored">Get Started →</a>
-                            </div>
-                        </div>
-                    </section>
+                    <p>Next, protect the files you're backing up. See <a href="secure-linux-smb-server-ubuntu.html">how to set up a secure Samba file server on Ubuntu</a>, or monitor the server with the <a href="../tools/top-10-cli-tools-sysadmin.html">CLI tools every sysadmin should know</a>.</p>
                 </div>
 
                 <footer class="post-footer">
@@ -133,17 +330,74 @@ restic init</code></pre>
                         <span class="tag">#restic</span>
                         <span class="tag">#linux</span>
                     </div>
-                    
+
                     <div class="author-bio">
                         <h3>About the Author</h3>
-                        <p>Matthew is a DevOps engineer with over 10 years of experience in cloud infrastructure and system administration.</p>
+                        <p><a href="../about.html">Matthew</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
             </div>
         </article>
     </main>
 
-    <div id="footer-placeholder"></div>
+    <div id="footer-placeholder"><!-- partial:footer:start -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SysOpsBits</h3>
+                <p>Azure, Microsoft 365, and PMP exam guides, hands-on labs, and honest tool comparisons for system administrators.</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395" target="_blank" rel="noopener">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../contact.html">Contact</a></li>
+                    <li><a href="../store.html">Study Guides</a></li>
+                    <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="../terms.html">Terms of Service</a></li>
+                    <li><a href="../affiliate-disclosure.html">Affiliate Disclosure</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="../categories.html">All Categories</a></li>
+                    <li><a href="../microsoft.html">Microsoft</a></li>
+                    <li><a href="../guided-labs.html">Guided Labs</a></li>
+                    <li><a href="../comparisons.html">Comparisons</a></li>
+                    <li><a href="../project-management.html">Project Management</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section support-section">
+                <h3>Free Practice Tests</h3>
+                <ul>
+                    <li><a href="../tutorials/az-900-practice-test.html">AZ-900 Practice Test</a></li>
+                    <li><a href="../tutorials/az-104-practice-test.html">AZ-104 Practice Test</a></li>
+                    <li><a href="../project-management/pmp-practice-test.html">PMP Practice Test</a></li>
+                </ul>
+                <a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn bmc-btn-footer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                    </svg>
+                    <span>Buy me a coffee</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 SysOpsBits. All rights reserved. As an Amazon Associate I earn from qualifying purchases.</p>
+            <p class="footer-legal">Microsoft, Azure, and related marks are trademarks of the Microsoft group of companies. PMP and PMBOK are registered marks of the Project Management Institute, Inc. SysOpsBits is independent and not affiliated with or endorsed by either.</p>
+        </div>
+    </div>
+</footer>
+<!-- partial:footer:end --></div>
 
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
