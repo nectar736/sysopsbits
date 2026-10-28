@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZ-140 Practice Test: 10 Free Azure Virtual Desktop Questions | SysOpsBits</title>
+    <meta name="description" content="Free AZ-140 practice test with 10 Azure Virtual Desktop questions, including select-2 items. Host pools, FSLogix, RDP Shortpath, identity, and autoscale, each answer explained and sourced to Microsoft Learn.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/az-140-practice-test.html">
+    <meta name="author" content="Matthew">
+    <meta property="og:site_name" content="SysOpsBits">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="AZ-140 Practice Test: 10 Free Azure Virtual Desktop Questions">
+    <meta property="og:description" content="Free AZ-140 practice test with 10 Azure Virtual Desktop questions, including select-2 items. Host pools, FSLogix, RDP Shortpath, identity, and autoscale, each answer explained and sourced to Microsoft Learn.">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/az-140-practice-test.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/az-140-practice-test.jpg">
+    <meta property="og:locale" content="en_US">
+    <meta property="article:published_time" content="2026-10-27">
+    <meta property="article:modified_time" content="2026-10-27">
+    <meta property="article:section" content="Microsoft">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AZ-140 Practice Test: 10 Free Azure Virtual Desktop Questions">
+    <meta name="twitter:description" content="Free AZ-140 practice test with 10 Azure Virtual Desktop questions, including select-2 items. Host pools, FSLogix, RDP Shortpath, identity, and autoscale, each answer explained and sourced to Microsoft Learn.">
+    <meta name="twitter:image" content="https://sysopsbits.com/images/az-140-practice-test.jpg">
+    <meta name="theme-color" content="#0a0a0f">
+    <link rel="icon" href="../favicon.ico" sizes="32x32">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+        }
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .quiz-progress {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .domain-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .domain-identity { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+        .domain-storage { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+        .domain-compute { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .domain-networking { background: rgba(6, 182, 212, 0.15); color: #06b6d4; }
+        .domain-monitoring { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+        .question-text {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+        .options-list li {
+            margin-bottom: 0.75rem;
+        }
+        .options-list label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+        .options-list label:hover {
+            border-color:var(--accent-text);
+            background: var(--bg-elevated);
+        }
+        .options-list label.selected {
+            border-color:var(--accent-text);
+            background: var(--accent-glow);
+        }
+        .options-list label.correct {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+        .options-list label.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .options-list label.disabled {
+            cursor: default;
+            opacity: 0.85;
+        }
+        .options-list input[type="radio"] {
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+        }
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #000;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px var(--accent-glow);
+        }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover { background: var(--bg-card-hover); }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #fff;
+        }
+        .btn-success:hover { opacity: 0.9; }
+        .review-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            border-left: 4px solid;
+        }
+        .review-box.correct { background: rgba(34, 197, 94, 0.1); border-color: #22c55e; }
+        .review-box.incorrect { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
+        .review-box h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+        .review-box .explanation {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        .results-container {
+            text-align: center;
+        }
+        .results-score {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+        .results-score.pass { color: #22c55e; }
+        .results-score.fail { color: #ef4444; }
+        .results-pass-fail {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        .results-pass-fail.pass { color: #22c55e; }
+        .results-pass-fail.fail { color: #ef4444; }
+        .domain-breakdown {
+            text-align: left;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        .domain-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .domain-row:last-child { border-bottom: none; }
+        .domain-row .domain-name { font-weight: 500; color: var(--text-primary); }
+        .domain-row .domain-score { color: var(--text-secondary); }
+        .quiz-actions-center { justify-content: center; }
+        .retake-area { margin-top: 2rem; }
+        .section-header {
+            margin-bottom: 1rem;
+        }
+        .section-header h1 { margin-bottom: 0.5rem; }
+        .quiz-layout {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        .quiz-main {
+            flex: 1;
+            min-width: 0;
+        }
+        .quiz-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            position: sticky;
+            top: 1rem;
+        }
+        .quiz-sidebar h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .question-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        .question-nav-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .question-nav-btn:hover {
+            border-color:var(--accent-text);
+            background: var(--bg-elevated);
+        }
+        .question-nav-btn.active {
+            border-color:var(--accent-text);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #000;
+        }
+        .question-nav-btn.answered {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+        .question-nav-btn.correct {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+        .question-nav-btn.incorrect {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .question-nav-btn.answered.active,
+        .question-nav-btn.correct.active,
+        .question-nav-btn.incorrect.active {
+            border-color:var(--accent-text);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            .quiz-layout {
+                flex-direction: column;
+            }
+            .quiz-sidebar {
+                width: 100%;
+                position: static;
+            }
+            .question-nav-grid {
+                grid-template-columns: repeat(10, 1fr);
+            }
+            .quiz-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+        .options-list input[type="checkbox"] {
+            margin-right: 0.75rem;
+            accent-color: var(--accent);
+            width: 18px;
+            height: 18px;
+        }
+        .select-hint {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-text);
+            margin: -0.5rem 0 1rem;
+        }
+    </style>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": ["LearningResource", "Quiz"], "headline": "AZ-140 Practice Test", "name": "AZ-140 Practice Test: 10 Free Azure Virtual Desktop Questions", "description": "Free AZ-140 practice test with 10 Azure Virtual Desktop questions, including select-2 items. Host pools, FSLogix, RDP Shortpath, identity, and autoscale, each answer explained and sourced to Microsoft Learn.", "image": ["https://sysopsbits.com/images/az-140-practice-test.jpg"], "datePublished": "2026-10-27", "dateModified": "2026-10-27", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/az-140-practice-test.html", "url": "https://sysopsbits.com/tutorials/az-140-practice-test.html", "inLanguage": "en-US", "learningResourceType": "Practice test", "educationalUse": "Exam preparation", "about": "AZ-140 Azure Virtual Desktop certification exam", "isAccessibleForFree": true, "keywords": "az-140, azure virtual desktop, practice test, fslogix, avd"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "AZ-140 Practice Test: 10 Free Azure Virtual Desktop Questions", "item": "https://sysopsbits.com/tutorials/az-140-practice-test.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What score do I need to pass AZ-140?", "acceptedAnswer": {"@type": "Answer", "text": "700 on a scale of 1 to 1000. Microsoft weights questions differently, so the scale isn't a percentage."}}, {"@type": "Question", "name": "Does the AZ-140 certification expire?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Azure Virtual Desktop Specialty is valid for one year. You renew it for free by passing an online assessment on Microsoft Learn."}}, {"@type": "Question", "name": "Should I pass AZ-104 before AZ-140?", "acceptedAnswer": {"@type": "Answer", "text": "Microsoft doesn't require it. AZ-140 assumes you already know Azure networking, storage, identity, and compute, so the AZ-104 practice test is a quick way to check those basics first."}}, {"@type": "Question", "name": "How do the select-2 questions work on the real exam?", "acceptedAnswer": {"@type": "Answer", "text": "Microsoft exams include questions with more than one correct answer and tell you how many to pick. This test scores them all-or-nothing: you get the point only when both picks are right."}}, {"@type": "Question", "name": "Are these real exam questions?", "acceptedAnswer": {"@type": "Answer", "text": "No. They're original questions written from the published skills outline and checked against Microsoft Learn. Microsoft's exam agreement prohibits sharing real exam content."}}]}]}</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"><!-- partial:header:start -->
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="site-branding">
+                <a href="../index.html" class="site-title">SysOpsBits</a>
+                <p class="site-tagline">Your guide to better sysops</p>
+            </div>
+
+            <nav class="main-nav" aria-label="Main">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="../index.html" data-page="index">Home</a></li>
+                    <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                    <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle" aria-haspopup="true">
+                            Categories
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                            <li><a href="../guided-labs.html" data-page="guided-labs">Guided Labs</a></li>
+                            <li><a href="../comparisons.html" data-page="comparisons">Comparisons</a></li>
+                            <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                            <li><a href="../index.html#practice-tests">Free Practice Tests</a></li>
+                            <li><a href="../categories.html" data-page="categories">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../about.html" data-page="about">About</a></li>
+                    <li><a href="../store.html" data-page="store" class="nav-store">Study Guides</a></li>
+                    <li class="support-link"><a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn" title="Buy me a coffee">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                        </svg>
+                        <span>Support</span>
+                    </a></li>
+                </ul>
+                <button class="theme-toggle" aria-label="Toggle dark/light mode">
+                    <span class="theme-toggle-label" id="theme-label-dark" data-active="true">Dark</span>
+                    <span class="theme-toggle-track">
+                        <span class="theme-toggle-thumb"></span>
+                    </span>
+                    <span class="theme-toggle-label" id="theme-label-light" data-active="false">Light</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- partial:header:end --></div>
+
+    <main>
+        <div class="container">
+            <header class="section-header">
+                <h1>AZ-140 Practice Test</h1>
+                <p>10 free questions on Configuring and Operating Microsoft Azure Virtual Desktop (AZ-140): infrastructure, identity and security, user environments and apps, and monitoring.</p>
+                <p>Three questions ask you to select two answers. You need both right to score the point. Every explanation links to the Microsoft Learn page it comes from.</p>
+                <p class="section-stats">Passing score: <strong>70%</strong> | 10 questions | 3 select-2</p>
+            </header>
+
+            <div class="post-featured-image">
+                <img width="1200" height="630" src="../images/az-140-practice-test.jpg" alt="AZ-140 Azure Virtual Desktop practice test" loading="eager" fetchpriority="high" style="width:100%;border-radius:var(--radius-lg);margin-bottom:1.5rem;">
+            </div>
+
+            <div class="callout callout-tip" style="margin-bottom: 1.5rem; text-align: center; font-size: 0.95rem;">
+                Want a full-length exam? The <strong><a href="https://buymeacoffee.com/mattyhip/e/589877" target="_blank" rel="noopener" data-product="az-140">AZ-140 Exam Kit</a></strong> has a 55-question practice exam and the complete skills outline in 63 pages.
+            </div>
+
+            <div class="quiz-container" id="quiz-container">
+                <div class="quiz-layout">
+                    <div class="quiz-main">
+                        <div class="quiz-header">
+                            <span class="domain-badge" id="domain-badge">Identity & Governance</span>
+                            <span class="quiz-progress" id="quiz-progress">Question 1 of 10</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 10%"></div>
+                        </div>
+                        <div id="question-area"></div>
+                        <div id="review-area"></div>
+                        <div id="results-area" style="display:none"></div>
+                    </div>
+                    <aside class="quiz-sidebar" id="quiz-sidebar">
+                        <h3>Questions</h3>
+                        <div class="question-nav-grid" id="question-nav-grid"></div>
+                    </aside>
+                </div>
+            </div>
+            <section class="post-content exam-info">
+                <h2>What the AZ-140 exam covers</h2>
+                <p>AZ-140 tests whether you can design, deploy, and run Azure Virtual Desktop. Microsoft weights the four domains like this in the skills outline effective July 20, 2026:</p>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Domain</th><th>Weight</th><th>Typical topics</th></tr></thead>
+                        <tbody>
+                            <tr><td>Plan and implement an Azure Virtual Desktop infrastructure</td><td>40–45%</td><td>Network capacity, RDP Shortpath and Multipath, Private Link, FSLogix storage, Azure Files and Azure NetApp Files, host pool design, licensing, images and Azure Compute Gallery</td></tr>
+                            <tr><td>Plan and implement identity and security</td><td>15–20%</td><td>AD DS vs Microsoft Entra ID vs Entra Domain Services, Azure RBAC, Conditional Access, SSO, Defender for Endpoint, NSGs and Azure Firewall, Trusted Launch</td></tr>
+                            <tr><td>Plan and implement user environments and apps</td><td>20–25%</td><td>FSLogix Profile Containers, ODFC and Cloud Cache, client settings, RDP properties, Start VM on Connect, application groups, RemoteApp, Teams, App attach</td></tr>
+                            <tr><td>Monitor and maintain an Azure Virtual Desktop infrastructure</td><td>10–15%</td><td>Azure Monitor and AVD Insights, autoscale, session management, update strategy, backup, disaster recovery</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>This test follows those weights: 4 infrastructure questions, 2 on identity and security, 3 on user environments and apps, and 1 on monitoring. Source: <a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-140" target="_blank" rel="noopener">Microsoft's AZ-140 study guide</a>.</p>
+
+                <h2>How to use this practice test</h2>
+                <ol>
+                    <li><strong>Take it once without notes.</strong> Your first score shows which domain to study first.</li>
+                    <li><strong>Read the explanation for every answer</strong>, including the ones you got right. AZ-140 questions turn on details like which role goes to the service principal and which goes to the user.</li>
+                    <li><strong>Follow the Microsoft Learn source</strong> on anything you missed, then rebuild it in a lab.</li>
+                    <li><strong>Fill the gaps with the AZ-140 guides on this site:</strong> <a href="az-140-avd-resources-services-guide.html">core AVD resources and services</a>, <a href="az-140-deploy-host-pool-step-by-step.html">deploying your first host pool</a>, <a href="az-140-fslogix-profile-containers-guide.html">FSLogix profile containers</a>, <a href="az-140-entra-kerberos-fslogix-azure-files.html">Entra Kerberos for FSLogix on Azure Files</a>, and <a href="az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath and Private Link networking</a>.</li>
+                </ol>
+
+                <h2>AZ-140 exam FAQ</h2>
+                <div class="faq">
+                    <details>
+                        <summary>What score do I need to pass AZ-140?</summary>
+                        <p>700 on a scale of 1 to 1000. Microsoft weights questions differently, so the scale isn't a percentage.</p>
+                    </details>
+                    <details>
+                        <summary>Does the AZ-140 certification expire?</summary>
+                        <p>Yes. Azure Virtual Desktop Specialty is valid for one year. You renew it for free by passing an online assessment on Microsoft Learn.</p>
+                    </details>
+                    <details>
+                        <summary>Should I pass AZ-104 before AZ-140?</summary>
+                        <p>Microsoft doesn't require it. AZ-140 assumes you already know Azure networking, storage, identity, and compute, so the <a href="az-104-practice-test.html">AZ-104 practice test</a> is a quick way to check those basics first.</p>
+                    </details>
+                    <details>
+                        <summary>How do the select-2 questions work on the real exam?</summary>
+                        <p>Microsoft exams include questions with more than one correct answer and tell you how many to pick. This test scores them all-or-nothing: you get the point only when both picks are right.</p>
+                    </details>
+                    <details>
+                        <summary>Are these real exam questions?</summary>
+                        <p>No. They're original questions written from the published skills outline and checked against Microsoft Learn. Microsoft's exam agreement prohibits sharing real exam content.</p>
+                    </details>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"><!-- partial:footer:start -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SysOpsBits</h3>
+                <p>Azure, Microsoft 365, and PMP exam guides, hands-on labs, and honest tool comparisons for system administrators.</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395" target="_blank" rel="noopener">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../contact.html">Contact</a></li>
+                    <li><a href="../store.html">Study Guides</a></li>
+                    <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="../terms.html">Terms of Service</a></li>
+                    <li><a href="../affiliate-disclosure.html">Affiliate Disclosure</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="../categories.html">All Categories</a></li>
+                    <li><a href="../microsoft.html">Microsoft</a></li>
+                    <li><a href="../guided-labs.html">Guided Labs</a></li>
+                    <li><a href="../comparisons.html">Comparisons</a></li>
+                    <li><a href="../project-management.html">Project Management</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section support-section">
+                <h3>Free Practice Tests</h3>
+                <ul>
+                    <li><a href="../tutorials/az-140-practice-test.html">AZ-140 Practice Test</a></li>
+                    <li><a href="../tutorials/az-900-practice-test.html">AZ-900 Practice Test</a></li>
+                    <li><a href="../tutorials/az-104-practice-test.html">AZ-104 Practice Test</a></li>
+                    <li><a href="../project-management/pmp-practice-test.html">PMP Practice Test</a></li>
+                </ul>
+                <a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn bmc-btn-footer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                    </svg>
+                    <span>Buy me a coffee</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 SysOpsBits. All rights reserved. As an Amazon Associate I earn from qualifying purchases.</p>
+            <p class="footer-legal">Microsoft, Azure, and related marks are trademarks of the Microsoft group of companies. PMP and PMBOK are registered marks of the Project Management Institute, Inc. SysOpsBits is independent and not affiliated with or endorsed by either.</p>
+        </div>
+    </div>
+</footer>
+<!-- partial:footer:end --></div>
+
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+    <script>
+    const LEARN = "https://learn.microsoft.com/en-us/azure/virtual-desktop/";
+    const questions = [
+        { id: 1, domain: "Infrastructure", question: "Your pooled host pool has 10 session hosts, and an autoscale plan deallocates idle hosts. Finance wants as few VMs running as possible during the workday. Which load balancing configuration should you use?", options: ["Breadth-first with the default maximum session limit", "Depth-first with a maximum session limit sized to what one host can handle", "Persistent load balancing", "Breadth-first, with drain mode turned on for half the hosts"], correct: 1, explanation: "Depth-first fills one session host up to its maximum session limit before it sends anyone to the next host, so idle hosts stay empty and autoscale can shut them down. You must set a maximum session limit for depth-first to work. Breadth-first spreads users across hosts for performance, which keeps more VMs busy. Persistent applies to personal host pools only. Drain mode blocks new sessions for maintenance and doesn't balance load.", source: LEARN + "host-pool-load-balancing" },
+
+        { id: 2, domain: "Infrastructure", question: "Remote users connect from home networks. Your session hosts reach the internet through Azure Firewall, which uses symmetric NAT, so direct STUN connections fail. You want sessions to use a relayed UDP connection (TURN) instead of falling back to TCP. Which two firewall rules do you need?", options: ["Allow outbound UDP 3478 from the session host subnet to 51.5.0.0/16", "Allow outbound UDP 3478 from the client network to 51.5.0.0/16", "Allow inbound UDP 3390 to each session host", "Allow outbound TCP 443 from the session host subnet to 51.5.0.0/16"], correct: [0, 1], explanation: "TURN relays the UDP flow through Azure Virtual Desktop's dedicated relay range, 51.5.0.0/16, on UDP port 3478. Both ends need to reach it: the session host subnet and the client network. Microsoft's documentation names Azure Firewall and NAT Gateway as symmetric NAT cases where TURN applies. Inbound UDP 3390 belongs to RDP Shortpath for managed networks, which needs a direct private path such as a VPN or ExpressRoute. TCP 443 carries the reverse connect transport, not the UDP relay.", source: LEARN + "rdp-shortpath" },
+
+        { id: 3, domain: "Infrastructure", question: "You build a golden image for a pooled host pool. You need to deploy session hosts in East US and West Europe from the same versioned image. Where should you store the image?", options: ["A managed image in East US", "An Azure Compute Gallery image version replicated to both regions", "A VHD in Blob Storage shared with a SAS URL", "A snapshot of the source VM's OS disk"], correct: 1, explanation: "Azure Compute Gallery handles versioning and replicates each image version to the regions you choose, and Microsoft recommends it for production Azure Virtual Desktop images. A managed image lives in one region and has no versioning. A VHD in Blob Storage isn't something you can select as a session host image until you turn it into an image. A snapshot of the OS disk isn't generalized, so it can't serve as a reusable image.", source: LEARN + "set-up-golden-image" },
+
+        { id: 4, domain: "Infrastructure", question: "Your session hosts are Microsoft Entra joined. Users are hybrid identities synced from AD DS, and the session host virtual network has no line of sight to a domain controller. You store FSLogix profiles on Azure Files. Which identity-based authentication should you enable on the storage account?", options: ["AD DS authentication", "Microsoft Entra Kerberos", "Microsoft Entra Domain Services authentication", "Storage account key access configured in FSLogix"], correct: 1, explanation: "With Microsoft Entra Kerberos, Entra ID issues the Kerberos tickets for the file share, so session hosts don't need line of sight to a domain controller. You still need one machine that can reach a domain controller to set the NTFS permissions. You also turn on CloudKerberosTicketRetrievalEnabled on the session hosts. AD DS authentication requires domain controller connectivity. Entra Domain Services is a separate managed domain that these hosts don't join. A storage account key gives every user the same full access and skips per-user permissions.", source: "https://learn.microsoft.com/en-us/fslogix/how-to-configure-profile-container-entra-id-hybrid" },
+
+        { id: 5, domain: "Identity & Security", question: "You deploy a host pool of Microsoft Entra joined session hosts without a session host configuration. Users can't sign in to the desktop. Which two assignments does each user need?", options: ["An assignment to the desktop application group", "The Virtual Machine User Login role on the session host VMs or their resource group", "The Desktop Virtualization Host Pool Contributor role on the host pool", "The Virtual Machine Contributor role on the resource group"], correct: [0, 1], explanation: "Every Azure Virtual Desktop user needs an application group assignment to see the desktop. Microsoft Entra joined session hosts also need the Virtual Machine User Login role before Windows accepts the sign-in. Administrators who need local admin rights get Virtual Machine Administrator Login instead. Host pools that use a session host configuration don't need the extra VM role. Host Pool Contributor and Virtual Machine Contributor are admin roles that manage resources. Neither lets anyone sign in.", source: LEARN + "azure-ad-joined-session-hosts" },
+
+        { id: 6, domain: "Identity & Security", question: "Your helpdesk needs to send messages to users, disconnect sessions, and sign users out. They must not change drain mode or remove session hosts. Which built-in role gives them the least privilege?", options: ["Desktop Virtualization User Session Operator", "Desktop Virtualization Session Host Operator", "Desktop Virtualization Host Pool Contributor", "Desktop Virtualization Reader"], correct: 0, explanation: "User Session Operator covers sending messages, disconnecting sessions, and signing users out, and it can't manage host pools or session hosts. Microsoft recommends you assign it on specific host pools. Session Host Operator can change drain mode and remove session hosts, which breaks the requirement. Host Pool Contributor manages the whole host pool. Reader can view resources but can't act on sessions.", source: LEARN + "rbac" },
+
+        { id: 7, domain: "User Environment & Apps", question: "Your personal host pool deallocates VMs overnight to save money. Users must be able to power on their own VM by connecting to it. Which two actions should you take?", options: ["Assign the Desktop Virtualization Power On Contributor role to the Azure Virtual Desktop service principal at a scope that contains the session host VMs", "Set Start VM on Connect to Yes in the host pool properties", "Assign the Desktop Virtualization Power On Contributor role to each user", "Create a scaling plan with a ramp-up schedule"], correct: [0, 1], explanation: "Start VM on Connect needs the Power On Contributor role on the Azure Virtual Desktop service principal (or a managed identity on the host pool), so the service can start the VM. You then turn the setting on in the host pool properties. You can only turn it on for an existing host pool, not while you create one. Users never get this role, because the service starts the VM for them. A scaling plan starts hosts on a schedule, not when a specific user connects.", source: LEARN + "start-virtual-machine-connect" },
+
+        { id: 8, domain: "User Environment & Apps", question: "You need FSLogix profiles to keep working if the Azure Files share in your primary region goes offline. You want a full copy of each profile in a second region. Which FSLogix configuration should you use?", options: ["Cloud Cache with both shares listed in CCDLocations", "Profile Container with both shares listed in VHDLocations", "ODFC containers in the second region", "Application masking rules for the profile folder"], correct: 0, explanation: "Cloud Cache writes every change to all storage providers in CCDLocations and reads from one of them, so each region holds a full, current copy. List providers in order of proximity, then preference. Cloud Cache adds local disk and I/O load on the session host, so size the VMs for it. VHDLocations with two paths makes FSLogix use the first location it can reach, and it never copies data to the second. ODFC holds Office data only. Application masking hides apps and has nothing to do with profile resiliency.", source: "https://learn.microsoft.com/en-us/fslogix/concepts-fslogix-cloud-cache" },
+
+        { id: 9, domain: "User Environment & Apps", question: "A user is assigned to both the desktop application group and a RemoteApp application group on the same pooled host pool. In Windows App they only see the full desktop. Which setting decides what they see?", options: ["The host pool's preferred application group type", "The host pool's load balancing algorithm", "The order of application groups in the workspace", "The maximum session limit on each session host"], correct: 0, explanation: "When a user has both group types on the same pooled host pool, the preferred application group type on the host pool decides whether they get the desktop or the RemoteApp apps. The setting stops users from running a desktop and a RemoteApp from the same host pool at once. RemoteApp application groups work with pooled host pools only. Load balancing picks a session host, not an app type. Workspace order changes how resources are listed, not which ones a user gets. The maximum session limit caps how many sessions a host accepts.", source: LEARN + "preferred-application-group-type" },
+
+        { id: 10, domain: "Monitor & Maintain", question: "A pooled host pool uses an autoscale scaling plan. You put one session host in drain mode to install updates, but autoscale keeps acting on it. How do you keep autoscale away from that host while you work on it?", options: ["Add the scaling plan's exclusion tag, such as excludeFromScaling, to the session host VM", "Remove the Desktop Virtualization Power On Off Contributor role from the service principal", "Switch the host pool to breadth-first load balancing", "Unassign the scaling plan from the host pool"], correct: 0, explanation: "A scaling plan skips any session host that carries its exclusion tag, so Microsoft suggests tagging drained hosts during maintenance. You choose the tag name when you create the plan, for example excludeFromScaling. Removing the Power On Off Contributor role breaks autoscale for every host. The load balancing algorithm doesn't control autoscale. Unassigning the plan stops scaling for the whole host pool, not just one host.", source: LEARN + "autoscale-create-assign-scaling-plan" }
+    ];
+
+    const domainLabels = {
+        "Infrastructure": "domain-compute",
+        "Identity & Security": "domain-identity",
+        "User Environment & Apps": "domain-storage",
+        "Monitor & Maintain": "domain-monitoring"
+    };
+
+    let currentQ = 0;
+    let answers = new Array(questions.length).fill(null);
+    let reviewed = new Array(questions.length).fill(false);
+
+    // "Select 2" questions store their answer as an array of option indexes
+    function isMulti(q) { return Array.isArray(q.correct); }
+
+    function isAnswered(i) {
+        const q = questions[i];
+        if (isMulti(q)) return Array.isArray(answers[i]) && answers[i].length === q.correct.length;
+        return answers[i] !== null;
+    }
+
+    // All-or-nothing: a select-2 question scores only when both picks match
+    function isRight(i) {
+        const q = questions[i];
+        if (!isAnswered(i)) return false;
+        if (isMulti(q)) {
+            const a = answers[i].slice().sort().join(",");
+            return a === q.correct.slice().sort().join(",");
+        }
+        return answers[i] === q.correct;
+    }
+
+    function isPicked(i, opt) {
+        const a = answers[i];
+        return Array.isArray(a) ? a.indexOf(opt) !== -1 : a === opt;
+    }
+
+    function isCorrectOption(q, opt) {
+        return isMulti(q) ? q.correct.indexOf(opt) !== -1 : q.correct === opt;
+    }
+
+    function correctText(q) {
+        const list = isMulti(q) ? q.correct : [q.correct];
+        return list.map(i => String.fromCharCode(65 + i) + ". " + q.options[i]).join("<br>");
+    }
+
+    function renderSidebar() {
+        const grid = document.getElementById("question-nav-grid");
+        grid.innerHTML = questions.map((q, i) => {
+            let cls = "question-nav-btn";
+            if (currentQ === i) cls += " active";
+            if (reviewed[i]) {
+                cls += isRight(i) ? " correct" : " incorrect";
+            } else if (isAnswered(i)) {
+                cls += " answered";
+            }
+            const label = isAnswered(i) ? "✓" : (i + 1);
+            return `<button class="${cls}" data-idx="${i}">${label}</button>`;
+        }).join("");
+
+        grid.querySelectorAll(".question-nav-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                goToQuestion(parseInt(this.dataset.idx));
+            });
+        });
+    }
+
+    function goToQuestion(idx) {
+        if (idx < 0 || idx >= questions.length) return;
+        currentQ = idx;
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQ];
+        const multi = isMulti(q);
+        const area = document.getElementById("question-area");
+        const reviewArea = document.getElementById("review-area");
+        const resultsArea = document.getElementById("results-area");
+
+        resultsArea.style.display = "none";
+        document.getElementById("domain-badge").textContent = q.domain;
+        document.getElementById("domain-badge").className = "domain-badge " + (domainLabels[q.domain] || "");
+        document.getElementById("quiz-progress").textContent = "Question " + (currentQ + 1) + " of " + questions.length;
+        document.getElementById("progress-fill").style.width = ((currentQ + 1) / questions.length * 100) + "%";
+
+        const inputType = multi ? "checkbox" : "radio";
+        let optionsHtml = q.options.map((opt, i) => {
+            let labelClass = "";
+            if (reviewed[currentQ]) {
+                if (isCorrectOption(q, i)) labelClass = "correct disabled";
+                else if (isPicked(currentQ, i)) labelClass = "incorrect disabled";
+                else labelClass = "disabled";
+            } else if (isPicked(currentQ, i)) {
+                labelClass = "selected";
+            }
+            const checked = isPicked(currentQ, i) ? "checked" : "";
+            const disabled = reviewed[currentQ] ? "disabled" : "";
+            return `<li><label class="${labelClass}"><input type="${inputType}" name="q" value="${i}" ${checked} ${disabled}> ${opt}</label></li>`;
+        }).join("");
+
+        const hint = multi ? `<p class="select-hint">Select ${q.correct.length}. Both picks must be right to score the point.</p>` : "";
+
+        area.innerHTML = `
+            <div class="question-text">${q.question}</div>
+            ${hint}
+            <ul class="options-list">${optionsHtml}</ul>
+            <div class="quiz-actions" id="quiz-actions">
+                <button class="btn btn-secondary" id="prev-btn" ${currentQ === 0 ? "disabled" : ""}>&larr; Back</button>
+                <button class="btn btn-secondary" id="review-btn" ${isAnswered(currentQ) ? "" : "disabled"}>Review</button>
+                <button class="btn btn-primary" id="next-btn">${currentQ === questions.length - 1 ? "See Results" : "Next Question"}</button>
+            </div>
+        `;
+
+        reviewArea.innerHTML = "";
+        if (reviewed[currentQ]) {
+            const right = isRight(currentQ);
+            reviewArea.innerHTML = `
+                <div class="review-box ${right ? 'correct' : 'incorrect'}">
+                    <h4>${right ? '✓ Correct' : '✗ Incorrect'}</h4>
+                    <div class="explanation"><strong>Correct answer${multi ? 's' : ''}:</strong><br>${correctText(q)}</div>
+                    <div class="explanation" style="margin-top:0.75rem"><strong>Explanation:</strong> ${q.explanation}</div>
+                    <div class="explanation" style="margin-top:0.75rem"><strong>Source:</strong> <a href="${q.source}" target="_blank" rel="noopener">Microsoft Learn</a></div>
+                </div>
+            `;
+        }
+
+        document.querySelectorAll('input[name="q"]').forEach(input => {
+            input.addEventListener("change", function() {
+                if (reviewed[currentQ]) return;
+                const value = parseInt(this.value);
+                if (multi) {
+                    let picked = Array.isArray(answers[currentQ]) ? answers[currentQ].slice() : [];
+                    if (this.checked) {
+                        if (picked.length >= q.correct.length) {
+                            this.checked = false;
+                            return;
+                        }
+                        picked.push(value);
+                    } else {
+                        picked = picked.filter(v => v !== value);
+                    }
+                    answers[currentQ] = picked;
+                    this.closest("label").classList.toggle("selected", this.checked);
+                } else {
+                    answers[currentQ] = value;
+                    document.querySelectorAll(".options-list label").forEach(l => l.classList.remove("selected"));
+                    this.closest("label").classList.add("selected");
+                }
+                document.getElementById("review-btn").disabled = !isAnswered(currentQ);
+                renderSidebar();
+            });
+        });
+
+        document.getElementById("review-btn").addEventListener("click", function() {
+            if (!isAnswered(currentQ)) return;
+            reviewed[currentQ] = true;
+            renderQuestion();
+        });
+
+        document.getElementById("next-btn").addEventListener("click", function() {
+            if (currentQ === questions.length - 1) {
+                showResults();
+            } else {
+                currentQ++;
+                renderQuestion();
+            }
+        });
+
+        document.getElementById("prev-btn").addEventListener("click", function() {
+            if (currentQ > 0) {
+                currentQ--;
+                renderQuestion();
+            }
+        });
+
+        renderSidebar();
+    }
+
+    function showResults() {
+        document.getElementById("question-area").innerHTML = "";
+        document.getElementById("review-area").innerHTML = "";
+        document.getElementById("quiz-sidebar").style.display = "none";
+        document.getElementById("results-area").style.display = "block";
+
+        const totalCorrect = questions.filter((q, i) => isRight(i)).length;
+        const pct = Math.round(totalCorrect / questions.length * 100);
+        const passed = pct >= 70;
+
+        const domains = {};
+        questions.forEach((q, i) => {
+            if (!domains[q.domain]) domains[q.domain] = { correct: 0, total: 0 };
+            domains[q.domain].total++;
+            if (isRight(i)) domains[q.domain].correct++;
+        });
+
+        let domainHtml = Object.entries(domains).map(([name, d]) => {
+            const p = Math.round(d.correct / d.total * 100);
+            return `<div class="domain-row"><span class="domain-name">${name}</span><span class="domain-score">${d.correct}/${d.total} (${p}%)</span></div>`;
+        }).join("");
+
+        document.getElementById("results-area").innerHTML = `
+            <div class="results-container">
+                <h2>AZ-140 Practice Test Results</h2>
+                <div class="results-score ${passed ? 'pass' : 'fail'}">${pct}%</div>
+                <div class="results-pass-fail ${passed ? 'pass' : 'fail'}">${passed ? '✓ PASSED' : '✗ NOT PASSED'}</div>
+                <p>You answered <strong>${totalCorrect}</strong> out of <strong>${questions.length}</strong> questions correctly. Microsoft scores the real AZ-140 exam from 1 to 1000, and you need 700 to pass, so treat 70% here as a rough guide.</p>
+                <div class="domain-breakdown">
+                    <h3>Domain Breakdown</h3>
+                    ${domainHtml}
+                </div>
+                <div class="retake-area">
+                    <button class="btn btn-success" onclick="location.reload()">Retake Test</button>
+                </div>
+                <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md); border: 1px solid rgba(245, 158, 11, 0.2);">
+                    <p style="margin: 0; font-size: 1rem;"><strong>Want the full exam?</strong> The <a href="https://buymeacoffee.com/mattyhip/e/589877" target="_blank" rel="noopener" data-product="az-140">AZ-140 Exam Kit</a> has a 55-question practice exam and the complete skills outline in 63 pages.</p>
+                </div>
+            </div>
+        `;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderQuestion();
+    });
+    </script>
+</body>
+</html>

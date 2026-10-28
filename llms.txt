@@ -6,6 +6,7 @@ All tutorials and practice tests are free to read. Practice questions are origin
 
 ## Key pages
 - [Home](https://sysopsbits.com/): Overview, free practice tests, latest articles
+- [Free AZ-140 Azure Virtual Desktop practice test](https://sysopsbits.com/tutorials/az-140-practice-test.html)
 - [Free AZ-900 practice test](https://sysopsbits.com/tutorials/az-900-practice-test.html)
 - [Free AZ-104 practice test](https://sysopsbits.com/tutorials/az-104-practice-test.html)
 - [Free PMP practice test](https://sysopsbits.com/project-management/pmp-practice-test.html)

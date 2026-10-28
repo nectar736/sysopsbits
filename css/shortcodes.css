@@ -613,3 +613,16 @@
 /* ===== Light-mode contrast for badges that carry inline colors ===== */
 .light-mode .category[style*="#06b6d4"] { color: #0e7490 !important; }
 .light-mode .category[style*="#f59e0b"] { color: #b45309 !important; }
+
+/* Four free practice tests: one row on desktop, 2x2 on tablets */
+#practice-tests .posts-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+  #practice-tests .posts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  #practice-tests .posts-grid { grid-template-columns: 1fr; }
+}
