@@ -1615,6 +1615,113 @@ a:hover {
   gap: 8px;
 }
 
+/* All-articles index (categories.html): one full-width panel per category.
+   Grid rows stretched every card to the tallest list, so panels stack instead
+   and each article list flows into responsive columns. */
+.terms-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+}
+
+.terms-grid .category-card:hover {
+  transform: none;
+}
+
+.terms-grid .category-header {
+  padding: 1.25rem 1.5rem;
+}
+
+.terms-grid .category-info {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.9rem;
+}
+
+.terms-grid .category-info h2 {
+  font-size: 1.35rem;
+  margin: 0;
+}
+
+.terms-grid .post-count {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-elevated);
+}
+
+.terms-grid .category-preview {
+  padding: 1.25rem 1.5rem 0.5rem;
+}
+
+.terms-grid .category-description {
+  max-width: 70ch;
+  margin-bottom: 1rem;
+}
+
+.terms-grid .recent-posts h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.25rem;
+}
+
+.terms-grid .recent-posts ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  column-gap: 2rem;
+}
+
+.terms-grid .recent-posts li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.terms-grid .recent-posts li:last-child {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.terms-grid .recent-posts li a {
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.terms-grid .recent-posts li a:hover {
+  color: var(--accent-secondary);
+}
+
+.terms-grid .recent-posts time {
+  font-size: 0.75rem;
+}
+
+.terms-grid .category-footer {
+  margin-top: 1rem;
+  padding: 0.9rem 1.5rem;
+  background: var(--bg-secondary);
+}
+
+@media (max-width: 600px) {
+  .terms-grid .category-header,
+  .terms-grid .category-preview,
+  .terms-grid .category-footer {
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
+  }
+}
+
 /* ===== STORE PAGE ===== */
 .product-grid {
   display: grid;
