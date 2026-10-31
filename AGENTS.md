@@ -44,6 +44,7 @@ docs/superpowers/        # Design specs (specs/) and implementation plans (plans
 - Every page head: title, meta description, canonical, `og:*` + `twitter:*` with `og:image`, favicon links, font `<link>` (no CSS `@import`), the inline theme script, one JSON-LD `@graph` (BlogPosting + BreadcrumbList for posts), gtag, and exactly one AdSense script. Copy the head of an existing post.
 - Add new posts to `sitemap.xml`, `llms.txt`, `categories.html`, and their category listing page.
 - Amazon links: `target="_blank" rel="sponsored nofollow noopener"`, the standard disclosure box at the top of the article (must include "As an Amazon Associate I earn from qualifying purchases."), and **no typed-in Amazon prices or star ratings** (use price tiers: $, $$, $$$).
+- Author name is **Matthew Hippensteel** everywhere: `<meta name="author">`, the JSON-LD Person `name`, and the `.author-bio` link text (copy the bio from an existing post).
 - Exam posts end with an `aside.product-cta` for the matching study guide (see any AZ-140 post).
 - Images: include `width`/`height`; the post hero image uses `loading="eager" fetchpriority="high"`.
 - Exam domain weights must match the current official outline (Microsoft Learn study guides; PMP 2026 ECO: People 33%, Process 41%, Business Environment 26%).

@@ -1,6 +1,6 @@
 # SysOpsBits
 
-> Practical guides, hands-on labs, and exam preparation for system administrators: Microsoft Azure (AZ-140 Azure Virtual Desktop, AZ-104, AZ-900, SC-900), Microsoft 365 and Entra ID, PowerShell, Linux, and project management certifications (PMP on PMBOK 8, PSM I). Written by Matthew, a PMP-certified systems administrator holding AZ-140, AZ-104, Azure Network Engineer, Identity and Access Administrator, Microsoft 365 Administrator Expert, Security+, and CCNA certifications.
+> Practical guides, hands-on labs, and exam preparation for system administrators: Microsoft Azure (AZ-140 Azure Virtual Desktop, AZ-104, AZ-900, SC-900), Microsoft 365 and Entra ID, PowerShell, Linux, and project management certifications (PMP on PMBOK 8, PSM I). Written by Matthew Hippensteel, a PMP-certified systems administrator holding AZ-140, AZ-104, Azure Network Engineer, Identity and Access Administrator, Microsoft 365 Administrator Expert, Security+, and CCNA certifications.
 
 All tutorials and practice tests are free to read. Practice questions are original and written from the official published skills outlines; they are not real exam questions. Paid study guides are sold through Buy Me a Coffee.
 
