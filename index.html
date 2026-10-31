@@ -198,9 +198,54 @@
             <section class="recent-posts home-section">
                 <div class="home-section-head">
                     <h2>Latest articles</h2>
-                    <p>New Azure Virtual Desktop labs and exam guides, plus everything else from this month.</p>
+                    <p>New guides on Azure mandatory MFA, private subnets, and Windows Autopilot, plus the latest Azure Virtual Desktop labs.</p>
                 </div>
                 <div class="posts-grid">
+                    <article class="post-card">
+                        <div class="post-image">
+                            <img width="1200" height="630" src="images/azure-mandatory-mfa.jpg" alt="Azure MFA Broke Your Scripts? Fix Them With Managed Identities" loading="lazy">
+                        </div>
+                        <div class="post-content">
+                            <div class="post-meta">
+                                <a href="microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                                <time datetime="2026-10-30">Oct 30, 2026</time>
+                            </div>
+                            <h3><a href="tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a></h3>
+                            <p>Azure now requires MFA for CLI, PowerShell, and IaC changes. Find the user accounts your automation uses and move them to managed identities or service principals.</p>
+                            <a href="tutorials/azure-mandatory-mfa-managed-identities.html" class="read-more">Read More →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card">
+                        <div class="post-image">
+                            <img width="1200" height="630" src="images/azure-private-subnets.jpg" alt="Azure VM Has No Internet in a New VNet? Private Subnets Explained" loading="lazy">
+                        </div>
+                        <div class="post-content">
+                            <div class="post-meta">
+                                <a href="microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                                <time datetime="2026-10-30">Oct 30, 2026</time>
+                            </div>
+                            <h3><a href="tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a></h3>
+                            <p>New Azure VNets default to private subnets, so VMs can't reach the internet. Choose NAT Gateway, Load Balancer outbound rules, or a public IP, and avoid five transition traps.</p>
+                            <a href="tutorials/azure-private-subnet-default-outbound-access.html" class="read-more">Read More →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card">
+                        <div class="post-image">
+                            <img width="1200" height="630" src="images/autopilot-device-preparation.jpg" alt="Autopilot Device Preparation vs Windows Autopilot: Which to Use" loading="lazy">
+                        </div>
+                        <div class="post-content">
+                            <div class="post-meta">
+                                <a href="microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                                <time datetime="2026-10-30">Oct 30, 2026</time>
+                            </div>
+                            <h3><a href="tutorials/autopilot-device-preparation-vs-windows-autopilot.html">Autopilot Device Preparation vs Windows Autopilot: Which to Use</a></h3>
+                            <p>Join types, Windows 11 build rules, app limits, setup steps, and the deployment choice the MD-102 exam now tests, checked against Microsoft Learn.</p>
+                            <a href="tutorials/autopilot-device-preparation-vs-windows-autopilot.html" class="read-more">Read More →</a>
+                        </div>
+                    </article>
+
                     <article class="post-card">
                         <div class="post-image">
                             <img width="1200" height="630" src="images/az-140-entra-kerberos.jpg" alt="AZ-140 Entra Kerberos for FSLogix on Azure Files" loading="lazy">
@@ -243,51 +288,6 @@
                             <h3><a href="tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, and Private Link for AVD</a></h3>
                             <p>Latency assessment, QoS with DSCP 46, Private Link setup, and the order to troubleshoot AVD connectivity.</p>
                             <a href="tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html" class="read-more">Read More →</a>
-                        </div>
-                    </article>
-
-                    <article class="post-card">
-                        <div class="post-image">
-                            <img width="1408" height="1408" src="images/az-140-host-pool.jpg" alt="AZ-140 host pool deployment lab" loading="lazy">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-meta">
-                                <a href="microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
-                                <time datetime="2026-09-01">Sep 1, 2026</time>
-                            </div>
-                            <h3><a href="tutorials/az-140-deploy-host-pool-step-by-step.html">AZ-140 Lab: Deploy Your First AVD Host Pool</a></h3>
-                            <p>A working pooled host pool from scratch: session hosts, workspace, application group, and user assignment, in the portal and PowerShell.</p>
-                            <a href="tutorials/az-140-deploy-host-pool-step-by-step.html" class="read-more">Read More →</a>
-                        </div>
-                    </article>
-
-                    <article class="post-card">
-                        <div class="post-image">
-                            <img width="1152" height="1728" src="images/psm-vs-csm.jpg" alt="PSM I vs CSM comparison" loading="lazy">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-meta">
-                                <a href="project-management.html" class="category">Project Management</a>
-                                <time datetime="2026-08-09">Aug 9, 2026</time>
-                            </div>
-                            <h3><a href="project-management/psm1-vs-csm.html">PSM I vs CSM: Which Scrum Master Certification?</a></h3>
-                            <p>Cost, renewal, exam difficulty, and how employers read each one, so you can pick the right Scrum Master credential.</p>
-                            <a href="project-management/psm1-vs-csm.html" class="read-more">Read More →</a>
-                        </div>
-                    </article>
-
-                    <article class="post-card">
-                        <div class="post-image">
-                            <img width="1200" height="630" src="images/azure-monitor-log-analytics-guide.jpg" alt="Azure Monitor and Log Analytics" loading="lazy">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-meta">
-                                <a href="microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
-                                <time datetime="2026-07-20">Jul 20, 2026</time>
-                            </div>
-                            <h3><a href="tutorials/azure-monitor-log-analytics-practical-guide.html">Azure Monitor and Log Analytics for AZ-104</a></h3>
-                            <p>Workspaces, KQL, data collection rules, alerts, action groups, and workbooks: the monitoring domain in practical terms.</p>
-                            <a href="tutorials/azure-monitor-log-analytics-practical-guide.html" class="read-more">Read More →</a>
                         </div>
                     </article>
                 </div>

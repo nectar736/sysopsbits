@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Mandatory MFA: Fix Broken Scripts With Managed Identities</title>
+    <meta name="description" content="Azure now requires MFA for CLI, PowerShell, and IaC changes. Move user-account scripts to managed identities or service principals, step by step.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/azure-mandatory-mfa-managed-identities.html">
+    <meta name="author" content="Matthew">
+    <meta property="og:site_name" content="SysOpsBits">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Azure MFA Broke Your Scripts? Fix Them With Managed Identities">
+    <meta property="og:description" content="Azure now requires MFA for CLI, PowerShell, and IaC changes. Move user-account scripts to managed identities or service principals, step by step.">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/azure-mandatory-mfa-managed-identities.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/azure-mandatory-mfa.jpg">
+    <meta property="og:locale" content="en_US">
+    <meta property="article:published_time" content="2026-10-30">
+    <meta property="article:modified_time" content="2026-10-30">
+    <meta property="article:section" content="Microsoft">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Azure MFA Broke Your Scripts? Fix Them With Managed Identities">
+    <meta name="twitter:description" content="Azure now requires MFA for CLI, PowerShell, and IaC changes. Move user-account scripts to managed identities or service principals, step by step.">
+    <meta name="twitter:image" content="https://sysopsbits.com/images/azure-mandatory-mfa.jpg">
+    <meta name="theme-color" content="#0a0a0f">
+    <link rel="icon" href="../favicon.ico" sizes="32x32">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Azure MFA Broke Your Scripts? Fix Them With Managed Identities", "name": "Azure MFA Broke Your Scripts? Fix Them With Managed Identities", "description": "Azure now requires MFA for CLI, PowerShell, and IaC changes. Move user-account scripts to managed identities or service principals, step by step.", "image": ["https://sysopsbits.com/images/azure-mandatory-mfa.jpg"], "datePublished": "2026-10-30", "dateModified": "2026-10-30", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/azure-mandatory-mfa-managed-identities.html", "url": "https://sysopsbits.com/tutorials/azure-mandatory-mfa-managed-identities.html", "articleSection": "Microsoft", "inLanguage": "en-US", "keywords": "azure, entra-id, mfa, managed-identity, sc-300, az-104"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Azure MFA Broke Your Scripts? Fix Them With Managed Identities", "item": "https://sysopsbits.com/tutorials/azure-mandatory-mfa-managed-identities.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can I still postpone Azure mandatory MFA?", "acceptedAnswer": {"@type": "Answer", "text": "No. Microsoft allowed Phase 2 postponement only until July 1, 2026, and there's no opt-out. After enforcement begins, a Global Administrator can ask Microsoft support to lift it temporarily. Treat that as breathing room for the migration, not a fix."}}, {"@type": "Question", "name": "Do managed identities and service principals need MFA?", "acceptedAnswer": {"@type": "Answer", "text": "No. Microsoft states that workload identities, including managed identities and service principals, aren't affected by either phase. Only user identities must complete MFA."}}, {"@type": "Question", "name": "Why does az vm list work but az vm create fails?", "acceptedAnswer": {"@type": "Answer", "text": "Phase 2 enforces MFA on create, update, and delete operations only. Reads pass without MFA, so a user-based script fails at its first write."}}, {"@type": "Question", "name": "Does mandatory MFA apply to test tenants?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Microsoft requires MFA in every Azure tenant, with no exception for test or lab environments."}}, {"@type": "Question", "name": "What should I use for GitHub Actions deployments?", "acceptedAnswer": {"@type": "Answer", "text": "Use OpenID Connect with a federated identity credential on an app registration or a user-assigned managed identity. GitHub's token is exchanged for a Microsoft Entra token, so you store no secret in the repository."}}]}]}</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"><!-- partial:header:start -->
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="site-branding">
+                <a href="../index.html" class="site-title">SysOpsBits</a>
+                <p class="site-tagline">Your guide to better sysops</p>
+            </div>
+
+            <nav class="main-nav" aria-label="Main">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="../index.html" data-page="index">Home</a></li>
+                    <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                    <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle" aria-haspopup="true">
+                            Categories
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                            <li><a href="../guided-labs.html" data-page="guided-labs">Guided Labs</a></li>
+                            <li><a href="../comparisons.html" data-page="comparisons">Comparisons</a></li>
+                            <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                            <li><a href="../index.html#practice-tests">Free Practice Tests</a></li>
+                            <li><a href="../categories.html" data-page="categories">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../about.html" data-page="about">About</a></li>
+                    <li><a href="../store.html" data-page="store" class="nav-store">Study Guides</a></li>
+                    <li class="support-link"><a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn" title="Buy me a coffee">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                        </svg>
+                        <span>Support</span>
+                    </a></li>
+                </ul>
+                <button class="theme-toggle" aria-label="Toggle dark/light mode">
+                    <span class="theme-toggle-label" id="theme-label-dark" data-active="true">Dark</span>
+                    <span class="theme-toggle-track">
+                        <span class="theme-toggle-thumb"></span>
+                    </span>
+                    <span class="theme-toggle-label" id="theme-label-light" data-active="false">Light</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- partial:header:end --></div>
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-10-30">October 30, 2026</time>
+                    </div>
+                    <h1>Azure MFA Broke Your Scripts? Fix Them With Managed Identities</h1>
+                    <p style="color:var(--text-secondary);max-width:700px;margin:0 auto;">Phase 2 of Azure mandatory MFA is live in every public-cloud tenant. Here is how to find the automation it broke and move it to an identity that never sees an MFA prompt.</p>
+                    <div class="post-featured-image">
+                        <img width="1200" height="630" src="../images/azure-mandatory-mfa.jpg" alt="Azure mandatory MFA and managed identities for automation" loading="eager" fetchpriority="high">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <div class="callout callout-info">
+                        <p><strong>Short answer:</strong> Azure now requires multifactor authentication for every user account that creates, updates, or deletes resources through Azure CLI, Azure PowerShell, IaC tools, or the REST API. A script that signs in as a user can't complete an MFA prompt, so it fails. Move the script to a workload identity: a managed identity if it runs in Azure, a federated credential if it runs in GitHub Actions, or a certificate-based service principal everywhere else. Workload identities are exempt from the requirement.</p>
+                    </div>
+
+                    <p>Your nightly cleanup job worked for two years. Then it started failing on <code>az vm deallocate</code> with an error about signing in with MFA, while <code>az vm list</code> still ran fine. Nothing in your script changed. Microsoft's enforcement did.</p>
+
+                    <p>This guide shows you how to confirm that mandatory MFA caused the failure, find every user account your automation hides behind, and replace each one with the right workload identity. Every command and date below comes from Microsoft Learn, current as of October 2026.</p>
+
+                    <h2>What Microsoft enforces, and when it started</h2>
+                    <p>Microsoft rolled mandatory MFA out in two phases. Phase 1 covered the admin portals. Phase 2 covers the tools your scripts use.</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Phase</th><th>Applies to</th><th>Operations</th><th>Started</th></tr></thead>
+                            <tbody>
+                                <tr><td>Phase 1</td><td>Azure portal, Microsoft Entra admin center, Intune admin center</td><td>Create, read, update, delete</td><td>October 2024 (Microsoft 365 admin center from February 2025)</td></tr>
+                                <tr><td>Phase 2</td><td>Azure CLI, Azure PowerShell, Azure mobile app, IaC tools, REST API, Azure SDK</td><td>Create, update, delete. Reads don't need MFA.</td><td>October 1, 2025, rolled out gradually</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Global Administrators could postpone Phase 2, but only until July 1, 2026. That window has closed, so every tenant in the public Azure cloud now enforces it. Microsoft doesn't enforce it in Azure for US Government or other sovereign clouds.</p>
+                    <p>The check happens on Azure Resource Manager, so any request to <code>https://management.azure.com</code> is in scope, whichever client sent it. That explains the pattern in the opening example: reads pass and writes fail.</p>
+
+                    <h2>Confirm that MFA enforcement broke your script</h2>
+                    <p>Users who sign in without MFA can still open a Phase 2 tool. The failure arrives at the first create, update, or delete, as an error that asks for MFA through a claims challenge. Interactive clients sometimes turn that challenge into a prompt. A scheduled task has nobody to answer it.</p>
+                    <p>Check three things:</p>
+                    <ol>
+                        <li><strong>Enforcement status.</strong> As a Global Administrator, open <code>https://aka.ms/postponePhase2MFA</code> in the Azure portal. A banner confirms when enforcement began for your tenant.</li>
+                        <li><strong>The sign-in log.</strong> In the Microsoft Entra admin center, open the sign-in logs and filter on the account your script uses. The log shows the application that enforced MFA.</li>
+                        <li><strong>Your tool versions.</strong> Microsoft recommends Azure CLI 2.76 or later and Azure PowerShell 14.3 or later. Older versions return less helpful errors.</li>
+                    </ol>
+
+                    <h2>Find every user account your automation uses</h2>
+                    <p>The failing script you know about is rarely the only one. Search the sign-in logs for user accounts that reach Azure through the Phase 2 tools with single-factor authentication. Microsoft publishes the app IDs:</p>
+                    <ul>
+                        <li>Azure CLI: <code>04b07795-8ddb-461a-bbee-02f9e1bf7b46</code></li>
+                        <li>Azure PowerShell: <code>1950a258-227b-4e31-a9cf-717495945fc2</code></li>
+                    </ul>
+                    <p>If you send Entra sign-in logs to a Log Analytics workspace, this KQL query lists the accounts to migrate:</p>
+                    <pre><code>SigninLogs
+| where TimeGenerated &gt; ago(30d)
+| where AppId in ("04b07795-8ddb-461a-bbee-02f9e1bf7b46", "1950a258-227b-4e31-a9cf-717495945fc2")
+| where AuthenticationRequirement == "singleFactorAuthentication"
+| summarize SignIns = count(), LastSeen = max(TimeGenerated) by UserPrincipalName, AppDisplayName
+| order by SignIns desc</code></pre>
+                    <p>Accounts that sign in at the same time every night, from the same server IP, are your service accounts. No workspace yet? Our <a href="azure-monitor-log-analytics-practical-guide.html">Azure Monitor and Log Analytics guide</a> walks through the diagnostic settings.</p>
+
+                    <h2>Pick the right workload identity</h2>
+                    <p>Microsoft states that managed identities and service principals aren't affected by either phase. Your choice depends on where the code runs.</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Where the script runs</th><th>Use this identity</th><th>Secret to manage</th></tr></thead>
+                            <tbody>
+                                <tr><td>Azure VM, Azure Functions, App Service, Automation account</td><td>System-assigned managed identity</td><td>None. Azure handles the credential.</td></tr>
+                                <tr><td>Several Azure resources sharing one identity</td><td>User-assigned managed identity</td><td>None</td></tr>
+                                <tr><td>GitHub Actions</td><td>Federated identity credential (OpenID Connect) on an app registration or a user-assigned managed identity</td><td>None. GitHub's token is exchanged for an Entra token.</td></tr>
+                                <tr><td>On-premises server, another cloud, a laptop</td><td>Service principal with a certificate</td><td>A certificate you store and rotate</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Avoid service principals with client secrets where a managed identity or federated credential works. Microsoft labels secret-based sign-in for GitHub Actions as not recommended, and a secret in a script file is one leak away from a compromised subscription.</p>
+
+                    <h2>Migrate a script in five steps</h2>
+
+                    <h3>1. Create the identity and grant only what the job needs</h3>
+                    <p>Enable a system-assigned managed identity on the VM or Automation account that runs the job, then assign it an Azure RBAC role at the narrowest scope that works. A cleanup job that deallocates VMs in one resource group doesn't need Contributor on the subscription. If you're unsure which role system applies, read <a href="azure-rbac-vs-entra-id-roles.html">Azure RBAC vs Entra ID roles</a> first. Resource access lives in Azure RBAC, not Entra roles.</p>
+
+                    <h3>2. Replace the sign-in line</h3>
+                    <p>This is usually the only line that changes. Azure CLI with a managed identity:</p>
+                    <pre><code># System-assigned managed identity
+az login --identity
+
+# User-assigned managed identity (client ID, object ID, or resource ID)
+az login --identity --client-id &lt;client-id&gt;</code></pre>
+                    <p>Azure PowerShell with a managed identity:</p>
+                    <pre><code># System-assigned
+Connect-AzAccount -Identity
+
+# User-assigned
+Connect-AzAccount -Identity -AccountId &lt;client-id-or-resource-id&gt;</code></pre>
+                    <p>A service principal with a certificate, for servers outside Azure:</p>
+                    <pre><code># Azure CLI: the PEM file must contain the certificate appended to the private key
+az login --service-principal --username &lt;app-id&gt; --certificate /path/to/cert.pem --tenant &lt;tenant-id&gt;
+
+# Azure PowerShell: certificate loaded in the local certificate store
+Connect-AzAccount -ServicePrincipal -ApplicationId &lt;app-id&gt; -Tenant &lt;tenant-id&gt; -CertificateThumbprint &lt;thumbprint&gt;</code></pre>
+
+                    <h3>3. Remove password-based code paths</h3>
+                    <p>Custom code breaks for a different reason. The Resource Owner Password Credentials (ROPC) flow can't do MFA, so it throws exceptions once MFA applies. Search your repositories for:</p>
+                    <ul>
+                        <li><code>UsernamePasswordCredential</code> in any Azure Identity library. Microsoft deprecated it for .NET, Go, Java, JavaScript, and Python.</li>
+                        <li><code>AZURE_USERNAME</code> and <code>AZURE_PASSWORD</code> environment variables used with <code>DefaultAzureCredential</code> or <code>EnvironmentCredential</code></li>
+                        <li><code>AcquireTokenByUsernamePassword</code> or <code>acquire_token_by_username_password</code> in MSAL</li>
+                    </ul>
+                    <p>Replace them with <code>ManagedIdentityCredential</code>, a certificate credential, or <code>DefaultAzureCredential</code> without the username and password variables.</p>
+
+                    <h3>4. Run the job and check the log</h3>
+                    <p>Run the script once by hand on its host. Then open the sign-in logs and filter to service principal sign-ins. You should see the managed identity or app, not a user. If <code>az login --identity</code> fails with no subscriptions found, the identity has no role assignment at a scope that includes a subscription or resource yet.</p>
+
+                    <h3>5. Retire the old account</h3>
+                    <p>Disable the user account, wait a full job cycle, then delete it and reclaim its license. To keep Conditional Access control over the new identity, Microsoft offers Conditional Access for workload identities, which needs a Workload Identities license.</p>
+
+                    <h2>Make sure the humans are covered too</h2>
+                    <p>Your admins also need MFA before they hit an error. Pick the option your license allows:</p>
+                    <ul>
+                        <li><strong>Microsoft Entra ID P1 or P2:</strong> create a Conditional Access policy that targets the <strong>Microsoft Admin Portals</strong> and <strong>Windows Azure Service Management API</strong> cloud apps and requires the Multifactor authentication strength. Start in report-only mode so you don't lock yourself out. Our <a href="azureConditionalAccess.html">Conditional Access step-by-step guide</a> covers policy design and exclusions.</li>
+                        <li><strong>Microsoft Entra ID Free or Microsoft 365:</strong> turn on security defaults.</li>
+                        <li><strong>Break-glass accounts:</strong> they have no exemption. Microsoft recommends passkeys (FIDO2) or certificate-based authentication for them.</li>
+                        <li><strong>Guest admins:</strong> B2B guests must satisfy MFA in your tenant or send MFA claims from their home tenant through cross-tenant access settings. See <a href="microsoft-entra-external-id-vs-b2b-collaboration.html">Entra External ID vs B2B collaboration</a>.</li>
+                    </ul>
+                    <p>Without Conditional Access licensing, you can still measure the impact with Microsoft's built-in Azure Policy definitions for MFA enforcement. Run them in Audit mode first, then Deny.</p>
+
+                    <h2>What this change doesn't touch</h2>
+                    <ul>
+                        <li><strong>Read operations</strong> through CLI, PowerShell, and the API</li>
+                        <li><strong>Microsoft Graph API calls</strong>, which generally fall outside this enforcement</li>
+                        <li><strong>Microsoft Entra Connect Sync and Cloud Sync</strong> service accounts</li>
+                        <li><strong>Apps and websites you host on Azure</strong>. Your app's owners control their own sign-in rules.</li>
+                    </ul>
+
+                    <h2>Why this matters for SC-300 and AZ-104</h2>
+                    <p>The SC-300 skills outline (updated October 28, 2026) asks you to "select appropriate identities for applications and Azure workloads, including managed identities, service principals, user accounts, and managed service accounts." Expect a scenario where a script fails after MFA rollout and you must choose its replacement identity. The right answer follows the table above: managed identity inside Azure, service principal outside. AZ-104 tests the RBAC half of the same story, which is why the <a href="az-104-practice-test.html">free AZ-104 practice test</a> includes role-scope questions.</p>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Can I still postpone Azure mandatory MFA?</h3>
+                                <p>No. Microsoft allowed Phase 2 postponement only until July 1, 2026, and there's no opt-out. After enforcement begins, a Global Administrator can ask Microsoft support to lift it temporarily. Treat that as breathing room for the migration, not a fix.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Do managed identities and service principals need MFA?</h3>
+                                <p>No. Microsoft states that workload identities, including managed identities and service principals, aren't affected by either phase. Only user identities must complete MFA.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Why does az vm list work but az vm create fails?</h3>
+                                <p>Phase 2 enforces MFA on create, update, and delete operations only. Reads pass without MFA, so a user-based script fails at its first write.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Does mandatory MFA apply to test tenants?</h3>
+                                <p>Yes. Microsoft requires MFA in every Azure tenant, with no exception for test or lab environments.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What should I use for GitHub Actions deployments?</h3>
+                                <p>Use OpenID Connect with a federated identity credential on an app registration or a user-assigned managed identity. GitHub's token is exchanged for a Microsoft Entra token, so you store no secret in the repository.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <p class="post-sources"><strong>Sources:</strong> <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mandatory-multifactor-authentication" target="_blank" rel="noopener">Mandatory MFA for Azure and admin portals</a>, <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-mandatory-multifactor-authentication" target="_blank" rel="noopener">Verify users are set up for mandatory MFA</a>, <a href="https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli-managed-identity" target="_blank" rel="noopener">Azure CLI managed identity sign-in</a>, <a href="https://learn.microsoft.com/en-us/powershell/azure/authenticate-noninteractive" target="_blank" rel="noopener">Azure PowerShell non-interactive sign-in</a>, <a href="https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure" target="_blank" rel="noopener">GitHub Actions to Azure</a>, and the <a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-300" target="_blank" rel="noopener">SC-300 study guide</a> on Microsoft Learn.</p>
+
+                    <aside class="product-cta" aria-label="Study guide">
+                        <img src="../images/az-104.jpg" alt="AZ-104 Exam Cram cover" width="1168" height="784" loading="lazy">
+                        <div class="product-cta-body">
+                            <p class="product-cta-eyebrow">Studying for AZ-104?</p>
+                            <h3 class="product-cta-title">AZ-104 Exam Cram</h3>
+                            <p>All five Azure Administrator domains as high-impact notes and hands-on labs, including identity, RBAC, and networking, plus an 80-question scenario-based practice exam.</p>
+                            <a class="btn btn-primary" href="https://buymeacoffee.com/mattyhip/e/537655" target="_blank" rel="noopener" data-product="az-104">Get the AZ-104 Exam Cram, $8.99</a>
+                            <p class="product-cta-note">Written by the author of this guide. Free practice tests stay free.</p>
+                        </div>
+                    </aside>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#entra-id</span>
+                        <span class="tag">#mfa</span>
+                        <span class="tag">#managed-identity</span>
+                        <span class="tag">#sc-300</span>
+                        <span class="tag">#az-104</span>
+                    </div>
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p><a href="../about.html">Matthew</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+    <div id="footer-placeholder"><!-- partial:footer:start -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SysOpsBits</h3>
+                <p>Azure, Microsoft 365, and PMP exam guides, hands-on labs, and honest tool comparisons for system administrators.</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395" target="_blank" rel="noopener">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../contact.html">Contact</a></li>
+                    <li><a href="../store.html">Study Guides</a></li>
+                    <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="../terms.html">Terms of Service</a></li>
+                    <li><a href="../affiliate-disclosure.html">Affiliate Disclosure</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="../categories.html">All Categories</a></li>
+                    <li><a href="../microsoft.html">Microsoft</a></li>
+                    <li><a href="../guided-labs.html">Guided Labs</a></li>
+                    <li><a href="../comparisons.html">Comparisons</a></li>
+                    <li><a href="../project-management.html">Project Management</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section support-section">
+                <h3>Free Practice Tests</h3>
+                <ul>
+                    <li><a href="../tutorials/az-140-practice-test.html">AZ-140 Practice Test</a></li>
+                    <li><a href="../tutorials/az-900-practice-test.html">AZ-900 Practice Test</a></li>
+                    <li><a href="../tutorials/az-104-practice-test.html">AZ-104 Practice Test</a></li>
+                    <li><a href="../project-management/pmp-practice-test.html">PMP Practice Test</a></li>
+                </ul>
+                <a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn bmc-btn-footer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                    </svg>
+                    <span>Buy me a coffee</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 SysOpsBits. All rights reserved. As an Amazon Associate I earn from qualifying purchases.</p>
+            <p class="footer-legal">Microsoft, Azure, and related marks are trademarks of the Microsoft group of companies. PMP and PMBOK are registered marks of the Project Management Institute, Inc. SysOpsBits is independent and not affiliated with or endorsed by either.</p>
+        </div>
+    </div>
+</footer>
+<!-- partial:footer:end --></div>
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

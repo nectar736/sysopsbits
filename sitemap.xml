@@ -330,4 +330,19 @@
     <lastmod>2026-10-27</lastmod>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://sysopsbits.com/tutorials/azure-mandatory-mfa-managed-identities.html</loc>
+    <lastmod>2026-10-30</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sysopsbits.com/tutorials/azure-private-subnet-default-outbound-access.html</loc>
+    <lastmod>2026-10-30</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sysopsbits.com/tutorials/autopilot-device-preparation-vs-windows-autopilot.html</loc>
+    <lastmod>2026-10-30</lastmod>
+    <priority>0.7</priority>
+  </url>
 </urlset>

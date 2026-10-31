@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure VM No Internet in a New VNet? Private Subnets Explained</title>
+    <meta name="description" content="New Azure VNets default to private subnets, so VMs can&#x27;t reach the internet. Choose NAT Gateway, Load Balancer outbound rules, or a public IP.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/azure-private-subnet-default-outbound-access.html">
+    <meta name="author" content="Matthew">
+    <meta property="og:site_name" content="SysOpsBits">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Azure VM Has No Internet in a New VNet? Private Subnets Explained">
+    <meta property="og:description" content="New Azure VNets default to private subnets, so VMs can&#x27;t reach the internet. Choose NAT Gateway, Load Balancer outbound rules, or a public IP.">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/azure-private-subnet-default-outbound-access.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/azure-private-subnets.jpg">
+    <meta property="og:locale" content="en_US">
+    <meta property="article:published_time" content="2026-10-30">
+    <meta property="article:modified_time" content="2026-10-30">
+    <meta property="article:section" content="Microsoft">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Azure VM Has No Internet in a New VNet? Private Subnets Explained">
+    <meta name="twitter:description" content="New Azure VNets default to private subnets, so VMs can&#x27;t reach the internet. Choose NAT Gateway, Load Balancer outbound rules, or a public IP.">
+    <meta name="twitter:image" content="https://sysopsbits.com/images/azure-private-subnets.jpg">
+    <meta name="theme-color" content="#0a0a0f">
+    <link rel="icon" href="../favicon.ico" sizes="32x32">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Azure VM Has No Internet in a New VNet? Private Subnets Explained", "name": "Azure VM Has No Internet in a New VNet? Private Subnets Explained", "description": "New Azure VNets default to private subnets, so VMs can't reach the internet. Choose NAT Gateway, Load Balancer outbound rules, or a public IP.", "image": ["https://sysopsbits.com/images/azure-private-subnets.jpg"], "datePublished": "2026-10-30", "dateModified": "2026-10-30", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/azure-private-subnet-default-outbound-access.html", "url": "https://sysopsbits.com/tutorials/azure-private-subnet-default-outbound-access.html", "articleSection": "Microsoft", "inLanguage": "en-US", "keywords": "azure, networking, nat-gateway, vnet, az-700, az-104"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Azure VM Has No Internet in a New VNet? Private Subnets Explained", "item": "https://sysopsbits.com/tutorials/azure-private-subnet-default-outbound-access.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Why can't my new Azure VM reach the internet?", "acceptedAnswer": {"@type": "Answer", "text": "VNets created with API versions released after March 31, 2026, and VNets created in the Azure portal, use private subnets by default. VMs in a private subnet need an explicit outbound method such as a NAT gateway, a load balancer outbound rule, a public IP, or a firewall route."}}, {"@type": "Question", "name": "Are existing Azure VMs affected by the default outbound access change?", "acceptedAnswer": {"@type": "Answer", "text": "No. Microsoft doesn't change existing VNets. Existing VMs, and new VMs you add to existing VNets, keep default outbound access unless you make the subnet private."}}, {"@type": "Question", "name": "What is the recommended fix for default outbound access?", "acceptedAnswer": {"@type": "Answer", "text": "Microsoft recommends associating a NAT gateway with the VM's subnet for most scenarios. It provides static, predictable outbound IPs and takes precedence over load balancer outbound rules and instance-level public IPs on that subnet for new connections."}}, {"@type": "Question", "name": "Does Windows Update work in a private subnet?", "acceptedAnswer": {"@type": "Answer", "text": "Not without an explicit outbound method. Microsoft's documentation names Windows Activation and Windows Updates as services that fail on a private subnet without explicit egress."}}, {"@type": "Question", "name": "Do I need to restart VMs after changing a subnet to private?", "acceptedAnswer": {"@type": "Answer", "text": "You need to stop and deallocate them. A guest OS restart doesn't apply the change to the network interface."}}]}]}</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"><!-- partial:header:start -->
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="site-branding">
+                <a href="../index.html" class="site-title">SysOpsBits</a>
+                <p class="site-tagline">Your guide to better sysops</p>
+            </div>
+
+            <nav class="main-nav" aria-label="Main">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="../index.html" data-page="index">Home</a></li>
+                    <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                    <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle" aria-haspopup="true">
+                            Categories
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                            <li><a href="../guided-labs.html" data-page="guided-labs">Guided Labs</a></li>
+                            <li><a href="../comparisons.html" data-page="comparisons">Comparisons</a></li>
+                            <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                            <li><a href="../index.html#practice-tests">Free Practice Tests</a></li>
+                            <li><a href="../categories.html" data-page="categories">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../about.html" data-page="about">About</a></li>
+                    <li><a href="../store.html" data-page="store" class="nav-store">Study Guides</a></li>
+                    <li class="support-link"><a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn" title="Buy me a coffee">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                        </svg>
+                        <span>Support</span>
+                    </a></li>
+                </ul>
+                <button class="theme-toggle" aria-label="Toggle dark/light mode">
+                    <span class="theme-toggle-label" id="theme-label-dark" data-active="true">Dark</span>
+                    <span class="theme-toggle-track">
+                        <span class="theme-toggle-thumb"></span>
+                    </span>
+                    <span class="theme-toggle-label" id="theme-label-light" data-active="false">Light</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- partial:header:end --></div>
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-10-30">October 30, 2026</time>
+                    </div>
+                    <h1>Azure VM Has No Internet in a New VNet? Private Subnets Explained</h1>
+                    <p style="color:var(--text-secondary);max-width:700px;margin:0 auto;">Since March 31, 2026, new virtual networks stop handing VMs a hidden public IP. Here is how to spot a private subnet, add a NAT gateway, and avoid the five traps in the switch.</p>
+                    <div class="post-featured-image">
+                        <img width="1200" height="630" src="../images/azure-private-subnets.jpg" alt="Azure private subnet with a NAT gateway providing outbound access" loading="eager" fetchpriority="high">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <div class="callout callout-info">
+                        <p><strong>Short answer:</strong> Virtual networks created with Azure API versions released after March 31, 2026 get private subnets by default (<code>defaultOutboundAccess = false</code>), and the Azure portal already works this way. A VM in a private subnet has no route to the internet until you add an explicit outbound method. Attach a NAT gateway to the subnet, which Microsoft recommends for most cases, or use Load Balancer outbound rules, a public IP on the NIC, or a firewall with a user-defined route.</p>
+                    </div>
+
+                    <p>You deploy a fresh VNet and a Windows VM from a template you've used a dozen times. The VM boots, you connect through Bastion, and then nothing works. Windows won't activate. Windows Update times out. An Azure Virtual Desktop session host never registers with its host pool. The NSG allows everything outbound, so the firewall isn't the problem.</p>
+                    <p>The subnet is. Azure stopped handing out free internet access to new networks, and this guide shows you how to confirm it, fix it properly, and avoid the traps that catch people during the switch.</p>
+
+                    <h2>What changed: default outbound access is off for new VNets</h2>
+                    <p>For years, Azure gave any VM without an explicit outbound method a hidden public IP so it could reach the internet. Microsoft calls this <strong>default outbound access</strong>. That IP belongs to Microsoft, can change without notice, and doesn't appear anywhere you can manage it.</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Scenario</th><th>Default outbound access?</th></tr></thead>
+                            <tbody>
+                                <tr><td>New VNet created with an API version released after March 31, 2026 (ARM, Bicep, PowerShell, CLI)</td><td>No. Subnets are private.</td></tr>
+                                <tr><td>New VNet created in the Azure portal</td><td>No. The portal already defaults to private subnets.</td></tr>
+                                <tr><td>New VNet from a template or Terraform pinned to an older API version</td><td>Yes. The property stays null, which allows it.</td></tr>
+                                <tr><td>Existing VNets, including new VMs you add to them</td><td>Yes, unless you make the subnet private</td></tr>
+                                <tr><td>VMs in a Flexible orchestration scale set</td><td>No. Flexible scale sets are secure by default.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Microsoft gives three reasons for the change. Implicit internet access contradicts Zero Trust. Explicit connectivity is easier to reason about. The default IP isn't yours and can change. It also misbehaves: VMs with multiple NICs can get inconsistent outbound IPs, scale set instances don't share predictable IPs, and default outbound IPs don't support fragmented packets or ICMP ping.</p>
+
+                    <h2>Confirm a private subnet is your problem</h2>
+                    <p>Check the subnet property first:</p>
+                    <pre><code>az network vnet subnet show \
+    --resource-group rg-app \
+    --vnet-name vnet-app \
+    --name snet-app \
+    --query defaultOutboundAccess</code></pre>
+                    <p><code>false</code> means the subnet is private. Then check whether anything else gives the VM a way out: a NAT gateway on the subnet, a public IP on the NIC, a Standard load balancer with outbound rules, or a route table that sends <code>0.0.0.0/0</code> to a firewall. If none of those exist, the VM has no egress.</p>
+                    <p>Microsoft's documentation names Windows Activation and Windows Update as services that fail on a private subnet without explicit egress. The same applies to anything that calls a public endpoint, including package repositories and the Azure Virtual Desktop agent.</p>
+
+                    <h2>Choose an explicit outbound method</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Method</th><th>Best for</th><th>Watch out for</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>NAT gateway on the subnet</strong></td><td>Most workloads. Microsoft's recommended option. Static, predictable outbound IPs without the SNAT port exhaustion limits of default outbound access or load balancer outbound rules.</td><td>Outbound only. It doesn't accept inbound connections.</td></tr>
+                                <tr><td>Standard load balancer with outbound rules</td><td>VMs already in a load balancer backend pool</td><td>You size and manage SNAT port allocation yourself.</td></tr>
+                                <tr><td>Public IP on the VM's NIC</td><td>A single jump box or a lab VM</td><td>Exposes the VM to inbound traffic. Lock it down with an NSG.</td></tr>
+                                <tr><td>Azure Firewall or an NVA, with a UDR</td><td>Hub-and-spoke networks that inspect all egress</td><td>Highest cost and complexity. A UDR to the firewall overrides a NAT gateway on the same subnet.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Microsoft documents that a NAT gateway takes precedence over load balancer outbound rules and instance-level public IPs on the same subnet for new connections. Existing connections finish on their old path, so adding one causes no outbound downtime. The exception is routing: a user-defined route that sends <code>0.0.0.0/0</code> to a firewall or NVA overrides the NAT gateway.</p>
+
+                    <h2>Fix it: add a NAT gateway with the Azure CLI</h2>
+                    <p>Three commands, taken from Microsoft's NAT gateway quickstart. First, a Standard static public IP:</p>
+                    <pre><code>az network public-ip create \
+    --resource-group rg-app \
+    --name pip-natgw \
+    --sku Standard \
+    --allocation-method Static</code></pre>
+                    <p>Next, the NAT gateway itself. The TCP idle timeout defaults to 4 minutes:</p>
+                    <pre><code>az network nat gateway create \
+    --resource-group rg-app \
+    --name natgw-app \
+    --public-ip-addresses pip-natgw \
+    --idle-timeout 4</code></pre>
+                    <p>Finally, attach it to the subnet:</p>
+                    <pre><code>az network vnet subnet update \
+    --resource-group rg-app \
+    --vnet-name vnet-app \
+    --name snet-app \
+    --nat-gateway natgw-app</code></pre>
+                    <p>Test from the VM with <code>Test-NetConnection www.microsoft.com -Port 443</code> on Windows or <code>curl -I https://www.microsoft.com</code> on Linux. If you need many outbound IPs, give the NAT gateway a public IP prefix instead of a single address. Microsoft also offers a Standard V2 NAT gateway SKU with zone-redundant deployments. Check its documentation before you choose between the two.</p>
+
+                    <h2>Five traps during the switch</h2>
+                    <h3>1. Changes need a stop and deallocate</h3>
+                    <p>When you flip an existing subnet between private and non-private, existing VMs keep their old NIC state until you stop and deallocate them. A restart from inside the OS doesn't count.</p>
+
+                    <h3>2. UDRs with next hop "Internet" break</h3>
+                    <p>A common hub design sends <code>0.0.0.0/0</code> to a firewall and adds service tag routes with next hop type <code>Internet</code> to bypass inspection. In a private subnet those bypass routes fail unless the source also has an explicit outbound method. Service endpoints aren't affected, because they use the <code>VirtualNetworkServiceEndpoint</code> next hop.</p>
+
+                    <h3>3. Load balancers with IP-based backend pools</h3>
+                    <p>Microsoft lists a known issue: a backend pool configured by IP address still uses default outbound access. Attach a NAT gateway to those VMs' subnet for a secure configuration. If you're building load balancers, our <a href="azure-internal-load-balancer.html">internal load balancer guide</a> covers backend pools and rules.</p>
+
+                    <h3>4. Some traffic still works, which hides the problem</h3>
+                    <p>VMs in a private subnet can still reach Azure Storage accounts in the same region without an explicit outbound method. A storage test that passes tells you nothing about internet access. Control that egress with an <a href="azure-nsg-best-practices.html">NSG</a>, or keep storage traffic private with <a href="azure-private-access-azure-services.html">private endpoints or service endpoints</a>.</p>
+
+                    <h3>5. The Advisor alert won't clear</h3>
+                    <p>Azure Advisor flags NICs under the Operational Excellence recommendation "Add explicit outbound method to disable default outbound". A VM in a non-private subnet can keep a default outbound IP even after you add a NAT gateway, although it no longer uses that IP. To clear the alert, make the subnet private and stop and deallocate the VM.</p>
+
+                    <h2>Azure Virtual Desktop session hosts need this too</h2>
+                    <p>A session host in a private subnet can't reach the service endpoints its agent needs, so it never shows up as available in the host pool. Microsoft's Tech Community published separate transition guidance for Azure Virtual Desktop and Windows 365 customers. Add the NAT gateway before you deploy hosts with the steps in our <a href="az-140-deploy-host-pool-step-by-step.html">AZ-140 host pool lab</a>.</p>
+                    <p>The egress design also affects connection quality. Azure Firewall and NAT gateway use symmetric NAT, which pushes RDP Shortpath for public networks from a direct STUN path to a relayed TURN path. Our <a href="az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath and Private Link guide</a> lists the firewall rules TURN needs.</p>
+
+                    <h2>Can you turn default outbound access back on?</h2>
+                    <p>Yes. You can still create non-private subnets with the portal, ARM, PowerShell, or CLI (<code>az network vnet subnet update ... --default-outbound true</code>), then stop and deallocate the VMs. Treat that as a bridge while you build NAT gateways, not a destination. Microsoft recommends explicit outbound connectivity for every workload, including those in existing networks.</p>
+
+                    <h2>What AZ-700 and AZ-104 expect you to know</h2>
+                    <p>The AZ-700 skills outline lists "Identify appropriate use cases for Azure NAT Gateway", "Implement Azure NAT Gateway", and "Create and configure explicit outbound rules, including source network address translation (SNAT)". Expect a scenario where VMs in a new subnet can't download updates and you choose the fix. NAT gateway wins unless the VMs already sit behind a Standard load balancer. AZ-104 tests the same networking domain. Review <a href="az-900-azure-networking-fundamentals.html">Azure networking fundamentals</a> if subnets and routing still feel shaky, then try the <a href="az-104-practice-test.html">free AZ-104 practice test</a>.</p>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Why can't my new Azure VM reach the internet?</h3>
+                                <p>VNets created with API versions released after March 31, 2026, and VNets created in the Azure portal, use private subnets by default. VMs in a private subnet need an explicit outbound method such as a NAT gateway, a load balancer outbound rule, a public IP, or a firewall route.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Are existing Azure VMs affected by the default outbound access change?</h3>
+                                <p>No. Microsoft doesn't change existing VNets. Existing VMs, and new VMs you add to existing VNets, keep default outbound access unless you make the subnet private.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>What is the recommended fix for default outbound access?</h3>
+                                <p>Microsoft recommends associating a NAT gateway with the VM's subnet for most scenarios. It provides static, predictable outbound IPs and takes precedence over load balancer outbound rules and instance-level public IPs on that subnet for new connections.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Does Windows Update work in a private subnet?</h3>
+                                <p>Not without an explicit outbound method. Microsoft's documentation names Windows Activation and Windows Updates as services that fail on a private subnet without explicit egress.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Do I need to restart VMs after changing a subnet to private?</h3>
+                                <p>You need to stop and deallocate them. A guest OS restart doesn't apply the change to the network interface.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <p class="post-sources"><strong>Sources:</strong> <a href="https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/default-outbound-access" target="_blank" rel="noopener">Default outbound access in Azure</a>, <a href="https://learn.microsoft.com/en-us/azure/nat-gateway/quickstart-create-nat-gateway" target="_blank" rel="noopener">Quickstart: create a NAT gateway</a>, <a href="https://learn.microsoft.com/en-us/azure/nat-gateway/nat-overview" target="_blank" rel="noopener">What is Azure NAT Gateway?</a>, and the <a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-700" target="_blank" rel="noopener">AZ-700 study guide</a> on Microsoft Learn.</p>
+
+                    <aside class="product-cta" aria-label="Study guide">
+                        <img src="../images/az-104.jpg" alt="AZ-104 Exam Cram cover" width="1168" height="784" loading="lazy">
+                        <div class="product-cta-body">
+                            <p class="product-cta-eyebrow">Studying for AZ-104?</p>
+                            <h3 class="product-cta-title">AZ-104 Exam Cram</h3>
+                            <p>All five Azure Administrator domains as high-impact notes and hands-on labs, including identity, RBAC, and networking, plus an 80-question scenario-based practice exam.</p>
+                            <a class="btn btn-primary" href="https://buymeacoffee.com/mattyhip/e/537655" target="_blank" rel="noopener" data-product="az-104">Get the AZ-104 Exam Cram, $8.99</a>
+                            <p class="product-cta-note">Written by the author of this guide. Free practice tests stay free.</p>
+                        </div>
+                    </aside>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#azure</span>
+                        <span class="tag">#networking</span>
+                        <span class="tag">#nat-gateway</span>
+                        <span class="tag">#vnet</span>
+                        <span class="tag">#az-700</span>
+                        <span class="tag">#az-104</span>
+                    </div>
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p><a href="../about.html">Matthew</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+    <div id="footer-placeholder"><!-- partial:footer:start -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SysOpsBits</h3>
+                <p>Azure, Microsoft 365, and PMP exam guides, hands-on labs, and honest tool comparisons for system administrators.</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395" target="_blank" rel="noopener">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../contact.html">Contact</a></li>
+                    <li><a href="../store.html">Study Guides</a></li>
+                    <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="../terms.html">Terms of Service</a></li>
+                    <li><a href="../affiliate-disclosure.html">Affiliate Disclosure</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="../categories.html">All Categories</a></li>
+                    <li><a href="../microsoft.html">Microsoft</a></li>
+                    <li><a href="../guided-labs.html">Guided Labs</a></li>
+                    <li><a href="../comparisons.html">Comparisons</a></li>
+                    <li><a href="../project-management.html">Project Management</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section support-section">
+                <h3>Free Practice Tests</h3>
+                <ul>
+                    <li><a href="../tutorials/az-140-practice-test.html">AZ-140 Practice Test</a></li>
+                    <li><a href="../tutorials/az-900-practice-test.html">AZ-900 Practice Test</a></li>
+                    <li><a href="../tutorials/az-104-practice-test.html">AZ-104 Practice Test</a></li>
+                    <li><a href="../project-management/pmp-practice-test.html">PMP Practice Test</a></li>
+                </ul>
+                <a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn bmc-btn-footer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                    </svg>
+                    <span>Buy me a coffee</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 SysOpsBits. All rights reserved. As an Amazon Associate I earn from qualifying purchases.</p>
+            <p class="footer-legal">Microsoft, Azure, and related marks are trademarks of the Microsoft group of companies. PMP and PMBOK are registered marks of the Project Management Institute, Inc. SysOpsBits is independent and not affiliated with or endorsed by either.</p>
+        </div>
+    </div>
+</footer>
+<!-- partial:footer:end --></div>
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>

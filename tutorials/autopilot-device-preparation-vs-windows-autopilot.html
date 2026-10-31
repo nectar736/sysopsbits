@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autopilot Device Preparation vs Windows Autopilot (MD-102)</title>
+    <meta name="description" content="Compare Windows Autopilot device preparation and classic Autopilot: join types, Windows 11 rules, app limits, and the choice MD-102 now tests.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <link rel="canonical" href="https://sysopsbits.com/tutorials/autopilot-device-preparation-vs-windows-autopilot.html">
+    <meta name="author" content="Matthew">
+    <meta property="og:site_name" content="SysOpsBits">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Autopilot Device Preparation vs Windows Autopilot: Which to Use">
+    <meta property="og:description" content="Compare Windows Autopilot device preparation and classic Autopilot: join types, Windows 11 rules, app limits, and the choice MD-102 now tests.">
+    <meta property="og:url" content="https://sysopsbits.com/tutorials/autopilot-device-preparation-vs-windows-autopilot.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/autopilot-device-preparation.jpg">
+    <meta property="og:locale" content="en_US">
+    <meta property="article:published_time" content="2026-10-30">
+    <meta property="article:modified_time" content="2026-10-30">
+    <meta property="article:section" content="Microsoft">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Autopilot Device Preparation vs Windows Autopilot: Which to Use">
+    <meta name="twitter:description" content="Compare Windows Autopilot device preparation and classic Autopilot: join types, Windows 11 rules, app limits, and the choice MD-102 now tests.">
+    <meta name="twitter:image" content="https://sysopsbits.com/images/autopilot-device-preparation.jpg">
+    <meta name="theme-color" content="#0a0a0f">
+    <link rel="icon" href="../favicon.ico" sizes="32x32">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/syntax.css">
+    <link rel="stylesheet" href="../css/shortcodes.css">
+    <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Autopilot Device Preparation vs Windows Autopilot: Which to Use", "name": "Autopilot Device Preparation vs Windows Autopilot: Which to Use", "description": "Compare Windows Autopilot device preparation and classic Autopilot: join types, Windows 11 rules, app limits, and the choice MD-102 now tests.", "image": ["https://sysopsbits.com/images/autopilot-device-preparation.jpg"], "datePublished": "2026-10-30", "dateModified": "2026-10-30", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/autopilot-device-preparation-vs-windows-autopilot.html", "url": "https://sysopsbits.com/tutorials/autopilot-device-preparation-vs-windows-autopilot.html", "articleSection": "Microsoft", "inLanguage": "en-US", "keywords": "intune, autopilot, windows-11, md-102, endpoint"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Autopilot Device Preparation vs Windows Autopilot: Which to Use", "item": "https://sysopsbits.com/tutorials/autopilot-device-preparation-vs-windows-autopilot.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does Windows Autopilot device preparation replace Windows Autopilot?", "acceptedAnswer": {"@type": "Answer", "text": "No. Microsoft runs both in parallel and continues to invest in classic Autopilot. You don't need to migrate existing Autopilot profiles."}}, {"@type": "Question", "name": "Does Windows Autopilot device preparation support Windows 10?", "acceptedAnswer": {"@type": "Answer", "text": "No. It requires Windows 11 version 24H2 or later, or version 23H2 or 22H2 with KB5035942 or later."}}, {"@type": "Question", "name": "Does device preparation support hybrid join?", "acceptedAnswer": {"@type": "Answer", "text": "No. Device preparation supports Microsoft Entra join only. Use classic Windows Autopilot for Microsoft Entra hybrid join."}}, {"@type": "Question", "name": "Do I need to upload hardware hashes for device preparation?", "acceptedAnswer": {"@type": "Answer", "text": "No. Device preparation doesn't require device registration. You can optionally associate devices or add corporate identifiers if you block personal enrollment."}}, {"@type": "Question", "name": "How many apps can device preparation install during setup?", "acceptedAnswer": {"@type": "Answer", "text": "Up to 25 essential apps and up to 10 PowerShell scripts during the out-of-box experience. Other apps assigned to the device group install after the user reaches the desktop."}}]}]}</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="tutorials">
+    <div id="header-placeholder"><!-- partial:header:start -->
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="site-branding">
+                <a href="../index.html" class="site-title">SysOpsBits</a>
+                <p class="site-tagline">Your guide to better sysops</p>
+            </div>
+
+            <nav class="main-nav" aria-label="Main">
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="../index.html" data-page="index">Home</a></li>
+                    <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                    <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle" aria-haspopup="true">
+                            Categories
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
+                            <li><a href="../guided-labs.html" data-page="guided-labs">Guided Labs</a></li>
+                            <li><a href="../comparisons.html" data-page="comparisons">Comparisons</a></li>
+                            <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
+                            <li><a href="../index.html#practice-tests">Free Practice Tests</a></li>
+                            <li><a href="../categories.html" data-page="categories">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../about.html" data-page="about">About</a></li>
+                    <li><a href="../store.html" data-page="store" class="nav-store">Study Guides</a></li>
+                    <li class="support-link"><a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn" title="Buy me a coffee">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                        </svg>
+                        <span>Support</span>
+                    </a></li>
+                </ul>
+                <button class="theme-toggle" aria-label="Toggle dark/light mode">
+                    <span class="theme-toggle-label" id="theme-label-dark" data-active="true">Dark</span>
+                    <span class="theme-toggle-track">
+                        <span class="theme-toggle-thumb"></span>
+                    </span>
+                    <span class="theme-toggle-label" id="theme-label-light" data-active="false">Light</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- partial:header:end --></div>
+    <main>
+        <article class="post">
+            <div class="container">
+                <header class="post-header">
+                    <div class="post-meta">
+                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
+                        <time datetime="2026-10-30">October 30, 2026</time>
+                    </div>
+                    <h1>Autopilot Device Preparation vs Windows Autopilot: Which to Use</h1>
+                    <p style="color:var(--text-secondary);max-width:700px;margin:0 auto;">Two Microsoft products share the Autopilot name and behave differently. This guide gives you the decision rules, the six setup steps, and the traps, checked against Microsoft Learn.</p>
+                    <div class="post-featured-image">
+                        <img width="1200" height="630" src="../images/autopilot-device-preparation.jpg" alt="Windows Autopilot device preparation compared with classic Windows Autopilot" loading="eager" fetchpriority="high">
+                    </div>
+                </header>
+
+                <div class="post-content">
+                    <div class="callout callout-info">
+                        <p><strong>Short answer:</strong> Use Windows Autopilot device preparation for new Windows 11 devices that only need Microsoft Entra join. It needs no hardware hash registration, delivers apps in a fixed order, and reports progress in near real time. Use classic Windows Autopilot when you need Microsoft Entra hybrid join, Windows 10, pre-provisioning, self-deploying mode, Autopilot Reset, co-management, or more than 25 apps during setup.</p>
+                    </div>
+
+                    <p>Microsoft now ships two products with "Autopilot" in the name, and they don't work the same way. Pick the wrong one and a user sits at the out-of-box experience while a profile you never meant to apply takes over, or a hybrid-join requirement you forgot about blocks the whole rollout.</p>
+                    <p>The choice is also on the exam. The MD-102 skills outline that took effect on October 27, 2026 lists "Choose between Windows Autopilot deployment profiles and device preparation policies" under deploying Windows clients. This guide gives you the decision rules, the setup steps, and the traps, all checked against Microsoft Learn.</p>
+
+                    <h2>What Windows Autopilot device preparation is</h2>
+                    <p>Microsoft describes device preparation as a re-architecture of Windows Autopilot. Users see a similar experience, but the plumbing differs in three ways that matter:</p>
+                    <ul>
+                        <li><strong>No device registration.</strong> Classic Autopilot needs each device's hardware hash uploaded before deployment. Device preparation doesn't.</li>
+                        <li><strong>Enrollment time grouping.</strong> When the user signs in, Intune adds the device to a device security group you chose in the policy. Apps, scripts, and policies assigned to that group land right away, instead of waiting for a dynamic group to recalculate.</li>
+                        <li><strong>Ordered delivery.</strong> Device preparation installs apps and scripts one after another, so you can deploy line-of-business (LOB) and Win32 apps in the same deployment. Classic Autopilot can't mix those two reliably.</li>
+                    </ul>
+                    <p>Device preparation also drops the Enrollment Status Page (ESP). Users see a "Setting up for work or school" screen with a percentage, and admins get a deployment report with app and script status in near real time.</p>
+
+                    <h2>Device preparation vs classic Autopilot: the comparison</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>Requirement</th><th>Device preparation</th><th>Classic Autopilot</th></tr></thead>
+                            <tbody>
+                                <tr><td>Microsoft Entra join</td><td>Yes</td><td>Yes</td></tr>
+                                <tr><td>Microsoft Entra hybrid join</td><td>No</td><td>Yes</td></tr>
+                                <tr><td>Windows 11</td><td>Yes</td><td>Yes</td></tr>
+                                <tr><td>Windows 10</td><td>No</td><td>Yes</td></tr>
+                                <tr><td>User-driven mode</td><td>Yes</td><td>Yes</td></tr>
+                                <tr><td>Pre-provisioning and self-deploying modes</td><td>No</td><td>Yes</td></tr>
+                                <tr><td>Automatic mode (Windows 365 Frontline shared devices)</td><td>Yes</td><td>No</td></tr>
+                                <tr><td>Device registration (hardware hash) required</td><td>No</td><td>Yes</td></tr>
+                                <tr><td>Apps during setup</td><td>Up to 25, plus up to 10 PowerShell scripts</td><td>Up to 100 apps through the ESP</td></tr>
+                                <tr><td>LOB and Win32 apps in one deployment</td><td>Yes</td><td>No</td></tr>
+                                <tr><td>Block the desktop until user-based configuration applies</td><td>No</td><td>Yes</td></tr>
+                                <tr><td>Autopilot Reset, co-management, DFCI, HoloLens, Teams Rooms</td><td>No</td><td>Yes</td></tr>
+                                <tr><td>GCC High and DoD environments</td><td>Yes</td><td>No</td></tr>
+                                <tr><td>Near real-time deployment report</td><td>Yes</td><td>No</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Read the government row carefully. Some third-party comparisons get it backwards. Microsoft's table shows device preparation supporting GCC High and DoD and classic Autopilot not supporting them.</p>
+
+                    <h2>Which one should you use?</h2>
+                    <p><strong>Choose device preparation when all of these are true:</strong></p>
+                    <ul>
+                        <li>Devices run Windows 11 at the supported build (see requirements below)</li>
+                        <li>Devices join Microsoft Entra ID only, with no hybrid join</li>
+                        <li>Setup needs 25 apps or fewer and 10 scripts or fewer</li>
+                        <li>You'd rather skip hardware hash uploads from your OEM or reseller</li>
+                    </ul>
+                    <p><strong>Stay on classic Autopilot when any of these is true:</strong></p>
+                    <ul>
+                        <li>You still have Windows 10 devices or need hybrid join to on-premises Active Directory</li>
+                        <li>Technicians pre-provision devices before shipping them, or kiosks use self-deploying mode</li>
+                        <li>You rely on Autopilot Reset, Configuration Manager co-management, or DFCI firmware management</li>
+                        <li>Users must not reach the desktop until user-based policies finish</li>
+                    </ul>
+                    <p>You don't have to pick one for the whole company. Microsoft supports running both side by side, and there's no requirement to migrate existing Autopilot profiles. Each device runs exactly one of the two.</p>
+
+                    <h2>Requirements you can't skip</h2>
+                    <ul>
+                        <li><strong>Windows build:</strong> Windows 11 version 24H2 or later, or version 23H2 or 22H2 with update KB5035942 or later. Installation media dated April 2024 or later includes it. Confirm that your OEM ships devices with the update installed.</li>
+                        <li><strong>Editions:</strong> Windows 11 Pro, Pro Education, Pro for Workstations, Enterprise, Education, or Enterprise LTSC.</li>
+                        <li><strong>Licensing:</strong> a subscription that includes Microsoft Entra ID P1 and Intune, such as Microsoft 365 Business Premium, Microsoft 365 E3 or E5, or EMS E3 or E5. Assign the license to the user.</li>
+                        <li><strong>Configuration:</strong> Windows automatic enrollment into Intune, and the first user who signs in needs permission to join devices to Microsoft Entra ID.</li>
+                        <li><strong>Network:</strong> DNS for internet names, and access on ports 80, 443, and UDP 123 for time sync. Configure proxy settings on the proxy server itself. Microsoft notes that proxy settings through Intune policy aren't fully supported here.</li>
+                    </ul>
+
+                    <h2>Set up a user-driven deployment in six steps</h2>
+                    <ol>
+                        <li><strong>Turn on Windows automatic enrollment</strong> in Intune.</li>
+                        <li><strong>Allow users to join devices</strong> to Microsoft Entra ID.</li>
+                        <li><strong>Create an assigned device security group</strong> and make the <strong>Intune Provisioning Client</strong> service principal its owner. Its AppId is <code>f1346770-5b25-470b-88bd-d5744ab7952c</code>. In some tenants it appears as <em>Intune Autopilot ConfidentialClient</em>. If it's missing, add it with <code>New-MgServicePrincipal -AppId f1346770-5b25-470b-88bd-d5744ab7952c</code> from the Microsoft Graph PowerShell SDK. You don't add devices yourself. Deployment adds them.</li>
+                        <li><strong>Create a user security group</strong> for the people who get this deployment. Microsoft recommends a new group instead of reusing an Autopilot one.</li>
+                        <li><strong>Assign apps and scripts to the device group</strong>, then create the <strong>device preparation policy</strong>. In the policy, pick the device group, the user group, and the essential apps and scripts that must install during setup.</li>
+                        <li><strong>Deploy the device.</strong> If you block personal device enrollment, add a Windows corporate identifier or associate the device with your tenant first. Associating a device also unlocks extra policy settings, including OOBE customization and device naming.</li>
+                    </ol>
+                    <p>Apps and scripts that are assigned to the device group but not selected in the policy install after the user reaches the desktop, along with user-based configuration. Keep the policy list to what the user needs on day one.</p>
+                    <p>Device preparation pairs well with Conditional Access that requires a compliant device. Our <a href="azureConditionalAccess.html">Conditional Access guide</a> shows how to build that policy, and <a href="cmd-vs-powershell-2026.html">CMD vs PowerShell</a> helps if you're converting old batch setup scripts into the PowerShell scripts the policy runs.</p>
+
+                    <h2>Five traps that break deployments</h2>
+                    <h3>1. A registered device ignores your device preparation policy</h3>
+                    <p>If a device has a classic Autopilot registration and isn't associated with your tenant, the Autopilot profile wins. To run device preparation on it, associate the device or deregister it first.</p>
+
+                    <h3>2. You see the Enrollment Status Page</h3>
+                    <p>Device preparation never shows the ESP. If the ESP appears, the device is running classic Autopilot, usually because it's registered or has a profile assigned.</p>
+
+                    <h3>3. Old installation media</h3>
+                    <p>A Windows 11 23H2 image from before April 2024 lacks KB5035942, so it doesn't meet the device preparation requirement. Microsoft publishes updated installation media in the Microsoft 365 admin center.</p>
+
+                    <h3>4. Expecting hybrid join</h3>
+                    <p>Device preparation supports Microsoft Entra join only. If users still need line of sight to on-premises Active Directory for <a href="reset-active-directory-passwords-powershell.html">AD password resets</a> or Group Policy, plan for that before moving them. Entra joined devices can still reach on-premises resources with the right network access.</p>
+
+                    <h3>5. Missing Intune RBAC permissions</h3>
+                    <p>Admins who build these policies need a role with Device configurations (read, create, update, delete, assign), Enrollment programs (<strong>Enrollment time device membership assignment</strong>), and read access to Managed apps, Mobile apps, and Organization. That enrollment-time permission is the one most custom roles miss.</p>
+
+                    <h2>What MD-102 expects</h2>
+                    <p>The October 27, 2026 MD-102 outline touches device preparation in several places:</p>
+                    <ul>
+                        <li>"Choose between Windows Autopilot deployment profiles and device preparation policies"</li>
+                        <li>"Choose between Windows Autopilot deployment modes, including user-driven, pre-provisioning, and self-deploying"</li>
+                        <li>"Target a profile by using assignment filters and enrollment time grouping"</li>
+                        <li>"Create an Enrollment Status Page (ESP)", which applies only to classic Autopilot</li>
+                    </ul>
+                    <p>Expect scenario questions that hide one disqualifier, such as a Windows 10 fleet, a hybrid join requirement, or a kiosk. Spot it, and the answer is classic Autopilot. With no disqualifier and a Windows 11, cloud-only fleet, device preparation is the answer.</p>
+
+                    <section class="faq-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <h3>Does Windows Autopilot device preparation replace Windows Autopilot?</h3>
+                                <p>No. Microsoft runs both in parallel and continues to invest in classic Autopilot. You don't need to migrate existing Autopilot profiles.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Does Windows Autopilot device preparation support Windows 10?</h3>
+                                <p>No. It requires Windows 11 version 24H2 or later, or version 23H2 or 22H2 with KB5035942 or later.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Does device preparation support hybrid join?</h3>
+                                <p>No. Device preparation supports Microsoft Entra join only. Use classic Windows Autopilot for Microsoft Entra hybrid join.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>Do I need to upload hardware hashes for device preparation?</h3>
+                                <p>No. Device preparation doesn't require device registration. You can optionally associate devices or add corporate identifiers if you block personal enrollment.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h3>How many apps can device preparation install during setup?</h3>
+                                <p>Up to 25 essential apps and up to 10 PowerShell scripts during the out-of-box experience. Other apps assigned to the device group install after the user reaches the desktop.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <p class="post-sources"><strong>Sources:</strong> <a href="https://learn.microsoft.com/en-us/autopilot/device-preparation/compare" target="_blank" rel="noopener">Compare Windows Autopilot device preparation and Windows Autopilot</a>, <a href="https://learn.microsoft.com/en-us/autopilot/device-preparation/overview" target="_blank" rel="noopener">Device preparation overview</a>, <a href="https://learn.microsoft.com/en-us/autopilot/device-preparation/requirements" target="_blank" rel="noopener">Device preparation requirements</a>, <a href="https://learn.microsoft.com/en-us/autopilot/device-preparation/faq" target="_blank" rel="noopener">Device preparation FAQ</a>, <a href="https://learn.microsoft.com/en-us/autopilot/device-preparation/tutorial/user-driven/entra-join-workflow" target="_blank" rel="noopener">User-driven Entra join workflow</a>, and the <a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/md-102" target="_blank" rel="noopener">MD-102 study guide</a> on Microsoft Learn.</p>
+
+                    <aside class="product-cta" aria-label="Study guide">
+                        <img src="../images/az-140-exam-kit.jpg" alt="Microsoft exam study guides cover" width="1400" height="1400" loading="lazy">
+                        <div class="product-cta-body">
+                            <p class="product-cta-eyebrow">Preparing for a Microsoft exam?</p>
+                            <h3 class="product-cta-title">Microsoft exam study guides</h3>
+                            <p>Compressed study guides with full practice exams for AZ-140, AZ-104, and AZ-900, written by an engineer who holds the Microsoft certifications this site covers.</p>
+                            <a class="btn btn-primary" href="../store.html" data-product="microsoft">Browse the study guides</a>
+                            <p class="product-cta-note">Written by the author of this guide. Free practice tests stay free.</p>
+                        </div>
+                    </aside>
+                </div>
+
+                <footer class="post-footer">
+                    <div class="post-tags">
+                        <span class="tag">#intune</span>
+                        <span class="tag">#autopilot</span>
+                        <span class="tag">#windows-11</span>
+                        <span class="tag">#md-102</span>
+                        <span class="tag">#endpoint</span>
+                    </div>
+                    <div class="author-bio">
+                        <h3>About the Author</h3>
+                        <p><a href="../about.html">Matthew</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
+                    </div>
+                </footer>
+            </div>
+        </article>
+    </main>
+    <div id="footer-placeholder"><!-- partial:footer:start -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SysOpsBits</h3>
+                <p>Azure, Microsoft 365, and PMP exam guides, hands-on labs, and honest tool comparisons for system administrators.</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395" target="_blank" rel="noopener">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../contact.html">Contact</a></li>
+                    <li><a href="../store.html">Study Guides</a></li>
+                    <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="../terms.html">Terms of Service</a></li>
+                    <li><a href="../affiliate-disclosure.html">Affiliate Disclosure</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="../categories.html">All Categories</a></li>
+                    <li><a href="../microsoft.html">Microsoft</a></li>
+                    <li><a href="../guided-labs.html">Guided Labs</a></li>
+                    <li><a href="../comparisons.html">Comparisons</a></li>
+                    <li><a href="../project-management.html">Project Management</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section support-section">
+                <h3>Free Practice Tests</h3>
+                <ul>
+                    <li><a href="../tutorials/az-140-practice-test.html">AZ-140 Practice Test</a></li>
+                    <li><a href="../tutorials/az-900-practice-test.html">AZ-900 Practice Test</a></li>
+                    <li><a href="../tutorials/az-104-practice-test.html">AZ-104 Practice Test</a></li>
+                    <li><a href="../project-management/pmp-practice-test.html">PMP Practice Test</a></li>
+                </ul>
+                <a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn bmc-btn-footer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                    </svg>
+                    <span>Buy me a coffee</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 SysOpsBits. All rights reserved. As an Amazon Associate I earn from qualifying purchases.</p>
+            <p class="footer-legal">Microsoft, Azure, and related marks are trademarks of the Microsoft group of companies. PMP and PMBOK are registered marks of the Project Management Institute, Inc. SysOpsBits is independent and not affiliated with or endorsed by either.</p>
+        </div>
+    </div>
+</footer>
+<!-- partial:footer:end --></div>
+    <script src="../js/main.js" defer></script>
+    <script src="../js/partials.js" defer></script>
+</body>
+</html>
