@@ -45,6 +45,8 @@ docs/superpowers/        # Design specs (specs/) and implementation plans (plans
 - Add new posts to `sitemap.xml`, `llms.txt`, `categories.html`, and their category listing page.
 - Amazon links: `target="_blank" rel="sponsored nofollow noopener"`, the standard disclosure box at the top of the article (must include "As an Amazon Associate I earn from qualifying purchases."), and **no typed-in Amazon prices or star ratings** (use price tiers: $, $$, $$$).
 - Author name is **Matthew Hippensteel** everywhere: `<meta name="author">`, the JSON-LD Person `name`, and the `.author-bio` link text (copy the bio from an existing post).
+- Unlisted posts (Nov 2026, for AdSense review): 8 weak posts and 3 Amazon gear guides carry `<meta name="robots" content="noindex, follow">` and are removed from the sitemap, llms.txt, listings, and categories.html. They stay online. Re-list one only after rewriting it with first-hand detail: restore the robots tag, then add it back to those indexes. The list lives in the commit that unlisted them.
+- Every post needs its own hero image (no reuse across posts, no store product covers as heroes).
 - Exam posts end with an `aside.product-cta` for the matching study guide (see any AZ-140 post).
 - Images: include `width`/`height`; the post hero image uses `loading="eager" fetchpriority="high"`.
 - Exam domain weights must match the current official outline (Microsoft Learn study guides; PMP 2026 ECO: People 33%, Process 41%, Business Environment 26%).

@@ -21,23 +21,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sysopsbits.com/comparisons/best-amazon-wfh-gear-2026.html</loc>
-    <lastmod>2026-10-24</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sysopsbits.com/comparisons/best-budget-keyboard-mouse-combos-2026.html</loc>
-    <lastmod>2026-10-24</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://sysopsbits.com/comparisons/best-cheap-vps-hosting-2026.html</loc>
     <lastmod>2026-03-05</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sysopsbits.com/comparisons/best-desk-setup-under-100-2026.html</loc>
-    <lastmod>2026-10-24</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
@@ -46,18 +31,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sysopsbits.com/comparisons/docker-vs-kubernetes-2026.html</loc>
-    <lastmod>2026-03-07</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://sysopsbits.com/comparisons/event-viewer-vs-powershell-logging.html</loc>
     <lastmod>2026-06-25</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sysopsbits.com/comparisons/ollama-vs-localai-vs-gpt4all-2026.html</loc>
-    <lastmod>2026-03-22</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
@@ -68,11 +43,6 @@
   <url>
     <loc>https://sysopsbits.com/comparisons/unifi-vs-pfsense-2026.html</loc>
     <lastmod>2026-10-24</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sysopsbits.com/comparisons/virtualbox-vs-hyper-v-2026.html</loc>
-    <lastmod>2026-03-22</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
@@ -181,21 +151,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sysopsbits.com/tools/best-performance-monitoring-tools-linux.html</loc>
-    <lastmod>2026-06-25</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sysopsbits.com/tools/best-virtualization-tools-sysadmins-2026.html</loc>
-    <lastmod>2026-06-25</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sysopsbits.com/tools/essential-network-troubleshooting-tools.html</loc>
-    <lastmod>2026-06-25</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://sysopsbits.com/tools/top-10-cli-tools-sysadmin.html</loc>
     <lastmod>2026-10-24</lastmod>
     <priority>0.7</priority>
@@ -301,17 +256,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sysopsbits.com/tutorials/getting-started-with-ollama.html</loc>
-    <lastmod>2026-06-25</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://sysopsbits.com/tutorials/microsoft-entra-external-id-vs-b2b-collaboration.html</loc>
-    <lastmod>2026-06-25</lastmod>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sysopsbits.com/tutorials/reset-active-directory-passwords-powershell.html</loc>
     <lastmod>2026-06-25</lastmod>
     <priority>0.7</priority>
   </url>

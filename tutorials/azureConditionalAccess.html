@@ -13,7 +13,7 @@
     <meta property="og:title" content="Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security">
     <meta property="og:description" content="Master Azure AD Conditional Access with this comprehensive tutorial. Covers MFA policies, legacy auth blocking, named locations, and authentication context.">
     <meta property="og:url" content="https://sysopsbits.com/tutorials/azureConditionalAccess.html">
-    <meta property="og:image" content="https://sysopsbits.com/images/load-balancer.jpg">
+    <meta property="og:image" content="https://sysopsbits.com/images/conditional-access-zero-trust.jpg">
     <meta property="og:locale" content="en_US">
     <meta property="article:published_time" content="2026-05-06">
     <meta property="article:modified_time" content="2026-06-25">
@@ -21,7 +21,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security">
     <meta name="twitter:description" content="Master Azure AD Conditional Access with this comprehensive tutorial. Covers MFA policies, legacy auth blocking, named locations, and authentication context.">
-    <meta name="twitter:image" content="https://sysopsbits.com/images/load-balancer.jpg">
+    <meta name="twitter:image" content="https://sysopsbits.com/images/conditional-access-zero-trust.jpg">
     <meta name="theme-color" content="#0a0a0f">
     <link rel="icon" href="../favicon.ico" sizes="32x32">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="../css/syntax.css">
     <link rel="stylesheet" href="../css/shortcodes.css">
     <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
-    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security", "name": "Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security", "description": "Learn how to implement Azure AD Conditional Access policies for Zero Trust security. Step-by-step guide covering MFA requirements, blocking legacy auth, named locations, and authentication context.", "image": ["https://sysopsbits.com/images/load-balancer.jpg"], "datePublished": "2026-05-06", "dateModified": "2026-06-25", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/azureConditionalAccess.html", "url": "https://sysopsbits.com/tutorials/azureConditionalAccess.html", "articleSection": "Microsoft", "inLanguage": "en-US"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security", "item": "https://sysopsbits.com/tutorials/azureConditionalAccess.html"}]}]}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security", "name": "Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security", "description": "Learn how to implement Azure AD Conditional Access policies for Zero Trust security. Step-by-step guide covering MFA requirements, blocking legacy auth, named locations, and authentication context.", "image": ["https://sysopsbits.com/images/conditional-access-zero-trust.jpg"], "datePublished": "2026-05-06", "dateModified": "2026-06-25", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/azureConditionalAccess.html", "url": "https://sysopsbits.com/tutorials/azureConditionalAccess.html", "articleSection": "Microsoft", "inLanguage": "en-US"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security", "item": "https://sysopsbits.com/tutorials/azureConditionalAccess.html"}]}]}</script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
@@ -104,7 +104,7 @@
                     </div>
                     <h1>Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security</h1>
                     <div class="post-featured-image">
-                        <img width="784" height="1168" src="../images/load-balancer.jpg" alt="Azure AD Conditional Access" loading="eager" fetchpriority="high">
+                        <img width="1200" height="630" src="../images/conditional-access-zero-trust.jpg" alt="Azure AD Conditional Access" loading="eager" fetchpriority="high">
                     </div>
                 </header>
 
@@ -244,7 +244,7 @@ New-AzureADMSConditionalAccessPolicy -DisplayName "Require MFA for Admin Users"<
 └──────────────────┬──────────────────────┘
                    │
                    ▼
-┌──────────────────────���─���────────────────┐
+┌─────────────────────────────────────────┐
 │  CA Policy Evaluates                     │
 │  (Client Apps = Legacy)                  │
 └──────────────────┬──────────────────────┘
