@@ -1,68 +1,28 @@
 // Navigation toggle lives in partials.js (initNavToggle). Binding it here too would toggle twice per click.
+// In-page links use native anchor behaviour (CSS handles smooth scrolling and the header offset).
 
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Newsletter form handling
-document.querySelectorAll('.newsletter-form').forEach(form => {
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const email = this.querySelector('input[type="email"]').value;
-        
-        // Here you would typically send the email to your newsletter service
-        // For now, we'll show a success message
-        const successMessage = document.createElement('div');
-        successMessage.className = 'newsletter-success';
-        successMessage.textContent = 'Thank you for subscribing!';
-        successMessage.style.cssText = 'background: #d4edda; color: #155724; padding: 1rem; border-radius: 6px; margin-top: 1rem;';
-        
-        this.parentNode.appendChild(successMessage);
-        this.reset();
-        
-        setTimeout(() => {
-            successMessage.remove();
-        }, 5000);
-    });
-});
-
-// Lazy loading for images (if not using native lazy loading)
-if ('loading' in HTMLImageElement.prototype === false) {
-    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
-        img.loading = 'lazy';
-    });
-}
-
-// Copy code functionality
-document.querySelectorAll('pre code').forEach(block => {
+// Copy button on code blocks. Styled by .copy-button in main.css.
+document.querySelectorAll('pre > code').forEach(block => {
+    const pre = block.parentNode;
     const button = document.createElement('button');
+    button.type = 'button';
     button.className = 'copy-button';
     button.textContent = 'Copy';
-    button.style.cssText = 'position: absolute; top: 0.5rem; right: 0.5rem; background: #4a5568; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer;';
-    
-    const pre = block.parentNode;
-    pre.style.position = 'relative';
+    button.setAttribute('aria-label', 'Copy code');
+    pre.classList.add('has-copy');
     pre.appendChild(button);
-    
+
     button.addEventListener('click', () => {
+        if (!navigator.clipboard) return;
         navigator.clipboard.writeText(block.textContent).then(() => {
-            button.textContent = 'Copied!';
+            button.textContent = 'Copied';
             setTimeout(() => {
                 button.textContent = 'Copy';
             }, 2000);
-        });
+        }).catch(() => {});
     });
 });
+
 // Conversion tracking: report study-guide and affiliate clicks to GA4
 document.addEventListener('click', function(e) {
     const link = e.target.closest && e.target.closest('a[href]');

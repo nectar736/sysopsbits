@@ -39,30 +39,30 @@
 </head>
 <body data-page="tutorials">
     <div id="header-placeholder"><!-- partial:header:start -->
+<a class="skip-link" href="#main-content">Skip to content</a>
 <header class="site-header">
     <div class="container">
         <div class="header-content">
             <div class="site-branding">
-                <a href="../index.html" class="site-title">SysOpsBits</a>
-                <p class="site-tagline">Your guide to better sysops</p>
+                <a href="../index.html" class="site-title">SysOpsBits<span class="brand-cursor" aria-hidden="true">_</span></a>
             </div>
 
             <nav class="main-nav" aria-label="Main">
-                <button class="nav-toggle" aria-label="Toggle navigation">
+                <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <ul class="nav-menu">
+                <ul class="nav-menu" id="nav-menu">
                     <li><a href="../index.html" data-page="index">Home</a></li>
                     <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
                     <li><a href="../project-management.html" data-page="project-management">Project Management</a></li>
                     <li class="nav-dropdown">
-                        <button class="dropdown-toggle" aria-haspopup="true">
+                        <button class="dropdown-toggle" type="button" aria-expanded="false" aria-controls="nav-categories">
                             Categories
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
                         </button>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" id="nav-categories">
                             <li><a href="../microsoft.html" data-page="microsoft">Microsoft</a></li>
                             <li><a href="../guided-labs.html" data-page="guided-labs">Guided Labs</a></li>
                             <li><a href="../comparisons.html" data-page="comparisons">Comparisons</a></li>
@@ -74,13 +74,13 @@
                     <li><a href="../about.html" data-page="about">About</a></li>
                     <li><a href="../store.html" data-page="store" class="nav-store">Study Guides</a></li>
                     <li class="support-link"><a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn" title="Buy me a coffee">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
                         </svg>
                         <span>Support</span>
                     </a></li>
                 </ul>
-                <button class="theme-toggle" aria-label="Toggle dark/light mode">
+                <button class="theme-toggle" type="button" aria-label="Light mode" aria-pressed="false">
                     <span class="theme-toggle-label" id="theme-label-dark" data-active="true">Dark</span>
                     <span class="theme-toggle-track">
                         <span class="theme-toggle-thumb"></span>
@@ -570,7 +570,7 @@ Get-Command -Module Net*</code></pre>
                     <li><a href="../project-management/pmp-practice-test.html">PMP Practice Test</a></li>
                 </ul>
                 <a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn bmc-btn-footer">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
                     </svg>
                     <span>Buy me a coffee</span>

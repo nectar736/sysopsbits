@@ -7,7 +7,7 @@ export default defineConfig({
   reporter: [['list']],
   use: { baseURL: 'http://localhost:8123' },
   webServer: {
-    command: 'python -m http.server 8123 --directory ../..',
+    command: 'node serve.mjs 8123',
     url: 'http://localhost:8123/index.html',
     reuseExistingServer: true,
   },

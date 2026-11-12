@@ -137,36 +137,68 @@ function getCurrentPage() {
 function initNavToggle() {
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');
-    
+
+    function setMenu(open) {
+        if (!navToggle || !navMenu) return;
+        navMenu.classList.toggle('active', open);
+        navToggle.classList.toggle('active', open);
+        navToggle.setAttribute('aria-expanded', String(open));
+    }
+
+    function setDropdown(dropdown, open) {
+        dropdown.classList.toggle('active', open);
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        if (toggle) toggle.setAttribute('aria-expanded', String(open));
+    }
+
+    function closeDropdowns() {
+        document.querySelectorAll('.nav-dropdown.active').forEach(dd => setDropdown(dd, false));
+    }
+
     if (navToggle && navMenu) {
         navToggle.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
+            setMenu(!navMenu.classList.contains('active'));
         });
-        
+
         // Close mobile menu when clicking outside
         document.addEventListener('click', function(event) {
-            if (navToggle && navMenu && !navToggle.contains(event.target) && !navMenu.contains(event.target)) {
-                navMenu.classList.remove('active');
+            if (!navToggle.contains(event.target) && !navMenu.contains(event.target)) {
+                setMenu(false);
             }
         });
     }
 
-    // Dropdown toggle click handler
+    // Dropdown toggle click handler (also fires for Enter and Space on the button)
     document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
         toggle.addEventListener('click', function(e) {
             e.stopPropagation();
             const dropdown = this.closest('.nav-dropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('active');
-            }
+            if (dropdown) setDropdown(dropdown, !dropdown.classList.contains('active'));
         });
     });
 
     // Close dropdowns when clicking outside
-    document.addEventListener('click', function() {
-        document.querySelectorAll('.nav-dropdown.active').forEach(dd => {
-            dd.classList.remove('active');
-        });
+    document.addEventListener('click', closeDropdowns);
+
+    // Escape closes the innermost open thing and returns focus to its toggle
+    document.addEventListener('keydown', function(e) {
+        if (e.key !== 'Escape') return;
+        const openDropdown = document.querySelector('.nav-dropdown.active');
+        if (openDropdown) {
+            setDropdown(openDropdown, false);
+            const toggle = openDropdown.querySelector('.dropdown-toggle');
+            if (toggle) toggle.focus();
+        } else if (navMenu && navMenu.classList.contains('active')) {
+            setMenu(false);
+            navToggle.focus();
+        }
+    });
+
+    // A page restored from the back/forward cache should not come back with the menu open
+    window.addEventListener('pageshow', function(e) {
+        if (!e.persisted) return;
+        setMenu(false);
+        closeDropdowns();
     });
 }
 
@@ -236,16 +268,20 @@ function initThemeToggle() {
     if (stored === 'light' || (!stored && !prefersDark)) {
         root.classList.add('light-mode');
     }
-    if (root.classList.contains('light-mode')) {
-        if (darkLabel) darkLabel.dataset.active = 'false';
-        if (lightLabel) lightLabel.dataset.active = 'true';
+    function reflect(isLight) {
+        if (darkLabel) darkLabel.dataset.active = isLight ? 'false' : 'true';
+        if (lightLabel) lightLabel.dataset.active = isLight ? 'true' : 'false';
+        toggle.setAttribute('aria-pressed', String(isLight));
     }
+
+    reflect(root.classList.contains('light-mode'));
 
     toggle.addEventListener('click', function() {
         const isLight = root.classList.toggle('light-mode');
         try { localStorage.setItem('theme', isLight ? 'light' : 'dark'); } catch (e) {}
-        if (darkLabel) darkLabel.dataset.active = isLight ? 'false' : 'true';
-        if (lightLabel) lightLabel.dataset.active = isLight ? 'true' : 'false';
+        reflect(isLight);
+        // Lets canvas-drawn things (the homepage scene) pick up the new colours
+        document.dispatchEvent(new CustomEvent('themechange', { detail: { light: isLight } }));
     });
 }
 
