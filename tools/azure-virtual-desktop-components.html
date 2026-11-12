@@ -28,9 +28,8 @@
     <link rel="apple-touch-icon" href="../apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/syntax.css">
     <link rel="stylesheet" href="../css/shortcodes.css">
     <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
     <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Azure Virtual Desktop Components: A Complete Guide for IT Professionals", "name": "Azure Virtual Desktop Components: A Complete Guide for IT Professionals", "description": "Deep dive into Azure Virtual Desktop components including host pools, session hosts, FSLogix, and management tools. Essential knowledge for IT professionals managing AVD environments.", "image": ["https://sysopsbits.com/images/avd-image.png"], "datePublished": "2026-04-01", "dateModified": "2026-05-05", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tools/azure-virtual-desktop-components.html", "url": "https://sysopsbits.com/tools/azure-virtual-desktop-components.html", "articleSection": "Microsoft", "inLanguage": "en-US", "keywords": "azure, avd, virtual-desktop, cloud"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Azure Virtual Desktop Components: A Complete Guide for IT Professionals", "item": "https://sysopsbits.com/tools/azure-virtual-desktop-components.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What's the difference between pooled and personal host pools?", "acceptedAnswer": {"@type": "Answer", "text": "Pooled host pools share session hosts among multiple users, making them cost-effective for task workers. Personal host pools assign dedicated hosts to users, ideal for power users who need persistent desktop experience."}}, {"@type": "Question", "name": "Do I need FSLogix with personal desktops?", "acceptedAnswer": {"@type": "Answer", "text": "While not strictly required, FSLogix still provides benefits like profile deduplication and simplified backup/restore of user data. It's recommended for most scenarios."}}, {"@type": "Question", "name": "Can I use existing Windows licenses with AVD?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, if you have Windows Enterprise or Business licenses with Software Assurance, you can use them for AVD session hosts. Azure also offers Windows Virtual Desktop license included in Microsoft 365 plans."}}, {"@type": "Question", "name": "What's the minimum recommended VM size for AVD?", "acceptedAnswer": {"@type": "Answer", "text": "For light users (email, browsing), D2s_v3 (2 vCPU, 8GB RAM) works well. Power users running multiple applications need D4s_v3 or larger. Always test with representative workloads before full deployment."}}]}]}</script>
@@ -94,12 +93,12 @@
 </header>
 <!-- partial:header:end --></div>
 
-    <main class="container">
+    <main id="main-content" class="container">
         <article class="post">
             <header class="post-header">
                 <h1>Azure Virtual Desktop Components: A Complete Guide for IT Professionals</h1>
                 <p class="post-meta">
-                    Published on <time datetime="2026-04-01">April 1, 2026</time> •
+                    Published on <time datetime="2026-04-01">2026-04-01</time> •
                     <span class="read-time">12 min read</span>
                 </p>
                 <div class="post-featured-image">
@@ -369,5 +368,6 @@
 
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
+    <script src="../js/motion.js" defer></script>
 </body>
 </html>

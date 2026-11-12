@@ -28,9 +28,8 @@
     <link rel="apple-touch-icon" href="../apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/syntax.css">
     <link rel="stylesheet" href="../css/shortcodes.css">
     <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
     <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Azure MFA Broke Your Scripts? Fix Them With Managed Identities", "name": "Azure MFA Broke Your Scripts? Fix Them With Managed Identities", "description": "Azure now requires MFA for CLI, PowerShell, and IaC changes. Move user-account scripts to managed identities or service principals, step by step.", "image": ["https://sysopsbits.com/images/azure-mandatory-mfa.jpg"], "datePublished": "2026-10-30", "dateModified": "2026-10-30", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/azure-mandatory-mfa-managed-identities.html", "url": "https://sysopsbits.com/tutorials/azure-mandatory-mfa-managed-identities.html", "articleSection": "Microsoft", "inLanguage": "en-US", "keywords": "azure, entra-id, mfa, managed-identity, sc-300, az-104"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Azure MFA Broke Your Scripts? Fix Them With Managed Identities", "item": "https://sysopsbits.com/tutorials/azure-mandatory-mfa-managed-identities.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can I still postpone Azure mandatory MFA?", "acceptedAnswer": {"@type": "Answer", "text": "No. Microsoft allowed Phase 2 postponement only until July 1, 2026, and there's no opt-out. After enforcement begins, a Global Administrator can ask Microsoft support to lift it temporarily. Treat that as breathing room for the migration, not a fix."}}, {"@type": "Question", "name": "Do managed identities and service principals need MFA?", "acceptedAnswer": {"@type": "Answer", "text": "No. Microsoft states that workload identities, including managed identities and service principals, aren't affected by either phase. Only user identities must complete MFA."}}, {"@type": "Question", "name": "Why does az vm list work but az vm create fails?", "acceptedAnswer": {"@type": "Answer", "text": "Phase 2 enforces MFA on create, update, and delete operations only. Reads pass without MFA, so a user-based script fails at its first write."}}, {"@type": "Question", "name": "Does mandatory MFA apply to test tenants?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Microsoft requires MFA in every Azure tenant, with no exception for test or lab environments."}}, {"@type": "Question", "name": "What should I use for GitHub Actions deployments?", "acceptedAnswer": {"@type": "Answer", "text": "Use OpenID Connect with a federated identity credential on an app registration or a user-assigned managed identity. GitHub's token is exchanged for a Microsoft Entra token, so you store no secret in the repository."}}]}]}</script>
@@ -93,13 +92,13 @@
     </div>
 </header>
 <!-- partial:header:end --></div>
-    <main>
+    <main id="main-content">
         <article class="post">
             <div class="container">
                 <header class="post-header">
                     <div class="post-meta">
-                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
-                        <time datetime="2026-10-30">October 30, 2026</time>
+                        <a href="../microsoft.html" class="category">Microsoft</a>
+                        <time datetime="2026-10-30">2026-10-30</time>
                     </div>
                     <h1>Azure MFA Broke Your Scripts? Fix Them With Managed Identities</h1>
                     <p style="color:var(--text-secondary);max-width:700px;margin:0 auto;">Phase 2 of Azure mandatory MFA is live in every public-cloud tenant. Here is how to find the automation it broke and move it to an identity that never sees an MFA prompt.</p>
@@ -349,5 +348,6 @@ Connect-AzAccount -ServicePrincipal -ApplicationId &lt;app-id&gt; -Tenant &lt;te
 <!-- partial:footer:end --></div>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
+    <script src="../js/motion.js" defer></script>
 </body>
 </html>

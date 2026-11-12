@@ -28,9 +28,8 @@
     <link rel="apple-touch-icon" href="../apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/syntax.css">
     <link rel="stylesheet" href="../css/shortcodes.css">
     <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
     <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Azure VM Has No Internet in a New VNet? Private Subnets Explained", "name": "Azure VM Has No Internet in a New VNet? Private Subnets Explained", "description": "New Azure VNets default to private subnets, so VMs can't reach the internet. Choose NAT Gateway, Load Balancer outbound rules, or a public IP.", "image": ["https://sysopsbits.com/images/azure-private-subnets.jpg"], "datePublished": "2026-10-30", "dateModified": "2026-10-30", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/azure-private-subnet-default-outbound-access.html", "url": "https://sysopsbits.com/tutorials/azure-private-subnet-default-outbound-access.html", "articleSection": "Microsoft", "inLanguage": "en-US", "keywords": "azure, networking, nat-gateway, vnet, az-700, az-104"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Azure VM Has No Internet in a New VNet? Private Subnets Explained", "item": "https://sysopsbits.com/tutorials/azure-private-subnet-default-outbound-access.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Why can't my new Azure VM reach the internet?", "acceptedAnswer": {"@type": "Answer", "text": "VNets created with API versions released after March 31, 2026, and VNets created in the Azure portal, use private subnets by default. VMs in a private subnet need an explicit outbound method such as a NAT gateway, a load balancer outbound rule, a public IP, or a firewall route."}}, {"@type": "Question", "name": "Are existing Azure VMs affected by the default outbound access change?", "acceptedAnswer": {"@type": "Answer", "text": "No. Microsoft doesn't change existing VNets. Existing VMs, and new VMs you add to existing VNets, keep default outbound access unless you make the subnet private."}}, {"@type": "Question", "name": "What is the recommended fix for default outbound access?", "acceptedAnswer": {"@type": "Answer", "text": "Microsoft recommends associating a NAT gateway with the VM's subnet for most scenarios. It provides static, predictable outbound IPs and takes precedence over load balancer outbound rules and instance-level public IPs on that subnet for new connections."}}, {"@type": "Question", "name": "Does Windows Update work in a private subnet?", "acceptedAnswer": {"@type": "Answer", "text": "Not without an explicit outbound method. Microsoft's documentation names Windows Activation and Windows Updates as services that fail on a private subnet without explicit egress."}}, {"@type": "Question", "name": "Do I need to restart VMs after changing a subnet to private?", "acceptedAnswer": {"@type": "Answer", "text": "You need to stop and deallocate them. A guest OS restart doesn't apply the change to the network interface."}}]}]}</script>
@@ -93,13 +92,13 @@
     </div>
 </header>
 <!-- partial:header:end --></div>
-    <main>
+    <main id="main-content">
         <article class="post">
             <div class="container">
                 <header class="post-header">
                     <div class="post-meta">
-                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
-                        <time datetime="2026-10-30">October 30, 2026</time>
+                        <a href="../microsoft.html" class="category">Microsoft</a>
+                        <time datetime="2026-10-30">2026-10-30</time>
                     </div>
                     <h1>Azure VM Has No Internet in a New VNet? Private Subnets Explained</h1>
                     <p style="color:var(--text-secondary);max-width:700px;margin:0 auto;">Since March 31, 2026, new virtual networks stop handing VMs a hidden public IP. Here is how to spot a private subnet, add a NAT gateway, and avoid the five traps in the switch.</p>
@@ -321,5 +320,6 @@
 <!-- partial:footer:end --></div>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
+    <script src="../js/motion.js" defer></script>
 </body>
 </html>

@@ -28,9 +28,8 @@
     <link rel="apple-touch-icon" href="../apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/syntax.css">
     <link rel="stylesheet" href="../css/shortcodes.css">
     <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
     <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Azure Virtual Machines: What AZ-900 Expects You to Know", "name": "Azure Virtual Machines: What AZ-900 Expects You to Know", "description": "Everything you need to know about Azure Virtual Machines for the AZ-900 exam. VM types, sizes, availability options, scaling, and pricing explained.", "image": ["https://sysopsbits.com/images/az-900-virtual-machines.jpg"], "datePublished": "2026-07-13", "dateModified": "2026-07-13", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/az-900-azure-virtual-machines.html", "url": "https://sysopsbits.com/tutorials/az-900-azure-virtual-machines.html", "articleSection": "Microsoft", "inLanguage": "en-US", "keywords": "azure, az-900, virtual-machines, compute, cloud"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Azure Virtual Machines: What AZ-900 Expects You to Know", "item": "https://sysopsbits.com/tutorials/az-900-azure-virtual-machines.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What's the difference between stopping and deallocating a VM?", "acceptedAnswer": {"@type": "Answer", "text": "Stop (without deallocate) keeps the VM's resources reserved — you still pay for compute. Deallocate releases the hardware and stops compute charges. You only pay for storage. Stopping from the Azure Portal deallocates by default, but stopping from within the OS does not."}}, {"@type": "Question", "name": "Can I change a VM's size after deployment?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, but the VM must be stopped (deallocated). You can then select a new size, as long as the size is available in your region and your subscription has enough quota. B-series VMs have some restrictions on resizing to non-burstable families."}}, {"@type": "Question", "name": "How many VMs can I run for free?", "acceptedAnswer": {"@type": "Answer", "text": "The Azure free account includes 750 hours of B1s Windows VM and 750 hours of B1s Linux VM per month for 12 months. After that, you pay standard rates. The free tier does not include the 99.9% SLA — you need two or more VMs in an availability set or zone for SLA coverage."}}]}]}</script>
@@ -94,13 +93,13 @@
 </header>
 <!-- partial:header:end --></div>
 
-    <main>
+    <main id="main-content">
         <article class="post">
             <div class="container">
                 <header class="post-header">
                     <div class="post-meta">
-                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
-                        <time datetime="2026-07-13">July 13, 2026</time>
+                        <a href="../microsoft.html" class="category">Microsoft</a>
+                        <time datetime="2026-07-13">2026-07-13</time>
                     </div>
                     <h1>Azure Virtual Machines: What AZ-900 Expects You to Know</h1>
                     <div class="post-featured-image">
@@ -439,5 +438,6 @@
 
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
+    <script src="../js/motion.js" defer></script>
 </body>
 </html>

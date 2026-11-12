@@ -28,9 +28,8 @@
     <link rel="apple-touch-icon" href="../apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/syntax.css">
     <link rel="stylesheet" href="../css/shortcodes.css">
     <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
     <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Azure NSG Best Practices: Practical Rules and Patterns", "name": "Azure NSG Best Practices: Practical Rules and Patterns", "description": "Learn how to configure Azure Network Security Groups with practical rules and patterns. Cover host vs subnet NSGs, common allow/deny patterns, and troubleshooting.", "image": ["https://sysopsbits.com/images/azure-nsg-best-practices.jpg"], "datePublished": "2026-03-05", "dateModified": "2026-06-25", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/azure-nsg-best-practices.html", "url": "https://sysopsbits.com/tutorials/azure-nsg-best-practices.html", "articleSection": "Microsoft", "inLanguage": "en-US", "keywords": "azure, nsg, network-security, cloud"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Azure NSG Best Practices: Practical Rules and Patterns", "item": "https://sysopsbits.com/tutorials/azure-nsg-best-practices.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can an NSG block Azure platform traffic?", "acceptedAnswer": {"@type": "Answer", "text": "Some Azure platform traffic (like health probes) cannot be blocked by NSGs. However, you can control most customer traffic with NSGs."}}, {"@type": "Question", "name": "What's the difference between NSG and Azure Firewall?", "acceptedAnswer": {"@type": "Answer", "text": "NSG provides basic network filtering at layer 3/4, while Azure Firewall is a fully managed network security service with more advanced features including threat intelligence, URL filtering, and SNAT."}}, {"@type": "Question", "name": "How many rules can an NSG have?", "acceptedAnswer": {"@type": "Answer", "text": "Each NSG supports up to 1,000 rules. For more complex scenarios, consider using Azure Firewall or dividing traffic across multiple subnets."}}]}]}</script>
@@ -94,13 +93,13 @@
 </header>
 <!-- partial:header:end --></div>
 
-    <main>
+    <main id="main-content">
         <article class="post">
             <div class="container">
                 <header class="post-header">
                     <div class="post-meta">
-                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
-                        <time datetime="2026-03-05">March 5, 2026</time>
+                        <a href="../microsoft.html" class="category">Microsoft</a>
+                        <time datetime="2026-03-05">2026-03-05</time>
                     </div>
                     <h1>Azure NSG Best Practices: Practical Rules and Patterns</h1>
                     <div class="post-featured-image">
@@ -477,5 +476,6 @@ az network watcher test-connectivity \
 
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
+    <script src="../js/motion.js" defer></script>
 </body>
 </html>

@@ -28,9 +28,8 @@
     <link rel="apple-touch-icon" href="../apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/syntax.css">
     <link rel="stylesheet" href="../css/shortcodes.css">
     <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
     <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "How to Set Up Automated Linux Backups with Restic", "name": "How to Set Up Automated Linux Backups with Restic", "description": "Complete guide to implementing automated, encrypted backups for Linux servers using Restic. Step-by-step commands with real-world examples.", "image": ["https://sysopsbits.com/images/automated-linux-backups-restic.jpg"], "datePublished": "2026-01-18", "dateModified": "2026-10-24", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/automated-linux-backups-restic.html", "url": "https://sysopsbits.com/tutorials/automated-linux-backups-restic.html", "articleSection": "Guided Labs", "inLanguage": "en-US", "keywords": "backups, restic, linux"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Guided Labs", "item": "https://sysopsbits.com/guided-labs.html"}, {"@type": "ListItem", "position": 3, "name": "How to Set Up Automated Linux Backups with Restic", "item": "https://sysopsbits.com/tutorials/automated-linux-backups-restic.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How long does a Restic backup take?", "acceptedAnswer": {"@type": "Answer", "text": "The first backup is limited by disk read speed and upload bandwidth. After that, only changed chunks are uploaded, so nightly runs on a typical web server finish in under a few minutes."}}, {"@type": "Question", "name": "How secure are Restic backups?", "acceptedAnswer": {"@type": "Answer", "text": "Data is encrypted and authenticated on the client with AES-256 and Poly1305, using a key derived from your password with scrypt. The storage backend never sees plaintext or your password."}}, {"@type": "Question", "name": "What happens if I forget the repository password?", "acceptedAnswer": {"@type": "Answer", "text": "The data can't be recovered. Store the password in at least two places, and never only on the server being backed up."}}, {"@type": "Question", "name": "Restic vs Borg: which should I use?", "acceptedAnswer": {"@type": "Answer", "text": "Both deduplicate and encrypt. Borg is very efficient but works best over SSH to a host running Borg. Restic writes directly to cloud object storage with no server component, which makes it the easier choice for S3, B2, or Azure Blob."}}]}]}</script>
@@ -94,14 +93,14 @@
 </header>
 <!-- partial:header:end --></div>
 
-    <main>
+    <main id="main-content">
         <article class="post">
             <div class="container">
                 <header class="post-header">
                     <div class="post-meta">
-                        <a href="../guided-labs.html" class="category" style="background:rgba(245,158,11,0.12);color:#f59e0b;border-color:rgba(245,158,11,0.2)">Guided Labs</a>
-                        <time datetime="2026-01-18">January 18, 2026</time>
-                        <span class="post-updated">Updated <time datetime="2026-10-24">October 24, 2026</time></span>
+                        <a href="../guided-labs.html" class="category">Guided Labs</a>
+                        <time datetime="2026-01-18">2026-01-18</time>
+                        <span class="post-updated">Updated <time datetime="2026-10-24">2026-10-24</time></span>
                     </div>
                     <h1>How to Set Up Automated Linux Backups with Restic</h1>
                     <div class="post-featured-image">
@@ -402,5 +401,6 @@ mkdir -p /mnt/restic &amp;&amp; restic mount /mnt/restic</code></pre>
 
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
+    <script src="../js/motion.js" defer></script>
 </body>
 </html>

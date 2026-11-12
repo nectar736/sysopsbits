@@ -28,9 +28,8 @@
     <link rel="apple-touch-icon" href="../apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/syntax.css">
     <link rel="stylesheet" href="../css/shortcodes.css">
     <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
     <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BlogPosting", "headline": "Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step", "name": "Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step", "description": "Learn how to deploy a secure Ubuntu VM in Azure VNet with NSG rules, SSH key authentication, and Fail2Ban hardening.", "image": ["https://sysopsbits.com/images/create-secure-linux-vm-azure.jpg"], "datePublished": "2026-03-05", "dateModified": "2026-06-25", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "mainEntityOfPage": "https://sysopsbits.com/tutorials/create-secure-linux-vm-azure.html", "url": "https://sysopsbits.com/tutorials/create-secure-linux-vm-azure.html", "articleSection": "Microsoft", "inLanguage": "en-US", "keywords": "azure, linux, ubuntu, ssh, security"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Microsoft", "item": "https://sysopsbits.com/microsoft.html"}, {"@type": "ListItem", "position": 3, "name": "Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step", "item": "https://sysopsbits.com/tutorials/create-secure-linux-vm-azure.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can I use a bastion host instead?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. A bastion host (jump box) is a dedicated VM in a management subnet that acts as the only entry point for SSH. You would allow SSH to the bastion from your IP, then connect from the bastion to other VMs. This provides an additional security layer."}}, {"@type": "Question", "name": "What if my IP changes?", "acceptedAnswer": {"@type": "Answer", "text": "If your public IP changes, update the NSG rule with your new IP. Consider using a VPN or bastion host if your IP is dynamic."}}, {"@type": "Question", "name": "Should I use Azure Bastion?", "acceptedAnswer": {"@type": "Answer", "text": "Azure Bastion is a managed jump box service that eliminates the need for a public IP on your VM. It's more secure than exposing SSH directly and simplifies management. However, it comes with additional costs."}}]}]}</script>
@@ -94,13 +93,13 @@
 </header>
 <!-- partial:header:end --></div>
 
-    <main>
+    <main id="main-content">
         <article class="post">
             <div class="container">
                 <header class="post-header">
                     <div class="post-meta">
-                        <a href="../microsoft.html" class="category" style="background:rgba(6,182,212,0.12);color:#06b6d4;border-color:rgba(6,182,212,0.2)">Microsoft</a>
-                        <time datetime="2026-03-05">March 5, 2026</time>
+                        <a href="../microsoft.html" class="category">Microsoft</a>
+                        <time datetime="2026-03-05">2026-03-05</time>
                     </div>
                     <h1>Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step</h1>
                     <div class="post-featured-image">
@@ -429,5 +428,6 @@ sudo sshd -t</code></pre>
 
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
+    <script src="../js/motion.js" defer></script>
 </body>
 </html>
