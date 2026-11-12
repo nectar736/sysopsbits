@@ -1,0 +1,18 @@
+{
+  "name": "sysopsbits-tooling",
+  "private": true,
+  "type": "module",
+  "description": "Dev-only tooling: vendor bundle build, unit and browser tests. Nothing here is deployed except js/vendor outputs.",
+  "scripts": {
+    "build": "node build.mjs",
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "esbuild": "0.28.2",
+    "gsap": "3.15.1",
+    "lighthouse": "12.8.2",
+    "three": "0.187.0"
+  }
+}
