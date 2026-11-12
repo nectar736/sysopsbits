@@ -43,10 +43,6 @@
         for (var i = 0; i < pending.length; i++) pending[i].setAttribute('data-reveal', 'in');
     }
 
-    function gsapOwnsEntrances() {
-        return root.classList.contains('gsap-ready') && document.body.getAttribute('data-page') === 'index';
-    }
-
     function initReveal() {
         if (!('IntersectionObserver' in window)) return;
         var viewport = window.innerHeight || root.clientHeight;
@@ -55,8 +51,8 @@
             for (var i = 0; i < entries.length; i++) {
                 if (!entries[i].isIntersecting) continue;
                 observer.unobserve(entries[i].target);
-                // On the homepage GSAP animates entrances once it has loaded (js/home-scene.js).
-                if (gsapOwnsEntrances()) continue;
+                // js/home-scene.js may have claimed the element (data-reveal="gsap") to animate it itself.
+                if (entries[i].target.getAttribute('data-reveal') !== 'pending') continue;
                 entries[i].target.setAttribute('data-reveal', 'in');
             }
         }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
@@ -100,6 +96,7 @@
     function onPointerMove(e) {
         if (e.pointerType === 'touch') return;
         var el = e.target && e.target.closest ? e.target.closest(TILT_SELECTOR) : null;
+        if (el && el.closest('article.post')) el = null; // reading stays still
         if (el !== tilted) {
             clearTilt(tilted);
             tilted = el;
@@ -121,6 +118,8 @@
         document.addEventListener('pointermove', onPointerMove, { passive: true });
         root.addEventListener('pointerleave', resetTilt);
         window.addEventListener('blur', resetTilt);
+        // Scrolling moves the card out from under a pointer that has not moved
+        window.addEventListener('scroll', resetTilt, { passive: true });
     }
 
     function stop() {
@@ -131,10 +130,11 @@
         showAll();
     }
 
-    // Returning from the back/forward cache: never leave content hidden.
+    // Returning from the back/forward cache, or printing: never leave content hidden.
     window.addEventListener('pageshow', function (e) {
         if (e.persisted) showAll();
     });
+    window.addEventListener('beforeprint', showAll);
 
     if (!motionQuery.matches) return;
     root.classList.add('motion-ok');

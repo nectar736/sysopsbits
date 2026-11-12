@@ -34,6 +34,37 @@ test.describe('desktop navigation', () => {
     await expect(toggle).toBeFocused();
   });
 
+  test('Escape dismisses a hover-opened dropdown, and hovering again reopens it', async ({ page }) => {
+    await page.goto('/about.html');
+    const menu = page.locator('#nav-categories');
+    await page.locator('.nav-dropdown').hover();
+    await expect(menu).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    await page.mouse.move(640, 600);
+    await page.locator('.nav-dropdown').hover();
+    await expect(menu).toBeVisible();
+  });
+
+  test('dropdown closes when keyboard focus leaves it', async ({ page }) => {
+    await page.goto('/about.html');
+    const toggle = page.locator('.dropdown-toggle');
+    await toggle.focus();
+    await page.keyboard.press('Enter');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await page.locator('.nav-menu a[data-page="about"]').focus();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('#nav-categories')).toBeHidden();
+  });
+
+  test('focused elements keep their own shape', async ({ page }) => {
+    await page.goto('/about.html');
+    const toggle = page.locator('.theme-toggle');
+    const before = await toggle.evaluate((el) => getComputedStyle(el).borderRadius);
+    await toggle.focus();
+    expect(await toggle.evaluate((el) => getComputedStyle(el).borderRadius)).toBe(before);
+  });
+
   test('theme toggle fires themechange and sets aria-pressed', async ({ page }) => {
     await page.goto('/about.html');
     await page.evaluate(() => {

@@ -13,6 +13,7 @@ Edits (every page except the three meta-refresh stubs):
   4. <time datetime="YYYY-MM-DD"> text -> the ISO date
   5. <main> gets id="main-content" (skip-link target)
   6. js/motion.js script tag before </body>
+  7. font-family attributes in inline SVG diagrams that named the retired fonts
 """
 import re
 import subprocess
@@ -30,6 +31,7 @@ _SYNTAX_LINE = re.compile(r'[ \t]*<link rel="stylesheet" href="[^"]*css/syntax\.
 _BADGE = re.compile(r'(<(?:a|span)\b[^>]*\bclass="category")\s+style="[^"]*"')
 _TIME = re.compile(r'(<time datetime="(\d{4}-\d{2}-\d{2})[^"]*">)[^<]*(</time>)')
 _MAIN = re.compile(r'<main(?![^>]*\bid=)([^>]*)>')
+_SVG_FONT = re.compile(r'font-family="(?:Outfit|Plus Jakarta Sans)[^"]*"')
 _BODY_END = re.compile(r'([ \t]*)</body>')
 _LAST_SCRIPT_INDENT = re.compile(r'^([ \t]*)<script\b[^\n]*\n(?=[ \t]*</body>)', re.M)
 
@@ -54,6 +56,10 @@ def add_main_id(html):
     return _MAIN.sub(lambda m: '<main id="main-content"%s>' % m.group(1), html, count=1)
 
 
+def swap_svg_fonts(html):
+    return _SVG_FONT.sub('font-family="IBM Plex Sans, system-ui, sans-serif"', html)
+
+
 def add_motion_script(html, prefix):
     """Insert the motion.js tag before </body>. prefix is '', '../' (repeated) or '/'."""
     if 'js/motion.js' in html:
@@ -70,6 +76,7 @@ EDITS = (
     ('badges', strip_badge_styles),
     ('dates', iso_dates),
     ('main id', add_main_id),
+    ('svg fonts', swap_svg_fonts),
 )
 
 
@@ -80,7 +87,7 @@ def restyle(html, prefix):
 
 
 def head_of(html):
-    m = re.search(r'<head>.*?</head>', html, re.S)
+    m = re.search(r'<head\b[^>]*>.*?</head>', html, re.S)
     return m.group(0) if m else ''
 
 
@@ -136,6 +143,9 @@ def apply_all(root):
 
 
 def check_heads(root):
+    if subprocess.run(['git', 'rev-parse', '--verify', '--quiet', 'main'], cwd=root, capture_output=True).returncode != 0:
+        print('heads: cannot compare, there is no local "main" branch')
+        return 1
     bad = []
     for page, rel in _pages(root):
         shown = subprocess.run(['git', 'show', 'main:' + rel], cwd=root, capture_output=True)

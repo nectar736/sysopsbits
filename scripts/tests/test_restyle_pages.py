@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from restyle_pages import (  # noqa: E402
     FONT_HREF, add_main_id, add_motion_script, drop_syntax_css, head_of, heads_match,
-    iso_dates, restyle, strip_badge_styles, swap_fonts,
+    iso_dates, restyle, strip_badge_styles, swap_fonts, swap_svg_fonts,
 )
 
 OLD_FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800'
@@ -85,6 +85,16 @@ class EditTests(unittest.TestCase):
         self.assertEqual(iso_dates('<time datetime="2026-10-30T09:00:00Z">October 30</time>'),
                          '<time datetime="2026-10-30T09:00:00Z">2026-10-30</time>')
 
+    def test_swap_svg_fonts_replaces_retired_families_only(self):
+        src = ('<text font-family="Outfit, sans-serif" font-size="12">A</text>'
+               '<text font-family="Plus Jakarta Sans, sans-serif">B</text>'
+               '<text font-family="JetBrains Mono, monospace">C</text>')
+        out = swap_svg_fonts(src)
+        self.assertEqual(out.count('font-family="IBM Plex Sans, system-ui, sans-serif"'), 2)
+        self.assertIn('font-family="JetBrains Mono, monospace"', out)
+        self.assertNotIn('Outfit', out)
+        self.assertEqual(swap_svg_fonts(out), out)
+
     def test_add_main_id_keeps_existing_attrs(self):
         self.assertEqual(add_main_id('<main class="x">'), '<main id="main-content" class="x">')
         self.assertEqual(add_main_id('<main>'), '<main id="main-content">')
@@ -126,6 +136,10 @@ class RestyleTests(unittest.TestCase):
         self.assertTrue(head.startswith('<head>'))
         self.assertTrue(head.endswith('</head>'))
         self.assertNotIn('<body>', head)
+
+    def test_head_of_accepts_attributes_on_the_head_tag(self):
+        self.assertEqual(head_of('<html><head lang="en"><title>t</title></head><body></body></html>'),
+                         '<head lang="en"><title>t</title></head>')
 
     def test_heads_match_ignores_fonts_and_syntax_only(self):
         self.assertTrue(heads_match(OLD, restyle(OLD, '../')))

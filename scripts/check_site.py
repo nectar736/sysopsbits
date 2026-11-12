@@ -19,7 +19,7 @@ STUBS = {'tools.html', 'tutorials.html', 'comparisons/cmd-vs-powershell-2026.htm
 PAGE_SCRIPTS = ('sync_partials.py', 'restyle_pages.py', 'build_article_extras.py')
 
 _TEXT = ('--text-primary', '--text-secondary', '--text-muted', '--accent-text')
-_SURFACES = ('--bg-primary', '--bg-card', '--bg-secondary')
+_SURFACES = ('--bg-primary', '--bg-card', '--bg-secondary', '--bg-elevated', '--bg-card-hover')
 PAIRS = (
     [(fg, bg, 4.5) for fg in _TEXT for bg in _SURFACES]
     + [('--text-on-accent', '--accent', 4.5)]
@@ -117,6 +117,8 @@ def _count_adsense(html):
 
 
 def check_adsense(root):
+    if subprocess.run(['git', 'rev-parse', '--verify', '--quiet', 'main'], cwd=root, capture_output=True).returncode != 0:
+        return ['adsense: cannot compare, there is no local "main" branch']
     failures = []
     for page in site_pages(root):
         rel = page.relative_to(root).as_posix()

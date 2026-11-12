@@ -155,6 +155,17 @@ function initNavToggle() {
         document.querySelectorAll('.nav-dropdown.active').forEach(dd => setDropdown(dd, false));
     }
 
+    document.querySelectorAll('.nav-dropdown').forEach(dropdown => {
+        // Keyboard: close when focus moves out of the dropdown
+        dropdown.addEventListener('focusout', function(e) {
+            if (e.relatedTarget && !dropdown.contains(e.relatedTarget)) setDropdown(dropdown, false);
+        });
+        // A menu dismissed with Escape may open again on the next hover
+        dropdown.addEventListener('pointerleave', function() {
+            dropdown.classList.remove('dismissed');
+        });
+    });
+
     if (navToggle && navMenu) {
         navToggle.addEventListener('click', function() {
             setMenu(!navMenu.classList.contains('active'));
@@ -173,7 +184,9 @@ function initNavToggle() {
         toggle.addEventListener('click', function(e) {
             e.stopPropagation();
             const dropdown = this.closest('.nav-dropdown');
-            if (dropdown) setDropdown(dropdown, !dropdown.classList.contains('active'));
+            if (!dropdown) return;
+            dropdown.classList.remove('dismissed');
+            setDropdown(dropdown, !dropdown.classList.contains('active'));
         });
     });
 
@@ -183,6 +196,8 @@ function initNavToggle() {
     // Escape closes the innermost open thing and returns focus to its toggle
     document.addEventListener('keydown', function(e) {
         if (e.key !== 'Escape') return;
+        // Also hides a menu that is only open because the pointer is hovering it
+        document.querySelectorAll('.nav-dropdown:hover').forEach(dd => dd.classList.add('dismissed'));
         const openDropdown = document.querySelector('.nav-dropdown.active');
         if (openDropdown) {
             setDropdown(openDropdown, false);

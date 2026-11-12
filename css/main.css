@@ -104,6 +104,9 @@
   html { scroll-behavior: smooth; }
 }
 
+/* Keeps keyboard focus and in-page targets clear of the fixed header */
+html { scroll-padding-top: calc(var(--header-h) + 16px); }
+
 html, body { height: 100%; }
 
 body {
@@ -130,7 +133,6 @@ img {
 :focus-visible {
   outline: 2px solid var(--accent-text);
   outline-offset: 2px;
-  border-radius: 2px;
 }
 
 main { flex: 1; }
@@ -200,7 +202,7 @@ code, kbd, pre, samp { font-family: var(--font-mono); }
 
 /* ===== HEADER / NAVBAR ===== */
 .skip-link {
-  position: absolute;
+  position: fixed;
   left: 16px;
   top: -64px;
   z-index: 1100;
@@ -375,6 +377,9 @@ main { padding-top: var(--header-h); }
 .nav-dropdown.active .dropdown-menu {
   display: block;
 }
+
+/* Escape hides a hover-opened menu until the pointer leaves (set by js/partials.js) */
+.nav-dropdown.dismissed:not(.active):hover .dropdown-menu { display: none; }
 
 .dropdown-menu li { list-style: none; }
 
@@ -715,15 +720,13 @@ main { padding-top: var(--header-h); }
   transition: background-color var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
 }
 
-.btn-primary,
-.btn-success {
+.btn-primary {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--text-on-accent);
 }
 
-.btn-primary:hover,
-.btn-success:hover {
+.btn-primary:hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
   color: var(--text-on-accent);
@@ -1945,13 +1948,22 @@ pre:hover .copy-button,
    js/motion.js adds .motion-ok to <html> only when the visitor has not asked for reduced motion.
    Everything that moves or fades lives under that class, so content is visible without it. */
 .motion-ok [data-reveal] {
-  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
-  transition-delay: calc(var(--reveal-i, 0) * 60ms);
+  --reveal-delay: calc(var(--reveal-i, 0) * 60ms);
+  transition: opacity var(--dur-slow) var(--ease-out) var(--reveal-delay), translate var(--dur-slow) var(--ease-out) var(--reveal-delay);
 }
 
+/* Reveal moves with "translate" so it never fights the tilt, which owns "transform" */
 .motion-ok [data-reveal="pending"] {
   opacity: 0;
-  transform: translateY(16px);
+  translate: 0 16px;
+}
+
+@media print {
+  [data-reveal] {
+    opacity: 1 !important;
+    translate: none !important;
+    transition: none !important;
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1959,12 +1971,8 @@ pre:hover .copy-button,
   .motion-ok .guide-card {
     position: relative;
     transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast), opacity var(--dur-slow) var(--ease-out);
-  }
-
-  .motion-ok .post-card[data-reveal="pending"],
-  .motion-ok .guide-card[data-reveal="pending"] {
-    transform: translateY(16px);
+    transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-fast), background-color var(--dur-fast),
+      opacity var(--dur-slow) var(--ease-out) var(--reveal-delay, 0ms), translate var(--dur-slow) var(--ease-out) var(--reveal-delay, 0ms);
   }
 
   /* Soft glow that follows the cursor */
