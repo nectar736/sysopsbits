@@ -1,33 +1,35 @@
-/* Additional styles for shortcodes */
+/* Shortcode components: callouts, inline CTA, diagrams, tables, product CTA, home sections, store */
 
-/* Callout Boxes */
+/* Callout Boxes: neutral card, mono label, coloured left rule */
 .callout {
-    padding: 1.25rem 1.5rem;
-    margin: 1.5rem 0;
-    border-radius: var(--radius-md, 8px);
-    border-left: 4px solid var(--accent, #3498db);
-    background: rgba(255, 255, 255, 0.04);
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
 }
 
-.callout-info {
-    border-left-color: #3498db;
-    background: rgba(52, 152, 219, 0.06);
+.callout::before {
+  content: 'NOTE';
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--accent-text);
 }
 
-.callout-tip {
-    border-left-color: #2ecc71;
-    background: rgba(46, 204, 113, 0.06);
-}
+.callout-tip::before { content: 'TIP'; }
+.callout-question::before { content: 'Q'; }
 
-.callout-trap {
-    border-left-color: #e74c3c;
-    background: rgba(231, 76, 60, 0.06);
-}
+.callout-trap,
+.callout-warning { border-left-color: var(--state-bad); }
 
-.callout-question {
-    border-left-color: #f39c12;
-    background: rgba(243, 156, 18, 0.06);
-}
+.callout-trap::before { content: 'TRAP'; color: var(--state-bad); }
+.callout-warning::before { content: 'WARN'; color: var(--state-bad); }
 
 .callout strong:first-child {
     display: block;
@@ -609,10 +611,6 @@
   color: var(--text-muted);
   margin-left: 0.5rem;
 }
-
-/* ===== Light-mode contrast for badges that carry inline colors ===== */
-.light-mode .category[style*="#06b6d4"] { color: #0e7490 !important; }
-.light-mode .category[style*="#f59e0b"] { color: #b45309 !important; }
 
 /* Four free practice tests: one row on desktop, 2x2 on tablets */
 #practice-tests .posts-grid {
