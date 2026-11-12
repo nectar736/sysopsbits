@@ -1,7 +1,7 @@
 # Site Redesign Design - SysOpsBits
 
 **Date:** 2026-11-11
-**Status:** Awaiting review
+**Status:** Approved (2026-11-11)
 
 ## Overview
 
@@ -80,7 +80,8 @@ Existing token names are kept. New names are added only where nothing existed.
 | `--bg-elevated` | `#1a1e24` | `#ffffff` |
 | `--bg-nav` | `rgba(11,13,16,0.85)` | `rgba(250,250,247,0.9)` |
 | `--border-color` | `#262b33` | `#dedcd4` |
-| `--border-hover` | `#3a414b` | `#8d8a80` |
+| `--border-hover` (decorative) | `#3a414b` | `#8d8a80` |
+| `--border-strong` (inputs, state) | `#6b7480` | `#8d8a80` |
 | `--text-primary` | `#e6e8eb` | `#16181c` |
 | `--text-secondary` | `#a7afb9` | `#4a4f57` |
 | `--text-muted` | `#8a929c` | `#636973` |
@@ -101,8 +102,8 @@ Aliases, so old references keep working with one accent:
 Measured contrast (WCAG formula, computed 2026-11-11): text 15.9 dark / 17.0 light;
 secondary 8.8 / 7.9; muted 6.2 / 5.3 on the page background and 5.7 / 4.9 on card
 surfaces; amber text 9.5 / 6.0; dark text on amber fill 9.2. The state colours and
-`--border-hover` as an input border must be measured during implementation and
-adjusted until text is at least 4.5:1 and input borders at least 3:1.
+`--border-strong` must be measured during implementation and adjusted until text is
+at least 4.5:1 and input borders at least 3:1.
 
 Colour rules:
 
@@ -236,8 +237,8 @@ no-op. It makes exactly these edits:
 3. Strip the inline `style` attribute from `.category` badges.
 4. Rewrite the text of `<time datetime="YYYY-MM-DD">...</time>` to the ISO date.
 5. Add `id="main-content"` to `<main>`.
-6. Add `<script src=".../js/motion.js" defer>` to every page and
-   `.../js/article.js` to pages that contain `article.post`.
+6. Add `<script src=".../js/motion.js" defer>` to every page. (`article.js` is added
+   to standard posts by `build_article_extras.py`.)
 Nothing else in `<head>` is touched (page transitions are opted into from CSS and
 need no markup).
 
