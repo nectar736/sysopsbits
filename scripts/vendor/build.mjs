@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 
+const here = fileURLToPath(new URL('.', import.meta.url)); // so the build works from any cwd
 const out = (name) => fileURLToPath(new URL(`../../js/vendor/${name}`, import.meta.url));
 const version = (pkg) =>
   JSON.parse(readFileSync(new URL(`./node_modules/${pkg}/package.json`, import.meta.url), 'utf8')).version;
@@ -27,6 +28,7 @@ const bundles = [
 let total = 0;
 for (const b of bundles) {
   await build({
+    absWorkingDir: here,
     entryPoints: [b.entry],
     outfile: out(b.file),
     bundle: true,
