@@ -791,6 +791,8 @@ main { padding-top: var(--header-h); }
 }
 
 .category-badge {
+  color: var(--accent-text);
+  border: 1px solid var(--border-color);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -802,30 +804,6 @@ main { padding-top: var(--header-h); }
   letter-spacing: 0.08em;
   border-radius: 100px;
   margin-bottom: 1.25rem;
-}
-
-.category-badge-microsoft {
-  background: rgba(6, 182, 212, 0.15);
-  color: var(--accent-secondary);
-  border: 1px solid rgba(6, 182, 212, 0.25);
-}
-
-.category-badge-guided-labs {
-  background: rgba(245, 158, 11, 0.15);
-  color: var(--accent-text);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-}
-
-.category-badge-comparisons {
-  background: rgba(168, 85, 247, 0.15);
-  color: #a855f7;
-  border: 1px solid rgba(168, 85, 247, 0.25);
-}
-
-.category-badge-project-management {
-  background: rgba(34, 211, 238, 0.15);
-  color: #22d3ee;
-  border: 1px solid rgba(34, 211, 238, 0.25);
 }
 
 /* ===== POSTS GRID AND CARDS (homepage, listing pages, store) =====
@@ -1996,5 +1974,121 @@ pre:hover .copy-button,
   .motion-ok .post-card.is-tilting::after,
   .motion-ok .guide-card.is-tilting::after {
     opacity: 1;
+  }
+}
+
+/* ===== LISTING PAGES ===== */
+.page-header {
+  padding: 3rem 0 1rem;
+}
+
+.promo-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+}
+
+.section-header .promo-box p {
+  flex: 1 1 220px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.promo-covers {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.promo-covers a {
+  display: block;
+  width: 84px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.promo-covers a:hover { border-color: var(--accent-text); }
+
+.promo-covers img {
+  display: block;
+  width: 100%;
+}
+
+/* Categories page: neutral badge styles that used to live in the page */
+.coming-soon-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+.content-note {
+  padding: 0.75rem 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.categories-hero::before { display: none; }
+
+.category-header { border-left: 2px solid var(--accent); }
+
+.stat-number { font-family: var(--font-mono); font-weight: 500; }
+
+.terms-grid .recent-posts li a:hover { color: var(--accent-text); }
+
+/* ===== STORE: product cards as book covers ===== */
+.book-grid {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.book-grid .post-image {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-secondary);
+  perspective: 900px;
+}
+
+.book-grid .post-image a {
+  display: block;
+  height: 100%;
+}
+
+.book-grid .post-image img {
+  object-fit: contain;
+  border-radius: 2px 6px 6px 2px;
+  box-shadow: -4px 0 0 rgba(0, 0, 0, 0.35), var(--surface-shadow);
+}
+
+.book-grid .product-price {
+  justify-content: flex-start;
+  margin: 0.75rem 0 0;
+}
+
+.product-price .sale-price {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent-text);
+}
+
+/* The cover turns toward the cursor; the card itself stays flat */
+@media (hover: hover) and (pointer: fine) {
+  .motion-ok .book-grid .post-card { transform: none; }
+
+  .motion-ok .book-grid .post-image img {
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform var(--dur-base) var(--ease-out);
   }
 }

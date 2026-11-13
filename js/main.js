@@ -33,6 +33,7 @@ document.addEventListener('click', function(e) {
     else if (/amzn\.to|amazon\.com/.test(href)) type = 'amazon_affiliate';
     if (!type) return;
     const placement = link.closest('.product-cta') ? 'article_cta'
+        : link.closest('.book-grid') ? 'store'
         : link.closest('.guide-card') ? 'home_guides'
         : link.closest('.post-card') ? 'card'
         : link.closest('.site-header, .site-footer') ? 'nav' : 'inline';
