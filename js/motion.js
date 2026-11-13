@@ -67,6 +67,24 @@
             el.setAttribute('data-reveal', 'pending');
             observer.observe(el);
         }
+
+        // A jump (End key, hash link) can carry elements past the viewport between observer
+        // callbacks; anything above the bottom of the viewport is revealed regardless.
+        var queued = false;
+        var sweep = function () {
+            queued = false;
+            var bottom = window.innerHeight || root.clientHeight;
+            var pending = document.querySelectorAll('[data-reveal="pending"]');
+            for (var j = 0; j < pending.length; j++) {
+                if (pending[j].getBoundingClientRect().top < bottom) pending[j].setAttribute('data-reveal', 'in');
+            }
+        };
+        window.addEventListener('scroll', function () {
+            if (!queued) {
+                queued = true;
+                window.requestAnimationFrame(sweep);
+            }
+        }, { passive: true });
     }
 
     var tilted = null;

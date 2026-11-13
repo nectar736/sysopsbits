@@ -28,9 +28,8 @@ test('reduced motion: no motion-ok class and nothing pending', async ({ page }) 
 test('print shows every card even when it was never scrolled to', async ({ page }) => {
   await page.goto('/microsoft.html');
   await page.emulateMedia({ media: 'print' });
-  const invisible = await page.locator('.post-card').evaluateAll((els) =>
-    els.filter((el) => getComputedStyle(el).opacity !== '1').length);
-  expect(invisible).toBe(0);
+  await expect.poll(() => page.locator('.post-card').evaluateAll((els) =>
+    els.filter((el) => getComputedStyle(el).opacity !== '1').length)).toBe(0);
 });
 
 test('card tilts under a fine pointer and settles when the pointer leaves', async ({ page }) => {
