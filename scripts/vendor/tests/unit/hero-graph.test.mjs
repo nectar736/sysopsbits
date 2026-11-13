@@ -53,3 +53,18 @@ test('pingLevel flashes each node one hop after the previous', () => {
   assert.equal(pingLevel(0, 0.31, opts), 0);                    // start node has faded
   assert.equal(pingLevel(-1, 0.2, opts), 0);                    // unreachable nodes never flash
 });
+
+test('nearestNode skips masked points', () => {
+  const pts = [{ x: 0, y: 0 }, { x: 10, y: 0 }];
+  assert.equal(nearestNode(pts, 1, 0, 40, [true, false]), 1);
+  assert.equal(nearestNode(pts, 1, 0, 40, [true, true]), -1);
+});
+
+test('the real icosphere graphs are one connected network', async () => {
+  const { IcosahedronGeometry, EdgesGeometry } = await import('three');
+  for (const detail of [1, 2]) {
+    const g = graphFromSegments(new EdgesGeometry(new IcosahedronGeometry(1, detail)).getAttribute('position').array);
+    assert.equal(g.nodes.length, 10 * (detail + 1) ** 2 + 2); // 42 and 92: no split or merged vertices
+    assert.ok(!hopDistances(g.neighbors, 0).includes(-1));
+  }
+});

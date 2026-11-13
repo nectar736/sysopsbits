@@ -19,7 +19,10 @@ const PING_SECONDS = 2.2;     // long enough for a ping to cross the sphere
 const DRAG_RATE = 0.008;      // radians per px dragged
 const SPIN_KICK = 0.9;        // rad/s added by a ping
 const SPIN_DAMPING = 2.5;     // how fast extra spin and drag inertia die away
-const NO_PING_SELECTOR = 'a, button, input, select, textarea, label, summary, .trust-chips';
+// Anything in the hero text column, plus any control, keeps its normal behaviour and never pings
+const NO_PING_SELECTOR = '.hero-content, a, button, input, select, textarea, label, summary';
+const PING_REACH = 0.15;      // a click pings only within this fraction of the box width from a node
+const FLING_IDLE_MS = 80;     // a drag held still this long before release does not fling
 
 function readColours() {
     const css = getComputedStyle(document.documentElement);
@@ -124,7 +127,11 @@ export async function start({ canvas, mode }) {
         coloursDirty = true;
     }
     applyColours();
-    document.addEventListener('themechange', applyColours);
+    const onTheme = () => {
+        applyColours();
+        writeColours(); // refresh even while the loop is paused
+        if (!running) renderer.render(scene, camera);
+    };
 
     function writeColours() {
         const nc = nodeGeometry.getAttribute('color');
@@ -137,12 +144,14 @@ export async function start({ canvas, mode }) {
         nc.needsUpdate = true;
         gc.needsUpdate = true;
         const ec = edgeGeometry.getAttribute('color');
-        graph.edges.forEach(([a, b], i) => {
+        for (let i = 0; i < graph.edges.length; i++) {
+            const a = graph.edges[i][0];
+            const b = graph.edges[i][1];
             const level = Math.max(Math.min(nodeLevel[a], nodeLevel[b]), (nodeLevel[a] + nodeLevel[b]) * 0.45);
             mixed.copy(edgeRest).lerp(hot, Math.min(1, level));
             ec.setXYZ(i * 2, mixed.r, mixed.g, mixed.b);
             ec.setXYZ(i * 2 + 1, mixed.r, mixed.g, mixed.b);
-        });
+        }
         ec.needsUpdate = true;
     }
 
@@ -189,8 +198,14 @@ export async function start({ canvas, mode }) {
 
     // ---- Interaction: hover, ping, drag ----
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const listen = new AbortController();
+    const on = (target, type, fn, opts) => target.addEventListener(type, fn, { ...opts, signal: listen.signal });
     const world = new Vector3();
-    const projected = Array.from({ length: nodeCount }, () => ({ x: 0, y: 0, front: true }));
+    const projected = Array.from({ length: nodeCount }, () => ({ x: 0, y: 0 }));
+    const backFacing = new Array(nodeCount).fill(false);
+    let boxRect = box.getBoundingClientRect();
+    const refreshBox = () => { boxRect = box.getBoundingClientRect(); };
+    let litCount = 0;
     let hoverAt = null;          // client {x, y} while a fine pointer is over the object
     let hovered = -1;
     let hoverLevel = 0;          // eases the highlight in and out
@@ -205,9 +220,10 @@ export async function start({ canvas, mode }) {
     canvas.dataset.hover = '';
     canvas.dataset.pings = '0';
     canvas.dataset.dragYaw = '0';
+    canvas.dataset.lit = '0';
 
     function inBox(x, y) {
-        const r = box.getBoundingClientRect();
+        const r = boxRect;
         return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
     }
 
@@ -223,20 +239,16 @@ export async function start({ canvas, mode }) {
         for (let i = 0; i < nodeCount; i++) {
             const n = graph.nodes[i];
             world.set(n[0], n[1], n[2]).applyMatrix4(group.matrixWorld);
-            projected[i].front = world.z >= centreZ;
+            backFacing[i] = world.z < centreZ;
             world.project(camera);
             projected[i].x = r.left + ((world.x + 1) / 2) * r.width;
             projected[i].y = r.top + ((1 - world.y) / 2) * r.height;
         }
     }
 
-    function frontOnly() {
-        return projected.map((p) => (p.front ? p : { x: Infinity, y: Infinity }));
-    }
-
     function startPing(x, y) {
         projectNodes();
-        const origin = nearestNode(frontOnly(), x, y, Infinity);
+        const origin = nearestNode(projected, x, y, boxRect.width * PING_REACH, backFacing);
         if (origin < 0) return;
         pings.push({ hops: hopDistances(graph.neighbors, origin), t: 0 });
         if (pings.length > MAX_PINGS) pings.shift();
@@ -253,23 +265,27 @@ export async function start({ canvas, mode }) {
         hero.classList.remove('is-dragging');
         if (cancelled) return;
         if (p.dragging) {
+            if (performance.now() - p.lastT > FLING_IDLE_MS) yawVelocity = 0;
             canvas.dataset.dragYaw = dragYaw.toFixed(2);
         } else if (Math.hypot(e.clientX - p.x, e.clientY - p.y) <= CLICK_SLOP) {
             startPing(e.clientX, e.clientY);
         }
     }
 
-    hero.addEventListener('pointerdown', (e) => {
-        if (e.button !== 0 || !eligible(e)) return;
+    on(hero, 'pointerdown', (e) => {
+        if (press || e.button !== 0 || !eligible(e)) return; // one press at a time
         const touch = e.pointerType === 'touch';
-        press = { id: e.pointerId, x: e.clientX, y: e.clientY, lastX: e.clientX, lastT: performance.now(), dragging: false, touch };
+        const now = performance.now();
+        press = { id: e.pointerId, x: e.clientX, y: e.clientY, lastX: e.clientX, lastY: e.clientY, lastT: now,
+            vYaw: dragYaw, vT: now, dragging: false, touch };
         if (!touch) {
-            e.preventDefault(); // no text selection while dragging the object
+            // The target is the empty object area (text is excluded above): stop a drag from selecting text
+            e.preventDefault();
             hero.setPointerCapture(e.pointerId);
         }
     });
 
-    hero.addEventListener('pointermove', (e) => {
+    on(hero, 'pointermove', (e) => {
         if (press && press.id === e.pointerId && !press.touch) {
             if (!press.dragging && Math.hypot(e.clientX - press.x, e.clientY - press.y) > CLICK_SLOP) {
                 press.dragging = true;
@@ -277,26 +293,29 @@ export async function start({ canvas, mode }) {
             }
             if (press.dragging) {
                 const now = performance.now();
-                const dx = e.clientX - press.lastX;
-                const dy = e.movementY || 0;
-                dragYaw += dx * DRAG_RATE;
-                dragPitch = Math.max(-0.8, Math.min(0.8, dragPitch + dy * DRAG_RATE));
-                const dt = Math.max((now - press.lastT) / 1000, 1 / 120);
-                yawVelocity = (dx * DRAG_RATE) / dt;
+                dragYaw += (e.clientX - press.lastX) * DRAG_RATE;
+                dragPitch = Math.max(-0.8, Math.min(0.8, dragPitch + (e.clientY - press.lastY) * DRAG_RATE));
                 press.lastX = e.clientX;
+                press.lastY = e.clientY;
                 press.lastT = now;
-                canvas.dataset.dragYaw = dragYaw.toFixed(2);
+                // Velocity over ~30ms windows, so fast mice are not under-measured
+                if (now - press.vT >= 30) {
+                    yawVelocity = (dragYaw - press.vYaw) / ((now - press.vT) / 1000);
+                    press.vYaw = dragYaw;
+                    press.vT = now;
+                }
             }
         }
         if (finePointer && e.pointerType !== 'touch') {
-            hoverAt = inBox(e.clientX, e.clientY) && !(e.target.closest && e.target.closest(NO_PING_SELECTOR))
-                ? { x: e.clientX, y: e.clientY } : null;
+            hoverAt = eligible(e) ? { x: e.clientX, y: e.clientY } : null;
         }
     });
 
-    hero.addEventListener('pointerup', (e) => endPress(e, false));
-    hero.addEventListener('pointercancel', (e) => endPress(e, true));
-    hero.addEventListener('pointerleave', () => { hoverAt = null; });
+    on(hero, 'pointerup', (e) => endPress(e, false));
+    on(hero, 'pointercancel', (e) => endPress(e, true));
+    on(hero, 'lostpointercapture', (e) => endPress(e, true));
+    on(hero, 'pointerleave', () => { hoverAt = null; });
+    on(window, 'scroll', refreshBox, { passive: true });
 
     if (finePointer) hero.classList.add('is-interactive');
     canvas.dataset.interactive = '1';
@@ -330,9 +349,10 @@ export async function start({ canvas, mode }) {
     function updateHighlights(dt) {
         // Hover: nearest visible node within reach of the cursor
         let next = -1;
+        if (hoverAt && !inBox(hoverAt.x, hoverAt.y)) hoverAt = null; // scrolled away under a still cursor
         if (hoverAt && !(press && press.dragging)) {
             projectNodes();
-            next = nearestNode(frontOnly(), hoverAt.x, hoverAt.y, HOVER_RADIUS);
+            next = nearestNode(projected, hoverAt.x, hoverAt.y, HOVER_RADIUS, backFacing);
         }
         if (next !== hovered) {
             hovered = next;
@@ -351,7 +371,8 @@ export async function start({ canvas, mode }) {
         nodeLevel.fill(0);
         if (hoverLevel > 0 && lastHovered >= 0) {
             nodeLevel[lastHovered] = hoverLevel;
-            for (const m of graph.neighbors[lastHovered]) nodeLevel[m] = Math.max(nodeLevel[m], 0.6 * hoverLevel);
+            const around = graph.neighbors[lastHovered];
+            for (let k = 0; k < around.length; k++) nodeLevel[around[k]] = Math.max(nodeLevel[around[k]], 0.6 * hoverLevel);
             const n = graph.nodes[lastHovered];
             markerGeometry.getAttribute('position').setXYZ(0, n[0], n[1], n[2]);
             markerGeometry.getAttribute('position').needsUpdate = true;
@@ -365,6 +386,12 @@ export async function start({ canvas, mode }) {
         }
         writeColours();
         coloursDirty = pings.length > 0 || hoverLevel > 0;
+        let lit = 0;
+        for (let i = 0; i < nodeCount; i++) if (nodeLevel[i] > 0.05) lit++;
+        if (lit !== litCount) {
+            litCount = lit;
+            canvas.dataset.lit = String(lit);
+        }
     }
 
     function tick(now) {
@@ -383,9 +410,9 @@ export async function start({ canvas, mode }) {
         tilt.lerp(pointer, 0.05);
         group.rotation.y = 0.62 + spin + (group.userData.scrollTurn || 0) + tilt.x * MAX_TILT + dragYaw;
         group.rotation.x = 0.42 + tilt.y * MAX_TILT + dragPitch;
-        updateHighlights(dt);
         backdrop.position.y = (group.userData.lift || 0) * 0.3;
         group.position.y = baseY + (group.userData.lift || 0);
+        updateHighlights(dt);
 
         if (!lite) {
             pulseT += dt * 0.8;
@@ -427,8 +454,9 @@ export async function start({ canvas, mode }) {
     resize();
     applyProgress();
     writeColours();
-    window.addEventListener('resize', () => { resize(); if (!running) renderer.render(scene, camera); });
-    document.addEventListener('visibilitychange', update);
+    on(document, 'themechange', onTheme);
+    on(window, 'resize', () => { resize(); refreshBox(); if (!running) renderer.render(scene, camera); });
+    on(document, 'visibilitychange', update);
     const io = new IntersectionObserver((entries) => {
         visible = entries[0].isIntersecting;
         update();
@@ -476,6 +504,7 @@ export async function start({ canvas, mode }) {
         stop() {
             setRunning(false);
             io.disconnect();
+            listen.abort();
             renderer.dispose();
         },
     };

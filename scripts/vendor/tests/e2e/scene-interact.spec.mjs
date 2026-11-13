@@ -24,7 +24,7 @@ test.describe('desktop', () => {
     }
     expect(hit).toBe(true);
     await expect(page.locator('.hero-scene')).toHaveCSS('cursor', 'crosshair');
-    await page.mouse.move(20, box.y + box.height + 200);
+    await page.locator('.hero-subtitle').hover();
     await expect(canvas).toHaveAttribute('data-hover', '');
   });
 
@@ -34,6 +34,8 @@ test.describe('desktop', () => {
     await expect(canvas).toHaveAttribute('data-pings', '0');
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     await expect(canvas).toHaveAttribute('data-pings', '1');
+    await expect.poll(async () => Number(await canvas.getAttribute('data-lit'))).toBeGreaterThan(3);
+    await expect(canvas).toHaveAttribute('data-lit', '0', { timeout: 5000 });
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     await expect(canvas).toHaveAttribute('data-pings', '2');
   });
@@ -50,6 +52,30 @@ test.describe('desktop', () => {
     const drag = Number(await canvas.getAttribute('data-drag-yaw'));
     expect(Math.abs(drag)).toBeGreaterThan(0.5);
     await expect(canvas).toHaveAttribute('data-pings', '0');
+  });
+
+  test('clicks on hero text, chips, the box corner and right-clicks do not ping', async ({ page }) => {
+    const box = await ready(page);
+    await page.locator('h1.hero-title').click();
+    await page.locator('.hero-subtitle').click();
+    await page.locator('.trust-chips li').first().click();
+    await page.mouse.click(box.x + 3, box.y + 3);
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2, { button: 'right' });
+    await page.waitForTimeout(200);
+    await expect(page.locator('#hero-canvas')).toHaveAttribute('data-pings', '0');
+  });
+
+  test('a drag that ends outside the object releases cleanly', async ({ page }) => {
+    const box = await ready(page);
+    const canvas = page.locator('#hero-canvas');
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x - 300, box.y + box.height / 2, { steps: 10 });
+    await page.mouse.up();
+    await expect(page.locator('.hero')).not.toHaveClass(/is-dragging/);
+    await expect(canvas).toHaveAttribute('data-pings', '0');
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(canvas).toHaveAttribute('data-pings', '1');
   });
 
   test('hero buttons still work and do not ping', async ({ page }) => {
@@ -80,9 +106,25 @@ test.describe('touch', () => {
     await expect(page.locator('.hero')).toHaveClass(/scene-ready/, { timeout: 15000 });
     const canvas = page.locator('#hero-canvas');
     await expect(canvas).toHaveAttribute('data-interactive', '1');
-    const box = await page.locator('.hero-scene').boundingBox();
     const before = Number(await canvas.getAttribute('data-pings'));
-    await page.touchscreen.tap(Math.min(box.x + box.width * 0.8, 385), box.y + box.height * 0.8);
+    const title = await page.locator('h1.hero-title').boundingBox();
+    await page.touchscreen.tap(title.x + 20, title.y + title.height / 2);
+    await page.locator('.hero-subtitle').tap();
+    await page.waitForTimeout(200);
+    expect(Number(await canvas.getAttribute('data-pings'))).toBe(before);
+    // find a spot over the sphere that the text does not cover
+    const spot = await page.evaluate(() => {
+      const r = document.querySelector('.hero-scene').getBoundingClientRect();
+      for (let y = r.top + r.height * 0.3; y < r.bottom - r.height * 0.3; y += 6) {
+        for (let x = Math.min(r.right, innerWidth) - 2; x > r.left + r.width * 0.3; x -= 4) {
+          const el = document.elementFromPoint(x, y);
+          if (el && !el.closest('.hero-content') && el.closest('.hero')) return { x, y };
+        }
+      }
+      return null;
+    });
+    expect(spot).not.toBeNull();
+    await page.touchscreen.tap(spot.x, spot.y);
     await expect.poll(async () => Number(await canvas.getAttribute('data-pings'))).toBe(before + 1);
     await expect(canvas).toHaveAttribute('data-hover', '');
   });
@@ -98,5 +140,6 @@ test('reduced motion: the static drawing ignores clicks and nothing loads', asyn
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   await page.waitForTimeout(2500);
   expect(vendor).toEqual([]);
-  await expect(page.locator('.hero-scene')).not.toHaveCSS('cursor', 'crosshair');
+  await expect(page.locator('#hero-canvas')).not.toHaveAttribute('data-interactive', '1');
+  await expect(page.locator('.hero')).not.toHaveClass(/is-interactive/);
 });

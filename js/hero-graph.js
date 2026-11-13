@@ -53,10 +53,12 @@ export function hopDistances(neighbors, start) {
 }
 
 // Index of the projected point closest to (x, y) within maxDist pixels, or -1.
-export function nearestNode(points, x, y, maxDist) {
+// skip[i] true leaves point i out (back-facing nodes).
+export function nearestNode(points, x, y, maxDist, skip) {
     let best = -1;
     let bestDist = maxDist;
     for (let i = 0; i < points.length; i++) {
+        if (skip && skip[i]) continue;
         const d = Math.hypot(points[i].x - x, points[i].y - y);
         if (d <= bestDist) {
             best = i;
