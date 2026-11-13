@@ -2257,3 +2257,8 @@ pre:hover .copy-button,
 
 /* Contact and legal pages reuse the article column */
 article.post > .container > header.post-header:only-child { margin-bottom: 0; }
+
+/* Hero object interaction (js/home-scene.js adds .is-interactive for fine pointers once the scene runs) */
+.hero.scene-ready.is-interactive .hero-scene { cursor: crosshair; }
+.hero.is-dragging,
+.hero.is-dragging .hero-scene { cursor: grabbing; user-select: none; }

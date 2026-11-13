@@ -14,4 +14,5 @@ export {
   Group,
   Color,
   Vector2,
+  Vector3,
 } from 'three';
