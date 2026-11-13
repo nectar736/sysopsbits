@@ -106,6 +106,7 @@
                         <img width="1200" height="630" src="../images/az-140-fslogix.jpg" alt="FSLogix profile containers attached from Azure Files to AVD session hosts" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#the-four-fslogix-components">The four FSLogix components</a></li><li><a href="#profile-container-the-core-configuration">Profile Container: the core configuration</a></li><li><a href="#odfc-when-to-split-office-data-out">ODFC: when to split Office data out</a></li><li><a href="#cloud-cache-resilience-at-a-price">Cloud Cache: resilience at a price</a></li><li><a href="#application-masking">Application Masking</a></li><li><a href="#storage-options-azure-files-vs-azure-netapp-files">Storage options: Azure Files vs Azure NetApp Files</a></li><li><a href="#exclusions-that-keep-containers-healthy">Exclusions that keep containers healthy</a></li><li><a href="#troubleshooting-checklist">Troubleshooting checklist</a></li><li><a href="#quick-reference-exam-traps">Quick-reference exam traps</a></li><li><a href="#resources">Resources</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <div class="callout callout-info">
@@ -115,7 +116,7 @@
 
                     <p>In a pooled host pool, a user can land on any session host at each sign-in. A local profile on host 3 means nothing when they land on host 7 tomorrow. FSLogix fixes this by storing the whole profile in a VHDX on network storage and attaching it at sign-in. Windows sees a local profile. Applications see a local profile. There is no file copy during logon, which is why it beats roaming profiles.</p>
 
-                    <h2>The four FSLogix components</h2>
+                    <h2 id="the-four-fslogix-components">The four FSLogix components</h2>
                     <table>
                         <thead><tr><th>Component</th><th>What it does</th><th>Use it when</th></tr></thead>
                         <tbody>
@@ -126,7 +127,7 @@
                         </tbody>
                     </table>
 
-                    <h2>Profile Container: the core configuration</h2>
+                    <h2 id="profile-container-the-core-configuration">Profile Container: the core configuration</h2>
                     <p>FSLogix is preinstalled on AVD marketplace images. You configure it in the registry under <code>HKLM\SOFTWARE\FSLogix\Profiles</code>, through Group Policy (ADMX templates), or with the Intune Settings Catalog. The minimum viable set is small:</p>
                     <pre><code>$path = "HKLM:\SOFTWARE\FSLogix\Profiles"
 New-Item -Path $path -Force | Out-Null
@@ -154,7 +155,7 @@ Set-ItemProperty -Path $path -Name FlipFlopProfileDirectoryName -Type DWord -Val
                     <h3>Concurrent sessions</h3>
                     <p>By default (<code>ProfileType = 0</code>) a profile container can be attached read-write by one session. If a user opens a desktop in two host pools that share storage, the second sign-in finds the VHDX locked and retries based on <code>LockedRetryCount</code> and <code>LockedRetryInterval</code>. If you need concurrent access, use <code>ProfileType = 3</code> (try read-write, fall back to read-only), or better, give each host pool its own <code>VHDLocations</code> path.</p>
 
-                    <h2>ODFC: when to split Office data out</h2>
+                    <h2 id="odfc-when-to-split-office-data-out">ODFC: when to split Office data out</h2>
                     <p>ODFC uses its own key, <code>HKLM\SOFTWARE\Policies\FSLogix\ODFC</code>, with its own <code>Enabled</code> and <code>VHDLocations</code>, plus include switches such as <code>IncludeOutlook</code>, <code>IncludeOneDrive</code>, and <code>IncludeTeams</code>.</p>
                     <p>A Profile Container already holds Office data, because it holds the whole profile. So ODFC isn't a performance add-on you turn on by default. Use it when:</p>
                     <ul>
@@ -165,7 +166,7 @@ Set-ItemProperty -Path $path -Name FlipFlopProfileDirectoryName -Type DWord -Val
                         <strong>Exam angle:</strong> “The company uses roaming user profiles and wants to improve Outlook and Teams performance without replacing the profile solution.” That is ODFC. “Users need their full profile on any session host” is Profile Container.
                     </div>
 
-                    <h2>Cloud Cache: resilience at a price</h2>
+                    <h2 id="cloud-cache-resilience-at-a-price">Cloud Cache: resilience at a price</h2>
                     <p>With plain <code>VHDLocations</code>, the session host reads and writes directly to the share. If the share drops, the session hangs and FSLogix tries to reattach. Cloud Cache changes the model:</p>
                     <ol>
                         <li>The container is cached on the session host's local disk.</li>
@@ -182,14 +183,14 @@ Set-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles -Name CCDLocations -Type 
                         <strong>Exam trap:</strong> <code>CCDLocations</code> and <code>VHDLocations</code> aren't combined. Configure one or the other. A question that asks for profile availability during a regional storage outage wants Cloud Cache with providers in two regions, not two entries in VHDLocations.
                     </div>
 
-                    <h2>Application Masking</h2>
+                    <h2 id="application-masking">Application Masking</h2>
                     <p>Application Masking lets one golden image serve different user groups. You install every app in the image, then hide what a group shouldn't see. Rules are built with the FSLogix <strong>Rule Editor</strong> and saved as a rule set (<code>.fxr</code>) and an assignment file (<code>.fxa</code>). Copy both to <code>C:\Program Files\FSLogix\Apps\Rules</code> on every host. Rules apply at sign-in, and changes take effect without a reboot.</p>
                     <p>You can hide applications, folders, files, registry keys, fonts, and printers, and you can assign rules by user, group, process, network location, or computer. It is also how you redirect a specific app to a specific Java version.</p>
                     <div class="callout callout-tip">
                         <strong>Exam angle:</strong> “One image, finance sees the accounting app, everyone else must not” points to Application Masking. If the question says “deliver the app dynamically without installing it in the image,” the answer is App Attach instead.
                     </div>
 
-                    <h2>Storage options: Azure Files vs Azure NetApp Files</h2>
+                    <h2 id="storage-options-azure-files-vs-azure-netapp-files">Storage options: Azure Files vs Azure NetApp Files</h2>
                     <table>
                         <thead><tr><th>Option</th><th>Best for</th><th>Identity support</th><th>Notes</th></tr></thead>
                         <tbody>
@@ -208,14 +209,14 @@ Set-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles -Name CCDLocations -Type 
                     <h3>Permissions recap</h3>
                     <p>Whatever the storage, the permission model is the same. Share level: give users the <strong>Storage File Data SMB Share Contributor</strong> role (Azure Files) or Change on the share. NTFS: users get Modify on the root folder only, CREATOR OWNER gets Modify on subfolders and files, admins get Full Control. That prevents users from opening each other's VHDX files.</p>
 
-                    <h2>Exclusions that keep containers healthy</h2>
+                    <h2 id="exclusions-that-keep-containers-healthy">Exclusions that keep containers healthy</h2>
                     <ul>
                         <li><strong>Antivirus:</strong> exclude <code>*.VHD</code>, <code>*.VHDX</code>, the FSLogix program files, the profile share path, and the Cloud Cache folder (<code>%ProgramData%\FSLogix\Cache</code>) if you use it. Scanning a VHDX while it is attached slows every logon.</li>
                         <li><strong>Profile bloat:</strong> use <code>redirections.xml</code> to exclude browser caches and temp folders from the container. Smaller containers mean faster attaches and lower storage cost.</li>
                         <li><strong>Teams and OneDrive:</strong> both work inside the container. Keep OneDrive Files On-Demand enabled so synced files stay as placeholders.</li>
                     </ul>
 
-                    <h2>Troubleshooting checklist</h2>
+                    <h2 id="troubleshooting-checklist">Troubleshooting checklist</h2>
                     <table>
                         <thead><tr><th>Symptom</th><th>Check</th><th>Fix</th></tr></thead>
                         <tbody>
@@ -229,7 +230,7 @@ Set-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles -Name CCDLocations -Type 
                     </table>
                     <p>Run <code>frx.exe list-redirects</code> and check the <strong>FSLogix Apps</strong> event logs on the host. In AVD Insights, long sign-in durations often trace back to profile attach time.</p>
 
-                    <h2>Quick-reference exam traps</h2>
+                    <h2 id="quick-reference-exam-traps">Quick-reference exam traps</h2>
                     <ul>
                         <li>Profile Container holds Office data already. ODFC is for other profile solutions or separate storage.</li>
                         <li>Cloud Cache uses <code>CCDLocations</code>, replaces <code>VHDLocations</code>, and costs local disk and extra writes.</li>
@@ -245,7 +246,7 @@ Set-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles -Name CCDLocations -Type 
                         <strong>Hands-on next:</strong> If your hosts are Entra joined, follow the <a href="az-140-entra-kerberos-fslogix-azure-files.html">Entra Kerberos and FSLogix script walkthrough</a> to get containers attaching without a domain controller. New to AVD? Start with the <a href="az-140-deploy-host-pool-step-by-step.html">host pool lab</a>.
                     </div>
 
-                    <h2>Resources</h2>
+                    <h2 id="resources">Resources</h2>
                     <ul>
                         <li><a href="https://learn.microsoft.com/fslogix/overview-what-is-fslogix" target="_blank" rel="noopener">What is FSLogix? – Microsoft Learn</a></li>
                         <li><a href="https://learn.microsoft.com/fslogix/reference-configuration-settings" target="_blank" rel="noopener">FSLogix configuration setting reference</a></li>
@@ -288,6 +289,7 @@ Set-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles -Name CCDLocations -Type 
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-avd-resources-services-guide.html">AZ-140 Core Resources and Services for Azure Virtual Desktop Explained</a> <span class="category">Microsoft</span> <time datetime="2026-09-01">2026-09-01</time></li><li><a href="../tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -353,5 +355,6 @@ Set-ItemProperty -Path HKLM:\SOFTWARE\FSLogix\Profiles -Name CCDLocations -Type 
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

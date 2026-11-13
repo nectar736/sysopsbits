@@ -107,6 +107,7 @@
                         <img width="1200" height="630" src="../images/secure-linux-smb-server-ubuntu.jpg" alt="Secure Linux SMB Server Ubuntu" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-secure-means-for-an-smb-server">What "secure" means for an SMB server</a></li><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#step-1-install-samba">Step 1: Install Samba</a></li><li><a href="#step-2-create-the-share-directory-and-access-group">Step 2: Create the share directory and access group</a></li><li><a href="#step-3-create-samba-users">Step 3: Create Samba users</a></li><li><a href="#step-4-write-a-hardened-smb-conf">Step 4: Write a hardened smb.conf</a></li><li><a href="#step-5-validate-and-restart">Step 5: Validate and restart</a></li><li><a href="#step-6-allow-smb-through-the-firewall-from-the-lan-only">Step 6: Allow SMB through the firewall from the LAN only</a></li><li><a href="#step-7-test-the-share-and-confirm-encryption">Step 7: Test the share and confirm encryption</a></li><li><a href="#step-8-connect-clients">Step 8: Connect clients</a></li><li><a href="#step-9-read-the-audit-log">Step 9: Read the audit log</a></li><li><a href="#troubleshooting">Troubleshooting</a></li><li><a href="#security-checklist">Security checklist</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>A Samba share is the quickest way to give Windows, macOS, and Linux clients a common file server. Installed with the defaults, though, it accepts old protocol versions and sends traffic in cleartext. This guide builds a share that requires SMB 3 encryption, admits only named users, stays off the internet, and logs who changed what.</p>
@@ -115,7 +116,7 @@
                         <p><strong>Tested on:</strong> Ubuntu Server 22.04 LTS (Samba 4.15) and 24.04 LTS (Samba 4.19). On Debian 12 the steps are the same. On older Samba releases, replace <code>server smb encrypt</code> with <code>smb encrypt</code>.</p>
                     </div>
 
-                    <h2>What "secure" means for an SMB server</h2>
+                    <h2 id="what-secure-means-for-an-smb-server">What "secure" means for an SMB server</h2>
                     <ul>
                         <li><strong>No SMB1.</strong> SMB1 is the protocol WannaCry spread through. Require SMB 3 at minimum.</li>
                         <li><strong>Encryption on the wire.</strong> SMB 3 can encrypt every packet with AES-GCM or AES-CCM. Make it mandatory, not optional.</li>
@@ -125,26 +126,26 @@
                         <li><strong>Audit trail.</strong> File creates, renames, and deletes are logged with the username and client IP.</li>
                     </ul>
 
-                    <h2>Prerequisites</h2>
+                    <h2 id="prerequisites">Prerequisites</h2>
                     <ul>
                         <li>Ubuntu Server 22.04 or 24.04 with sudo access</li>
                         <li>A static IP or DHCP reservation for the server</li>
                         <li>Your LAN subnet (examples use <code>192.168.1.0/24</code>)</li>
                     </ul>
 
-                    <h2>Step 1: Install Samba</h2>
+                    <h2 id="step-1-install-samba">Step 1: Install Samba</h2>
                     <pre><code>sudo apt update
 sudo apt install samba
 smbd --version</code></pre>
 
-                    <h2>Step 2: Create the share directory and access group</h2>
+                    <h2 id="step-2-create-the-share-directory-and-access-group">Step 2: Create the share directory and access group</h2>
                     <pre><code>sudo groupadd smbusers
 sudo mkdir -p /srv/samba/shared
 sudo chown root:smbusers /srv/samba/shared
 sudo chmod 2770 /srv/samba/shared</code></pre>
                     <p><code>2770</code> gives the owner and group full access and everyone else none. The leading <code>2</code> is the setgid bit, so new files inherit the <code>smbusers</code> group and stay accessible to the whole team.</p>
 
-                    <h2>Step 3: Create Samba users</h2>
+                    <h2 id="step-3-create-samba-users">Step 3: Create Samba users</h2>
                     <p>Samba users must exist as Linux accounts, but they don't need a shell or a home directory:</p>
                     <pre><code>sudo useradd -M -s /usr/sbin/nologin -G smbusers alice
 sudo smbpasswd -a alice    # sets the SMB password (separate from any Linux password)
@@ -152,7 +153,7 @@ sudo smbpasswd -e alice    # enables the account
 sudo pdbedit -L            # lists Samba users</code></pre>
                     <p>To give an existing Linux user access, add them to the group with <code>sudo usermod -aG smbusers bob</code>, then run <code>smbpasswd -a bob</code>.</p>
 
-                    <h2>Step 4: Write a hardened smb.conf</h2>
+                    <h2 id="step-4-write-a-hardened-smb-conf">Step 4: Write a hardened smb.conf</h2>
                     <p>Back up the default file, then replace it:</p>
                     <pre><code>sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
 sudo nano /etc/samba/smb.conf</code></pre>
@@ -212,13 +213,13 @@ sudo nano /etc/samba/smb.conf</code></pre>
                         <li><code>create mask</code> and <code>directory mask</code> keep files group-readable and group-writable, matching the setgid directory.</li>
                     </ul>
 
-                    <h2>Step 5: Validate and restart</h2>
+                    <h2 id="step-5-validate-and-restart">Step 5: Validate and restart</h2>
                     <pre><code>testparm                      # syntax check; read any warnings
 sudo systemctl restart smbd
 sudo systemctl disable --now nmbd   # NetBIOS is off, so nmbd isn't needed
 systemctl status smbd --no-pager</code></pre>
 
-                    <h2>Step 6: Allow SMB through the firewall from the LAN only</h2>
+                    <h2 id="step-6-allow-smb-through-the-firewall-from-the-lan-only">Step 6: Allow SMB through the firewall from the LAN only</h2>
                     <pre><code>sudo ufw allow from 192.168.1.0/24 to any port 445 proto tcp
 sudo ufw enable
 sudo ufw status numbered</code></pre>
@@ -226,12 +227,12 @@ sudo ufw status numbered</code></pre>
                         <p><strong>Never port-forward 445 to the internet.</strong> For remote access, connect over a VPN first (WireGuard, Tailscale, or your firewall's VPN) and use the share as if you were on the LAN.</p>
                     </div>
 
-                    <h2>Step 7: Test the share and confirm encryption</h2>
+                    <h2 id="step-7-test-the-share-and-confirm-encryption">Step 7: Test the share and confirm encryption</h2>
                     <pre><code>smbclient //localhost/shared -U alice -m SMB3 -c 'ls'
 sudo smbstatus</code></pre>
                     <p>While a client is connected, <code>smbstatus</code> lists the protocol version and an <strong>Encryption</strong> column showing the cipher (for example <code>AES-128-GCM</code>). If that column says <code>-</code>, encryption isn't active. Recheck <code>server smb encrypt</code>.</p>
 
-                    <h2>Step 8: Connect clients</h2>
+                    <h2 id="step-8-connect-clients">Step 8: Connect clients</h2>
                     <h3>Windows</h3>
                     <pre><code>net use S: \\192.168.1.20\shared /user:alice /persistent:yes</code></pre>
                     <p>Then verify from PowerShell:</p>
@@ -250,14 +251,14 @@ sudo chmod 600 /etc/samba/creds-alice</code></pre>
                     <h3>macOS</h3>
                     <p>In Finder, press <kbd>Cmd</kbd>+<kbd>K</kbd> and connect to <code>smb://192.168.1.20/shared</code>. macOS negotiates SMB 3 encryption automatically when the server requires it.</p>
 
-                    <h2>Step 9: Read the audit log</h2>
+                    <h2 id="step-9-read-the-audit-log">Step 9: Read the audit log</h2>
                     <p>The <code>full_audit</code> module writes to syslog facility <code>local5</code>. Send it to its own file:</p>
                     <pre><code>echo 'local5.*  /var/log/samba/audit.log' | sudo tee /etc/rsyslog.d/50-samba-audit.conf
 sudo systemctl restart rsyslog
 sudo tail -f /var/log/samba/audit.log</code></pre>
                     <p>Each line shows the user, client IP, share, action, and path, which is what you need when someone asks who deleted a folder.</p>
 
-                    <h2>Troubleshooting</h2>
+                    <h2 id="troubleshooting">Troubleshooting</h2>
                     <div class="table-wrapper">
                         <table>
                             <thead><tr><th>Error</th><th>Usual cause</th><th>Fix</th></tr></thead>
@@ -271,7 +272,7 @@ sudo tail -f /var/log/samba/audit.log</code></pre>
                         </table>
                     </div>
 
-                    <h2>Security checklist</h2>
+                    <h2 id="security-checklist">Security checklist</h2>
                     <ul>
                         <li>SMB1 and SMB2 refused (<code>server min protocol = SMB3</code>)</li>
                         <li>Encryption required, and <code>smbstatus</code> shows a cipher</li>
@@ -284,6 +285,7 @@ sudo tail -f /var/log/samba/audit.log</code></pre>
                     </ul>
                 </div>
 
+                <!-- auto:cta:start --><p class="store-line">Studying for a certification? <a href="../store.html">Browse the study guides</a>.</p><!-- auto:cta:end -->
                 <footer class="post-footer">
                     <div class="post-tags">
                         <span class="tag">#samba</span>
@@ -296,6 +298,7 @@ sudo tail -f /var/log/samba/audit.log</code></pre>
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/automated-linux-backups-restic.html">How to Set Up Automated Linux Backups with Restic</a> <span class="category">Guided Labs</span> <time datetime="2026-01-18">2026-01-18</time></li><li><a href="../tools/top-10-cli-tools-sysadmin.html">Top 10 CLI Tools Every Sysadmin Should Know</a> <span class="category">Guided Labs</span> <time datetime="2026-01-12">2026-01-12</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -363,5 +366,6 @@ sudo tail -f /var/log/samba/audit.log</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

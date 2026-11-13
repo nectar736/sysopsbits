@@ -106,11 +106,12 @@
                         <img width="1200" height="630" src="../images/docker-vs-kubernetes.jpg" alt="Docker vs Kubernetes" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-is-docker">What is Docker?</a></li><li><a href="#what-is-kubernetes">What is Kubernetes?</a></li><li><a href="#key-differences">Key Differences</a></li><li><a href="#using-both-together">Using Both Together</a></li><li><a href="#which-should-you-choose">Which Should You Choose?</a></li><li><a href="#quick-start">Quick Start</a></li><li><a href="#conclusion">Conclusion</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Understanding the differences between Docker and Kubernetes, and when to use each for your container strategy.</p>
 
-                    <h2>What is Docker?</h2>
+                    <h2 id="what-is-docker">What is Docker?</h2>
                     <p>Docker is an open platform for developing, shipping, and running applications using containerization technology. A container is a lightweight, standalone package that includes everything needed to run a piece of software: code, runtime, system tools, libraries, and settings.</p>
 
                     <p>Docker provides:</p>
@@ -131,7 +132,7 @@
                         <li>CI/CD pipelines for automated testing and deployment</li>
                     </ul>
 
-                    <h2>What is Kubernetes?</h2>
+                    <h2 id="what-is-kubernetes">What is Kubernetes?</h2>
                     <p>Kubernetes (often abbreviated as K8s) is an open-source container orchestration platform originally developed by Google. It automates the deployment, scaling, and management of containerized applications across clusters of hosts.</p>
 
                     <p>Kubernetes provides:</p>
@@ -155,7 +156,7 @@
                         <li>Resource optimization across a cluster</li>
                     </ul>
 
-                    <h2>Key Differences</h2>
+                    <h2 id="key-differences">Key Differences</h2>
                     <table>
                         <thead>
                             <tr><th>Feature</th><th>Docker</th><th>Kubernetes</th></tr>
@@ -171,7 +172,7 @@
                         </tbody>
                     </table>
 
-                    <h2>Using Both Together</h2>
+                    <h2 id="using-both-together">Using Both Together</h2>
                     <p>The key insight is that <strong>Docker and Kubernetes are not mutually exclusive</strong> - they solve different problems at different scales and often work together.</p>
 
                     <h3>How They Complement Each Other</h3>
@@ -197,7 +198,7 @@
                         <li><strong>Podman</strong> - A daemonless container engine</li>
                     </ul>
 
-                    <h2>Which Should You Choose?</h2>
+                    <h2 id="which-should-you-choose">Which Should You Choose?</h2>
                     <p>The answer depends on your use case:</p>
 
                     <h3>Choose Docker Alone When:</h3>
@@ -224,7 +225,7 @@
                         <li>You need local development with Docker, production orchestration with Kubernetes</li>
                     </ul>
 
-                    <h2>Quick Start</h2>
+                    <h2 id="quick-start">Quick Start</h2>
                     <p>To get started with Docker:</p>
                     <pre><code># Install Docker
 curl -fsSL https://get.docker.com | sh
@@ -246,7 +247,7 @@ minikube start
 # Deploy an application
 kubectl create deployment myapp --image=myapp</code></pre>
 
-                    <h2>Conclusion</h2>
+                    <h2 id="conclusion">Conclusion</h2>
                     <p>Docker and Kubernetes serve different but complementary purposes. Docker excels at containerization - packaging applications into portable, consistent units. Kubernetes excels at orchestration - managing those containers at scale across multiple hosts.</p>
 
                     <p>For most production environments, you'll end up using both: Docker for building and testing your containers, and Kubernetes for deploying and managing them. Start with Docker to understand containers, then add Kubernetes as your needs grow.</p>
@@ -263,6 +264,7 @@ kubectl create deployment myapp --image=myapp</code></pre>
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../comparisons/best-cheap-vps-hosting-2026.html">Best and Cheapest VPS Hosting Plans (2026)</a> <span class="category">Comparisons</span> <time datetime="2026-02-22">2026-02-22</time></li><li><a href="../comparisons/digitalocean-vs-linode-vs-hetzner-2026.html">DigitalOcean vs Linode vs Hetzner (2026)</a> <span class="category">Comparisons</span> <time datetime="2026-01-10">2026-01-10</time></li><li><a href="../comparisons/unifi-vs-pfsense-2026.html">UniFi vs pfSense: Network Solutions Compared</a> <span class="category">Comparisons</span> <time datetime="2026-01-05">2026-01-05</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -330,5 +332,6 @@ kubectl create deployment myapp --image=myapp</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

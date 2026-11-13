@@ -106,11 +106,12 @@
                         <img width="1200" height="630" src="../images/azure-private-access.jpg" alt="Azure Private Access Services" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#why-private-access-matters">Why Private Access Matters</a></li><li><a href="#virtual-network-service-endpoints">Virtual Network Service Endpoints</a></li><li><a href="#azure-private-link-private-endpoints">Azure Private Link &amp; Private Endpoints</a></li><li><a href="#integrate-private-endpoints-with-dns">Integrate Private Endpoints with DNS</a></li><li><a href="#design-considerations-for-private-endpoints">Design Considerations for Private Endpoints</a></li><li><a href="#integrate-app-service-with-azure-vnets">Integrate App Service with Azure VNets</a></li><li><a href="#service-endpoints-vs-private-endpoints-when-to-use-which">Service Endpoints vs Private Endpoints: When to Use Which?</a></li><li><a href="#best-practices-for-private-access">Best Practices for Private Access</a></li><li><a href="#common-troubleshooting-scenarios">Common Troubleshooting Scenarios</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Public endpoints for Azure services like Storage, SQL Database, and App Services are convenient but introduce attack surfaces. This guide walks you through securing Azure service connectivity using private networking primitives: Virtual Network Service Endpoints and Azure Private Link with private endpoints. We'll cover architecture decisions, implementation with AZ CLI, and DNS integration patterns.</p>
 
-                    <h2>Why Private Access Matters</h2>
+                    <h2 id="why-private-access-matters">Why Private Access Matters</h2>
                     <p>By default, most Azure PaaS services expose public endpoints. While protected by Azure's platform security, public endpoints:</p>
                     <ul>
                         <li>Traverse the public internet, adding latency and potential eavesdropping risks</li>
@@ -124,7 +125,7 @@
                         <li>Simplified access control using VNet private IP addresses</li>
                     </ul>
 
-                    <h2>Virtual Network Service Endpoints</h2>
+                    <h2 id="virtual-network-service-endpoints">Virtual Network Service Endpoints</h2>
                     <p>Service endpoints extend your VNet private address space to Azure services directly. Traffic from your VNet to the Azure service stays on Azure's backbone network, and service resources gain the VNet's private IP as the source address.</p>
 
                     <h3>How Service Endpoints Work</h3>
@@ -161,7 +162,7 @@ az network vnet subnet show \
                         <strong>Note:</strong> Service endpoints work only for traffic originating from the VNet where they're enabled. They don't support cross-tenant access or on-premises traffic over ExpressRoute/VPN without additional configuration.
                     </div>
 
-                    <h2>Azure Private Link & Private Endpoints</h2>
+                    <h2 id="azure-private-link-private-endpoints">Azure Private Link & Private Endpoints</h2>
                     <p>Private Link is the newer, more capable solution for private access. It provides a private IP address in your VNet for Azure services (or your own services via Private Link Service).</p>
 
                     <h3>Key Components</h3>
@@ -189,7 +190,7 @@ az network private-endpoint show \
   --name storagePrivateEndpoint \
   --query "ipConfigurations[0].privateIPAddress"</code></pre>
 
-                    <h2>Integrate Private Endpoints with DNS</h2>
+                    <h2 id="integrate-private-endpoints-with-dns">Integrate Private Endpoints with DNS</h2>
                     <p>For private endpoints to work, your applications must resolve the service's public DNS name to its private IP address. Azure Private DNS zones automate this.</p>
 
                     <h3>Configure Private DNS Integration</h3>
@@ -223,7 +224,7 @@ az network private-endpoint dns-zone-group create \
                         </ul>
                     </div>
 
-                    <h2>Design Considerations for Private Endpoints</h2>
+                    <h2 id="design-considerations-for-private-endpoints">Design Considerations for Private Endpoints</h2>
                     <p>When architecting private access, keep these patterns in mind:</p>
                     <ol>
                         <li><strong>Hub-and-Spoke:</strong> Centralize private endpoints in a hub VNet, share across spoke VNets via VNet peering</li>
@@ -259,7 +260,7 @@ az network private-dns link vnet create \
   --virtual-network spokeVnet \
   --registration-enabled false</code></pre>
 
-                    <h2>Integrate App Service with Azure VNets</h2>
+                    <h2 id="integrate-app-service-with-azure-vnets">Integrate App Service with Azure VNets</h2>
                     <p>Azure App Service (Web Apps, API Apps) can be integrated into your VNet to access private endpoints and on-premises resources. This is called VNet Integration.</p>
 
                     <h3>Configure VNet Integration with AZ CLI</h3>
@@ -285,7 +286,7 @@ az webapp config set \
                         <strong>Pro Tip:</strong> Use VNet Integration for outbound traffic from your App Service to private resources. For inbound private access to your App Service, use a private endpoint for the App Service instead.
                     </div>
 
-                    <h2>Service Endpoints vs Private Endpoints: When to Use Which?</h2>
+                    <h2 id="service-endpoints-vs-private-endpoints-when-to-use-which">Service Endpoints vs Private Endpoints: When to Use Which?</h2>
                     <table class="comparison-table">
                         <tr>
                             <th>Feature</th>
@@ -319,7 +320,7 @@ az webapp config set \
                         </tr>
                     </table>
 
-                    <h2>Best Practices for Private Access</h2>
+                    <h2 id="best-practices-for-private-access">Best Practices for Private Access</h2>
                     <ul>
                         <li>Prefer Private Endpoints for new deployments — they're more flexible and support more scenarios</li>
                         <li>Use Service Endpoints only for simple, same-VNet access to Azure services</li>
@@ -343,7 +344,7 @@ az network private-endpoint show \
   --name storagePrivateEndpoint \
   --query "privateLinkServiceConnections[0].privateLinkServiceConnectionState"</code></pre>
 
-                    <h2>Common Troubleshooting Scenarios</h2>
+                    <h2 id="common-troubleshooting-scenarios">Common Troubleshooting Scenarios</h2>
                     <h3>DNS Resolution Failures</h3>
                     <p>If your application still resolves the public IP instead of the private IP:</p>
                     <pre><code># Check DNS resolution from a VM in the VNet
@@ -363,7 +364,7 @@ az network private-endpoint-connection approve \
   --type Microsoft.Storage/storageAccounts</code></pre>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>Can I use private endpoints with Azure Firewall?</h3>
@@ -411,6 +412,7 @@ az network private-endpoint-connection approve \
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/az-900-azure-networking-fundamentals.html">Azure Networking Fundamentals: VNet, Subnets, Peering, DNS for AZ-900</a> <span class="category">Microsoft</span> <time datetime="2026-07-11">2026-07-11</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -478,5 +480,6 @@ az network private-endpoint-connection approve \
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

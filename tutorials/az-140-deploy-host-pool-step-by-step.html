@@ -106,6 +106,7 @@
                         <img width="1408" height="1408" src="../images/az-140-host-pool.jpg" alt="Azure Virtual Desktop host pool deployment diagram" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#before-you-start-prerequisites-that-actually-matter">Before you start: prerequisites that actually matter</a></li><li><a href="#architecture-in-one-picture">Architecture in one picture</a></li><li><a href="#step-1-prepare-the-network">Step 1: Prepare the network</a></li><li><a href="#step-2-prepare-identity-and-secrets">Step 2: Prepare identity and secrets</a></li><li><a href="#step-3-create-the-host-pool-with-a-session-host-configuration">Step 3: Create the host pool with a session host configuration</a></li><li><a href="#step-4-confirm-hosts-are-healthy">Step 4: Confirm hosts are healthy</a></li><li><a href="#step-5-verify-the-workspace-and-application-group">Step 5: Verify the workspace and application group</a></li><li><a href="#step-6-assign-a-user">Step 6: Assign a user</a></li><li><a href="#step-7-connect-and-test">Step 7: Connect and test</a></li><li><a href="#common-fixes-when-the-desktop-does-not-appear">Common fixes when the desktop does not appear</a></li><li><a href="#clean-up-or-keep-for-the-next-lab">Clean up or keep for the next lab</a></li><li><a href="#what-az-140-asks-about-this-lab">What AZ-140 asks about this lab</a></li><li><a href="#resources">Resources</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <div class="callout callout-info">
@@ -115,7 +116,7 @@
 
                     <p>You read the AZ-140 study guide and hit the first domain: Plan and implement an Azure Virtual Desktop infrastructure. It carries 40 to 45 percent of the exam weight. The fastest way to learn it is to deploy it. This guide gives you a repeatable lab you can run in a Visual Studio subscription without breaking your budget.</p>
 
-                    <h2>Before you start: prerequisites that actually matter</h2>
+                    <h2 id="before-you-start-prerequisites-that-actually-matter">Before you start: prerequisites that actually matter</h2>
                     <p>Microsoft lists long prerequisites. These four decide whether your lab succeeds or fails.</p>
                     <ul>
                         <li><strong>Subscription and quota.</strong> Use a subscription where you can create VMs. Check quota for the D-series in the region you plan to use. The portal warns you late if you run out.</li>
@@ -128,7 +129,7 @@
                         <strong>Cost control:</strong> Two Standard D4s_v5 hosts in East US cost less than a few dollars per hour when running. Stop or delete them when you finish. Storage for the OS disks keeps billing at a low rate. Set an auto-shutdown or a manual reminder.
                     </div>
 
-                    <h2>Architecture in one picture</h2>
+                    <h2 id="architecture-in-one-picture">Architecture in one picture</h2>
                     <figure class="chart-figure">
                         <div class="chart-diagram" style="max-width:560px">
                             <svg viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Host pool architecture">
@@ -164,7 +165,7 @@
                         <figcaption>The minimal viable AVD lab. Identity on top, pool and workspace in the middle, hosts and profiles below, network at the base. AZ-140 expects you to place each piece.</figcaption>
                     </figure>
 
-                    <h2>Step 1: Prepare the network</h2>
+                    <h2 id="step-1-prepare-the-network">Step 1: Prepare the network</h2>
                     <p>Create a resource group, a virtual network, and a subnet for session hosts. This lab skips complex hub-spoke routing and focuses on what the exam tests: capacity, connectivity, and troubleshooting.</p>
                     <pre><code># Variables
 $rg="rg-avd-lab"
@@ -181,7 +182,7 @@ az network vnet subnet update -g $rg --vnet-name $vnet -n $subnet --private-endp
 # Required endpoints are listed at https://learn.microsoft.com/azure/virtual-desktop/safe-url-list</code></pre>
                     <p>If you enforce egress filtering, allow the AVD control plane FQDNs. A common lab failure is a host that joins the domain but never shows as Available because it cannot reach <code>*.wvd.microsoft.com</code>.</p>
 
-                    <h2>Step 2: Prepare identity and secrets</h2>
+                    <h2 id="step-2-prepare-identity-and-secrets">Step 2: Prepare identity and secrets</h2>
                     <p>For Entra ID joined hosts, the exam expects you to know single sign-on, RBAC, and MFA interactions. For AD DS joined hosts, you need domain join credentials.</p>
                     <p>The current host pool experience uses a session host configuration and a managed identity. That identity reads secrets from Key Vault. You must give it access before deployment.</p>
                     <pre><code># Create key vault and store local admin + domain join secrets
@@ -201,7 +202,7 @@ az role assignment create --assignee $(az identity show -g $rg -n id-avd-hostpoo
                         <strong>Exam trap:</strong> The domain join account cannot have MFA enabled. MFA blocks the non-interactive join during VM provisioning. Use a dedicated service account with a strong password and rotate it after the lab.
                     </div>
 
-                    <h2>Step 3: Create the host pool with a session host configuration</h2>
+                    <h2 id="step-3-create-the-host-pool-with-a-session-host-configuration">Step 3: Create the host pool with a session host configuration</h2>
                     <p>The portal now creates a pooled host pool with a session host configuration by default. This object stores the VM size, image, name prefix, and domain join settings. You can create hosts now or set the count to zero and add them later.</p>
                     <ol>
                         <li>Search for <strong>Azure Virtual Desktop</strong> in the portal, select <strong>Host pools</strong>, then <strong>Create</strong>.</li>
@@ -231,7 +232,7 @@ New-AzWvdHostPool @hpParams
                         <strong>Why a session host configuration?</strong> It keeps your pool consistent. Every new host uses the same size, image, and domain settings. The configuration plus a session host management policy handles updates and scaling later. AZ-140 now tests this model.
                     </div>
 
-                    <h2>Step 4: Confirm hosts are healthy</h2>
+                    <h2 id="step-4-confirm-hosts-are-healthy">Step 4: Confirm hosts are healthy</h2>
                     <p>Deployment takes 10 to 15 minutes for two hosts. Check the pool:</p>
                     <pre><code>az desktopvirtualization hostpool show -g $rg -n hp01 --query "{name:name, type:hostPoolType, lb:loadBalancerType}"
 az desktopvirtualization session-host list -g $rg --host-pool-name hp01 -o table</code></pre>
@@ -242,7 +243,7 @@ az desktopvirtualization session-host list -g $rg --host-pool-name hp01 -o table
                         <li>Verify domain join succeeded. For AD DS, check the computer object exists in the OU.</li>
                     </ul>
 
-                    <h2>Step 5: Verify the workspace and application group</h2>
+                    <h2 id="step-5-verify-the-workspace-and-application-group">Step 5: Verify the workspace and application group</h2>
                     <p>When you created the pool with Register desktop app group enabled, Azure made a <strong>Desktop</strong> application group and registered it to <code>ws01</code>. Confirm:</p>
                     <pre><code>az desktopvirtualization applicationgroup list -g $rg -o table
 az desktopvirtualization workspace show -g $rg -n ws01 --query "{name:name, appGroups:applicationGroupReferences}"</code></pre>
@@ -251,7 +252,7 @@ az desktopvirtualization workspace show -g $rg -n ws01 --query "{name:name, appG
 az desktopvirtualization workspace create -g $rg -n ws01 -l $loc --friendly-name "Lab workspace"
 az desktopvirtualization workspace update -g $rg -n ws01 --application-group-references $(az desktopvirtualization applicationgroup show -g $rg -n hp01-DAG --query id -o tsv)</code></pre>
 
-                    <h2>Step 6: Assign a user</h2>
+                    <h2 id="step-6-assign-a-user">Step 6: Assign a user</h2>
                     <p>A workspace means nothing until a user can see it. Assign your test account to the Desktop application group.</p>
                     <pre><code># Get your test user object ID
 $userId=$(az ad user show --id "avduser@contoso.onmicrosoft.com" --query id -o tsv)
@@ -265,7 +266,7 @@ az role assignment create --assignee $userId --role "Virtual Machine User Login"
 az role assignment create --assignee $userId --role "Virtual Machine User Login" --scope $(az vm show -g $rg -n hp01-sh-1 --query id -o tsv)</code></pre>
                     <p>For Entra ID joined hosts, enable single sign-on and check Conditional Access does not block the <strong>Azure Windows VM Sign-In</strong> app with an MFA requirement that has no strong auth method registered. Exclude that app or require Windows Hello for Business.</p>
 
-                    <h2>Step 7: Connect and test</h2>
+                    <h2 id="step-7-connect-and-test">Step 7: Connect and test</h2>
                     <ol>
                         <li>Install <strong>Windows App</strong> (the successor to Remote Desktop) on Windows, macOS, or iOS, or use the web client at <code>https://windows365.microsoft.com</code> for a quick test.</li>
                         <li>Sign in as <code>avduser@contoso.onmicrosoft.com</code>. You see <strong>ws01</strong> and the <strong>SessionDesktop</strong> icon.</li>
@@ -276,7 +277,7 @@ az role assignment create --assignee $userId --role "Virtual Machine User Login"
                         <strong>Quick validation:</strong> In Azure Monitor, enable diagnostics on the host pool to a Log Analytics workspace. Query <code>WVDConnections</code> to see connection time and host assignment. The exam now expects you to know this table.
                     </div>
 
-                    <h2>Common fixes when the desktop does not appear</h2>
+                    <h2 id="common-fixes-when-the-desktop-does-not-appear">Common fixes when the desktop does not appear</h2>
                     <table>
                         <thead><tr><th>Symptom</th><th>Check</th><th>Fix</th></tr></thead>
                         <tbody>
@@ -287,7 +288,7 @@ az role assignment create --assignee $userId --role "Virtual Machine User Login"
                         </tbody>
                     </table>
 
-                    <h2>Clean up or keep for the next lab</h2>
+                    <h2 id="clean-up-or-keep-for-the-next-lab">Clean up or keep for the next lab</h2>
                     <p>Keep the pool if you plan to add FSLogix next. Profile containers need the same identity and a storage account, so this foundation pays off. Otherwise delete the resource group to stop VM and disk charges. The workspace and host pool have no cost on their own.</p>
                     <pre><code># Stop hosts to save cost but keep disks
 az vm deallocate -g $rg -n hp01-sh-0
@@ -296,14 +297,14 @@ az vm deallocate -g $rg -n hp01-sh-1
 # Or remove everything
 az group delete -n $rg --yes --no-wait</code></pre>
 
-                    <h2>What AZ-140 asks about this lab</h2>
+                    <h2 id="what-az-140-asks-about-this-lab">What AZ-140 asks about this lab</h2>
                     <p>Expect questions on host pool types (pooled versus personal), assignment types, load balancing, session host sizing, and why you choose Entra ID joined versus AD DS. Know the RBAC roles: Host Pool Contributor to create, Desktop Virtualization User to consume, Virtual Machine User Login for Entra ID sign-in. Know that all hosts in a pool share the same image and identity, and that the workspace is the user-facing container while the application group controls what they see.</p>
 
                     <div class="callout callout-info">
                         <strong>Next step:</strong> Add FSLogix profile containers on Azure Files. Store the VHD on an SMB share with correct NTFS and share permissions, point the registry to <code>VHDLocations</code>, and test with two logons. That configuration shows up in domain two and three of the exam and gives users a roaming profile that survives host reimaging.
                     </div>
 
-                    <h2>Resources</h2>
+                    <h2 id="resources">Resources</h2>
                     <ul>
                         <li><a href="https://learn.microsoft.com/azure/virtual-desktop/deploy-azure-virtual-desktop" target="_blank" rel="noopener">Deploy Azure Virtual Desktop with session host configuration – Microsoft Learn</a></li>
                         <li><a href="https://learn.microsoft.com/azure/virtual-desktop/add-session-hosts-host-pool" target="_blank" rel="noopener">Add session hosts to a host pool</a></li>
@@ -348,6 +349,7 @@ az group delete -n $rg --yes --no-wait</code></pre>
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-fslogix-profile-containers-guide.html">FSLogix Profile Containers for Azure Virtual Desktop: Complete AZ-140 Guide</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -413,5 +415,6 @@ az group delete -n $rg --yes --no-wait</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

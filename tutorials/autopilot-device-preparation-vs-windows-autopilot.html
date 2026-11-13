@@ -106,6 +106,7 @@
                         <img width="1200" height="630" src="../images/autopilot-device-preparation.jpg" alt="Windows Autopilot device preparation compared with classic Windows Autopilot" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-windows-autopilot-device-preparation-is">What Windows Autopilot device preparation is</a></li><li><a href="#device-preparation-vs-classic-autopilot-the-comparison">Device preparation vs classic Autopilot: the comparison</a></li><li><a href="#which-one-should-you-use">Which one should you use?</a></li><li><a href="#requirements-you-can-t-skip">Requirements you can't skip</a></li><li><a href="#set-up-a-user-driven-deployment-in-six-steps">Set up a user-driven deployment in six steps</a></li><li><a href="#five-traps-that-break-deployments">Five traps that break deployments</a></li><li><a href="#what-md-102-expects">What MD-102 expects</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <div class="callout callout-info">
@@ -115,7 +116,7 @@
                     <p>Microsoft now ships two products with "Autopilot" in the name, and they don't work the same way. Pick the wrong one and a user sits at the out-of-box experience while a profile you never meant to apply takes over, or a hybrid-join requirement you forgot about blocks the whole rollout.</p>
                     <p>The choice is also on the exam. The MD-102 skills outline that took effect on October 27, 2026 lists "Choose between Windows Autopilot deployment profiles and device preparation policies" under deploying Windows clients. This guide gives you the decision rules, the setup steps, and the traps, all checked against Microsoft Learn.</p>
 
-                    <h2>What Windows Autopilot device preparation is</h2>
+                    <h2 id="what-windows-autopilot-device-preparation-is">What Windows Autopilot device preparation is</h2>
                     <p>Microsoft describes device preparation as a re-architecture of Windows Autopilot. Users see a similar experience, but the plumbing differs in three ways that matter:</p>
                     <ul>
                         <li><strong>No device registration.</strong> Classic Autopilot needs each device's hardware hash uploaded before deployment. Device preparation doesn't.</li>
@@ -124,7 +125,7 @@
                     </ul>
                     <p>Device preparation also drops the Enrollment Status Page (ESP). Users see a "Setting up for work or school" screen with a percentage, and admins get a deployment report with app and script status in near real time.</p>
 
-                    <h2>Device preparation vs classic Autopilot: the comparison</h2>
+                    <h2 id="device-preparation-vs-classic-autopilot-the-comparison">Device preparation vs classic Autopilot: the comparison</h2>
                     <div class="table-wrapper">
                         <table>
                             <thead><tr><th>Requirement</th><th>Device preparation</th><th>Classic Autopilot</th></tr></thead>
@@ -148,7 +149,7 @@
                     </div>
                     <p>Read the government row carefully. Some third-party comparisons get it backwards. Microsoft's table shows device preparation supporting GCC High and DoD and classic Autopilot not supporting them.</p>
 
-                    <h2>Which one should you use?</h2>
+                    <h2 id="which-one-should-you-use">Which one should you use?</h2>
                     <p><strong>Choose device preparation when all of these are true:</strong></p>
                     <ul>
                         <li>Devices run Windows 11 at the supported build (see requirements below)</li>
@@ -165,7 +166,7 @@
                     </ul>
                     <p>You don't have to pick one for the whole company. Microsoft supports running both side by side, and there's no requirement to migrate existing Autopilot profiles. Each device runs exactly one of the two.</p>
 
-                    <h2>Requirements you can't skip</h2>
+                    <h2 id="requirements-you-can-t-skip">Requirements you can't skip</h2>
                     <ul>
                         <li><strong>Windows build:</strong> Windows 11 version 24H2 or later, or version 23H2 or 22H2 with update KB5035942 or later. Installation media dated April 2024 or later includes it. Confirm that your OEM ships devices with the update installed.</li>
                         <li><strong>Editions:</strong> Windows 11 Pro, Pro Education, Pro for Workstations, Enterprise, Education, or Enterprise LTSC.</li>
@@ -174,7 +175,7 @@
                         <li><strong>Network:</strong> DNS for internet names, and access on ports 80, 443, and UDP 123 for time sync. Configure proxy settings on the proxy server itself. Microsoft notes that proxy settings through Intune policy aren't fully supported here.</li>
                     </ul>
 
-                    <h2>Set up a user-driven deployment in six steps</h2>
+                    <h2 id="set-up-a-user-driven-deployment-in-six-steps">Set up a user-driven deployment in six steps</h2>
                     <ol>
                         <li><strong>Turn on Windows automatic enrollment</strong> in Intune.</li>
                         <li><strong>Allow users to join devices</strong> to Microsoft Entra ID.</li>
@@ -186,7 +187,7 @@
                     <p>Apps and scripts that are assigned to the device group but not selected in the policy install after the user reaches the desktop, along with user-based configuration. Keep the policy list to what the user needs on day one.</p>
                     <p>Device preparation pairs well with Conditional Access that requires a compliant device. Our <a href="azureConditionalAccess.html">Conditional Access guide</a> shows how to build that policy, and <a href="cmd-vs-powershell-2026.html">CMD vs PowerShell</a> helps if you're converting old batch setup scripts into the PowerShell scripts the policy runs.</p>
 
-                    <h2>Five traps that break deployments</h2>
+                    <h2 id="five-traps-that-break-deployments">Five traps that break deployments</h2>
                     <h3>1. A registered device ignores your device preparation policy</h3>
                     <p>If a device has a classic Autopilot registration and isn't associated with your tenant, the Autopilot profile wins. To run device preparation on it, associate the device or deregister it first.</p>
 
@@ -202,7 +203,7 @@
                     <h3>5. Missing Intune RBAC permissions</h3>
                     <p>Admins who build these policies need a role with Device configurations (read, create, update, delete, assign), Enrollment programs (<strong>Enrollment time device membership assignment</strong>), and read access to Managed apps, Mobile apps, and Organization. That enrollment-time permission is the one most custom roles miss.</p>
 
-                    <h2>What MD-102 expects</h2>
+                    <h2 id="what-md-102-expects">What MD-102 expects</h2>
                     <p>The October 27, 2026 MD-102 outline touches device preparation in several places:</p>
                     <ul>
                         <li>"Choose between Windows Autopilot deployment profiles and device preparation policies"</li>
@@ -213,7 +214,7 @@
                     <p>Expect scenario questions that hide one disqualifier, such as a Windows 10 fleet, a hybrid join requirement, or a kiosk. Spot it, and the answer is classic Autopilot. With no disqualifier and a Windows 11, cloud-only fleet, device preparation is the answer.</p>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>Does Windows Autopilot device preparation replace Windows Autopilot?</h3>
@@ -265,6 +266,7 @@
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -330,5 +332,6 @@
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

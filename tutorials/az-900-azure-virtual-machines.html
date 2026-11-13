@@ -106,11 +106,12 @@
                         <img width="1200" height="630" src="../images/az-900-virtual-machines.jpg" alt="Azure Virtual Machines" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-is-an-azure-virtual-machine">What Is an Azure Virtual Machine?</a></li><li><a href="#vm-sizes-and-families">VM Sizes and Families</a></li><li><a href="#availability-options">Availability Options</a></li><li><a href="#vm-storage">VM Storage</a></li><li><a href="#vm-pricing-models">VM Pricing Models</a></li><li><a href="#vm-vs-containers-vs-serverless">VM vs Containers vs Serverless</a></li><li><a href="#common-az-900-vm-scenarios">Common AZ-900 VM Scenarios</a></li><li><a href="#what-az-900-expects-you-to-know">What AZ-900 Expects You to Know</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Virtual Machines are one of the most recognisable services in Azure, and AZ-900 covers them extensively. Microsoft wants you to understand not just what a VM is, but how to pick the right size, plan for availability, and know when a VM is the right choice versus a container or serverless option. This guide covers everything the exam expects.</p>
 
-                    <h2>What Is an Azure Virtual Machine?</h2>
+                    <h2 id="what-is-an-azure-virtual-machine">What Is an Azure Virtual Machine?</h2>
                     <p>An Azure Virtual Machine gives you full control over a server running in Microsoft's data centre. You choose the operating system, the hardware specs, and what software runs on it. You're responsible for patching, securing, and maintaining the OS and applications. This is Infrastructure as a Service (IaaS).</p>
 
                     <p>VMs are ideal for lift-and-shift migrations, custom software that needs a specific OS configuration, and workloads where you need full administrative access. If you need control over the environment, you want a VM.</p>
@@ -119,7 +120,7 @@
                         <strong>AZ-900 Tip:</strong> The exam tests your ability to choose between IaaS (VMs), PaaS (App Service), and serverless (Azure Functions). VMs = full control and full responsibility. PaaS = less control but less management overhead. Know this distinction cold.
                     </div>
 
-                    <h2>VM Sizes and Families</h2>
+                    <h2 id="vm-sizes-and-families">VM Sizes and Families</h2>
                     <p>Azure offers dozens of VM sizes grouped into families. Each family is optimised for a specific type of workload. For AZ-900, you don't need to memorise specific sizes, but you need to understand the categories and what they're for.</p>
 
                     <h3>General Purpose</h3>
@@ -186,7 +187,7 @@
                         <strong>Important:</strong> A VM's size determines its cost. Resizing a VM requires it to stop (deallocate). You cannot resize a running VM. When you deallocate, you stop paying for the compute but still pay for the attached storage.
                     </div>
 
-                    <h2>Availability Options</h2>
+                    <h2 id="availability-options">Availability Options</h2>
                     <p>This is one of the most heavily tested areas of AZ-900. Azure offers several ways to keep your VMs running during planned and unplanned events.</p>
 
                     <h3>Availability Sets</h3>
@@ -252,7 +253,7 @@
                         </tbody>
                     </table>
 
-                    <h2>VM Storage</h2>
+                    <h2 id="vm-storage">VM Storage</h2>
                     <p>Each VM uses at least two disks: an OS disk (usually 127-128 GB) and a temporary disk. You can add additional data disks.</p>
 
                     <h3>Disk Types</h3>
@@ -271,7 +272,7 @@
                         <li><strong>Disk encryption:</strong> Azure Disk Encryption uses BitLocker (Windows) or DM-Crypt (Linux) to encrypt OS and data disks. Azure Storage Service Encryption encrypts disks at rest by default.</li>
                     </ul>
 
-                    <h2>VM Pricing Models</h2>
+                    <h2 id="vm-pricing-models">VM Pricing Models</h2>
                     <p>AZ-900 tests your understanding of how to optimise VM costs.</p>
 
                     <h3>Pay-as-you-go</h3>
@@ -290,7 +291,7 @@
                         <strong>AZ-900 Tip:</strong> Scenario questions about cost optimisation are guaranteed. Know which pricing model fits which scenario: predictable workloads → Reserved Instances, flexible workloads → pay-as-you-go, fault-tolerant batch jobs → Spot.
                     </div>
 
-                    <h2>VM vs Containers vs Serverless</h2>
+                    <h2 id="vm-vs-containers-vs-serverless">VM vs Containers vs Serverless</h2>
                     <p>The exam expects you to compare compute options and pick the right one for a given scenario.</p>
 
                     <ul>
@@ -300,7 +301,7 @@
                         <li><strong>Azure Functions (Serverless):</strong> Event-driven, pay-per-execution. Scales to zero when idle. Good for scheduled tasks, webhooks, message processing.</li>
                     </ul>
 
-                    <h2>Common AZ-900 VM Scenarios</h2>
+                    <h2 id="common-az-900-vm-scenarios">Common AZ-900 VM Scenarios</h2>
                     <ul>
                         <li><strong>Scenario 1:</strong> "You need full control over the OS and want to migrate an on-premises app without changes." <em>Answer: Azure VM.</em></li>
                         <li><strong>Scenario 2:</strong> "You need high availability for a critical app across multiple data centres in a region." <em>Answer: Deploy VMs across availability zones.</em></li>
@@ -309,7 +310,7 @@
                         <li><strong>Scenario 5:</strong> "You need to reduce costs for a 3-year production workload." <em>Answer: Reserved Instances.</em></li>
                     </ul>
 
-                    <h2>What AZ-900 Expects You to Know</h2>
+                    <h2 id="what-az-900-expects-you-to-know">What AZ-900 Expects You to Know</h2>
                     <p>Here's the official exam objective checklist for compute:</p>
 
                     <ul>
@@ -328,7 +329,7 @@
                     </div>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>What's the difference between stopping and deallocating a VM?</h3>
@@ -372,6 +373,7 @@
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/az-900-azure-networking-fundamentals.html">Azure Networking Fundamentals: VNet, Subnets, Peering, DNS for AZ-900</a> <span class="category">Microsoft</span> <time datetime="2026-07-11">2026-07-11</time></li><li><a href="../tutorials/azure-nsg-best-practices.html">Azure NSG Best Practices: Practical Rules and Patterns</a> <span class="category">Microsoft</span> <time datetime="2026-03-05">2026-03-05</time></li><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -439,5 +441,6 @@
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

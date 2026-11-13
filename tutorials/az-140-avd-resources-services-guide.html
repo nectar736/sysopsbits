@@ -106,6 +106,7 @@
                         <img width="1408" height="1408" src="../images/az-140-service-guide.jpg" alt="Azure Virtual Desktop resources and supporting services" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#the-four-layers">The four layers</a></li><li><a href="#access-layer-workspaces-and-application-groups">Access layer: workspaces and application groups</a></li><li><a href="#compute-layer-host-pools-and-session-hosts">Compute layer: host pools and session hosts</a></li><li><a href="#user-data-layer-fslogix-and-storage">User data layer: FSLogix and storage</a></li><li><a href="#foundation-identity">Foundation: identity</a></li><li><a href="#foundation-networking">Foundation: networking</a></li><li><a href="#app-delivery-images-and-msix-app-attach">App delivery: images and MSIX app attach</a></li><li><a href="#operations-monitoring-scaling-and-resilience">Operations: monitoring, scaling, and resilience</a></li><li><a href="#how-it-all-connects">How it all connects</a></li><li><a href="#quick-exam-checklist">Quick exam checklist</a></li><li><a href="#where-to-go-next">Where to go next</a></li><li><a href="#resources">Resources</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <div class="callout callout-info">
@@ -115,7 +116,7 @@
 
                     <p>Azure Virtual Desktop is not a single product. It is a control plane that orchestrates Azure resources you already know: VMs, virtual networks, storage, and identity. AZ-140 tests whether you can choose the right type of each resource and wire them together. The study guide splits this across all four domains, with the heaviest weight on infrastructure. Start with the resource map, then learn the dependencies.</p>
 
-                    <h2>The four layers</h2>
+                    <h2 id="the-four-layers">The four layers</h2>
                     <p>Think of AVD in four layers.</p>
                     <ol>
                         <li><strong>Access layer:</strong> workspace and application groups. Users see this.</li>
@@ -166,7 +167,7 @@
                         <figcaption>Group resources by what breaks when they fail. The exam describes symptoms and expects you to trace them to the right layer.</figcaption>
                     </figure>
 
-                    <h2>Access layer: workspaces and application groups</h2>
+                    <h2 id="access-layer-workspaces-and-application-groups">Access layer: workspaces and application groups</h2>
                     <h3>Workspace</h3>
                     <p>The workspace is the feed. Users subscribe to it in Windows App or the web client. It holds references to application groups, not desktops directly. One workspace can aggregate groups from multiple host pools, so a user sees one feed even if you split pools by workload or region. Workspaces cost nothing.</p>
                     <h3>Application groups</h3>
@@ -180,7 +181,7 @@
                         <strong>Exam angle:</strong> The exam gives a requirement like “users need only Excel and SAP, not the full desktop” and expects RemoteApp. “One feed for two pools” points to one workspace with two application groups registered to it.
                     </div>
 
-                    <h2>Compute layer: host pools and session hosts</h2>
+                    <h2 id="compute-layer-host-pools-and-session-hosts">Compute layer: host pools and session hosts</h2>
                     <h3>Host pool</h3>
                     <p>The host pool is the container for session hosts and the policy for how sessions land.</p>
                     <ul>
@@ -196,7 +197,7 @@
                         <strong>Related services:</strong> Azure Compute Gallery stores versioned golden images. VM Image Builder automates sysprep and capture. Both appear in the image lifecycle questions.
                     </div>
 
-                    <h2>User data layer: FSLogix and storage</h2>
+                    <h2 id="user-data-layer-fslogix-and-storage">User data layer: FSLogix and storage</h2>
                     <p>Pooled hosts are stateless by design. When you reimage a host, you lose local profiles. FSLogix fixes this.</p>
                     <h3>Profile Containers</h3>
                     <p>FSLogix Profile Container redirects the whole Windows profile into a VHD stored on an SMB file share. At sign-in, the service attaches the VHD. The user sees a local profile experience, but the data lives off the VM. Include Microsoft 365 data in the same container to avoid a separate Office Container unless a specific scenario demands two.</p>
@@ -220,7 +221,7 @@
                         <strong>Common mistake:</strong> You need both share-level and NTFS permissions. A share that opens in Storage Explorer but fails at logon usually has NTFS wrong.
                     </div>
 
-                    <h2>Foundation: identity</h2>
+                    <h2 id="foundation-identity">Foundation: identity</h2>
                     <p>AZ-140 tests three identity scenarios:</p>
                     <ul>
                         <li><strong>Entra ID joined.</strong> No domain join, modern auth, Conditional Access, single sign-on. Needs Virtual Machine User Login and hybrid identities for FSLogix.</li>
@@ -229,7 +230,7 @@
                     </ul>
                     <p>Conditional Access applies to AVD. If you require MFA on the <strong>Azure Windows VM Sign-In</strong> app without excluding it or using Hello for Business, Entra ID logons fail. The domain join account cannot have MFA because provisioning runs non-interactively.</p>
 
-                    <h2>Foundation: networking</h2>
+                    <h2 id="foundation-networking">Foundation: networking</h2>
                     <p>Hosts live in your VNet while the control plane lives in Microsoft’s cloud. That split causes the trickiest failures.</p>
                     <ul>
                         <li><strong>VNet and subnets.</strong> Use a dedicated subnet for hosts. Verify outbound to the safe URL list, then apply NSGs. Start open, then restrict.</li>
@@ -237,7 +238,7 @@
                         <li><strong>Private Link, Bastion, JIT.</strong> Private Link puts AVD traffic on private endpoints for compliance. Bastion gives RDP without public IPs. JIT narrows admin access windows via Defender for Cloud.</li>
                     </ul>
 
-                    <h2>App delivery: images and MSIX app attach</h2>
+                    <h2 id="app-delivery-images-and-msix-app-attach">App delivery: images and MSIX app attach</h2>
                     <p>Three options cover most scenarios:</p>
                     <ol>
                         <li><strong>Baked image.</strong> Sysprep a golden image, store versions in Compute Gallery, deploy hosts from it. Stable but slow to update.</li>
@@ -245,13 +246,13 @@
                         <li><strong>Microsoft 365 and Teams.</strong> Use shared computer activation for Microsoft 365 Apps. Teams needs the WebRTC Redirector Service on the host. OneDrive needs Files On-Demand for multi-session.</li>
                     </ol>
 
-                    <h2>Operations: monitoring, scaling, and resilience</h2>
+                    <h2 id="operations-monitoring-scaling-and-resilience">Operations: monitoring, scaling, and resilience</h2>
                     <h3>Monitoring</h3>
                     <p>Send diagnostics from host pool, workspace, and app groups to a Log Analytics workspace. Insights is a workbook on that data. It shows duration, errors, and host health. Key tables: <code>WVDConnections</code>, <code>WVDErrors</code>, <code>WVDManagement</code>.</p>
                     <h3>Scaling and BCDR</h3>
                     <p>Scaling plans start and stop hosts by schedule. Start VM on Connect wakes a host when a user signs in. Back up FSLogix shares via Recovery Services vault. For DR, replicate images via Compute Gallery and keep a second host pool in the paired region with replicated profile storage.</p>
 
-                    <h2>How it all connects</h2>
+                    <h2 id="how-it-all-connects">How it all connects</h2>
                     <ol>
                         <li>User subscribes to <strong>ws01</strong> in Windows App.</li>
                         <li>Entra ID and Conditional Access allow the connection, service checks <strong>Desktop Virtualization User</strong> on the app group.</li>
@@ -262,7 +263,7 @@
                     </ol>
                     <p>Slow Teams points to Shortpath. Slow logon points to FSLogix share. Empty feed points to app group assignment.</p>
 
-                    <h2>Quick exam checklist</h2>
+                    <h2 id="quick-exam-checklist">Quick exam checklist</h2>
                     <table>
                         <thead><tr><th>Resource</th><th>Key choice</th><th>Service it depends on</th></tr></thead>
                         <tbody>
@@ -279,10 +280,10 @@
                         </tbody>
                     </table>
 
-                    <h2>Where to go next</h2>
+                    <h2 id="where-to-go-next">Where to go next</h2>
                     <p>Build the lab from the companion post, then add one layer at a time. First FSLogix on Azure Files Premium with a hybrid user, then RDP Shortpath for managed networks with a UDP 3390 rule, then an MSIX app attach package. Each addition maps to a skills-measured bullet and gives you a failure mode to troubleshoot, which is exactly how AZ-140 tests you.</p>
 
-                    <h2>Resources</h2>
+                    <h2 id="resources">Resources</h2>
                     <ul>
                         <li><a href="https://learn.microsoft.com/credentials/certifications/resources/study-guides/az-140" target="_blank" rel="noopener">AZ-140 study guide – skills measured as of July 2026</a></li>
                         <li><a href="https://learn.microsoft.com/azure/virtual-desktop/prerequisites" target="_blank" rel="noopener">Prerequisites for Azure Virtual Desktop</a></li>
@@ -327,6 +328,7 @@
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-fslogix-profile-containers-guide.html">FSLogix Profile Containers for Azure Virtual Desktop: Complete AZ-140 Guide</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -392,5 +394,6 @@
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

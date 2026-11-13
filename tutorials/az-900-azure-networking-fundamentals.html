@@ -106,11 +106,12 @@
                         <img width="1200" height="630" src="../images/az-900-networking.jpg" alt="Azure Networking Fundamentals" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-is-an-azure-virtual-network">What Is an Azure Virtual Network?</a></li><li><a href="#subnets-dividing-your-vnet">Subnets: Dividing Your VNet</a></li><li><a href="#vnet-peering-connecting-networks">VNet Peering: Connecting Networks</a></li><li><a href="#dns-resolution-in-azure">DNS Resolution in Azure</a></li><li><a href="#network-security-groups">Network Security Groups</a></li><li><a href="#vpn-gateway-and-expressroute">VPN Gateway and ExpressRoute</a></li><li><a href="#azure-load-balancer">Azure Load Balancer</a></li><li><a href="#choosing-the-right-connectivity-solution">Choosing the Right Connectivity Solution</a></li><li><a href="#common-az-900-networking-scenarios">Common AZ-900 Networking Scenarios</a></li><li><a href="#what-az-900-expects-you-to-know">What AZ-900 Expects You to Know</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Networking is one of the most heavily tested areas on the AZ-900 exam. Microsoft wants you to understand how Azure resources talk to each other and to the outside world. This guide covers the core networking concepts you need to know: virtual networks, subnets, peering, DNS, and network security. No fluff, just what AZ-900 expects.</p>
 
-                    <h2>What Is an Azure Virtual Network?</h2>
+                    <h2 id="what-is-an-azure-virtual-network">What Is an Azure Virtual Network?</h2>
                     <p>An Azure Virtual Network (VNet) is your private network in the cloud. It's a logical isolation boundary that lets Azure resources like VMs, databases, and app services communicate securely. Think of a VNet as your own data center network, but Microsoft handles the physical hardware.</p>
 
                     <p>Every VNet exists within a single Azure region and a single subscription. You define its IP address space using CIDR notation, like <code>10.0.0.0/16</code>. That address space gives you roughly 65,000 usable IP addresses to work with.</p>
@@ -119,7 +120,7 @@
                         <strong>AZ-900 Tip:</strong> Remember that VNets are region-scoped, not globally scoped. A VNet in East US is separate from a VNet in West Europe unless you connect them with peering or a VPN gateway.
                     </div>
 
-                    <h2>Subnets: Dividing Your VNet</h2>
+                    <h2 id="subnets-dividing-your-vnet">Subnets: Dividing Your VNet</h2>
                     <p>Subnets let you partition your VNet into smaller networks. Each subnet gets a portion of the VNet's address space. You use subnets to organize resources and control traffic flow.</p>
 
                     <p>For example, you could create a VNet with a <code>10.0.0.0/16</code> address space and split it into:</p>
@@ -150,7 +151,7 @@ az network subnet create \
                         <li><strong>GatewaySubnet:</strong> Must be named exactly <code>GatewaySubnet</code> with a minimum /27 prefix. Used by VPN and ExpressRoute gateways.</li>
                     </ul>
 
-                    <h2>VNet Peering: Connecting Networks</h2>
+                    <h2 id="vnet-peering-connecting-networks">VNet Peering: Connecting Networks</h2>
                     <p>VNet peering lets you connect two VNets so resources in one can talk to resources in the other using the Microsoft backbone network. No public internet involved, no VPN required.</p>
 
                     <h3>Key Facts for the Exam</h3>
@@ -181,7 +182,7 @@ az network vnet peering create \
                         <strong>Important:</strong> You must create peering in both directions. Creating a peering from VNet A to VNet B does not automatically create the reverse. Both sides must be configured for bidirectional communication.
                     </div>
 
-                    <h2>DNS Resolution in Azure</h2>
+                    <h2 id="dns-resolution-in-azure">DNS Resolution in Azure</h2>
                     <p>Azure provides built-in DNS resolution for resources in the same VNet. When you deploy a VM, Azure automatically registers its private IP in the default DNS. Other resources in the same VNet can reach it by hostname.</p>
 
                     <h3>DNS Options for AZ-900</h3>
@@ -193,7 +194,7 @@ az network vnet peering create \
 
                     <p>For AZ-900, remember that Azure-provided DNS only works within a single VNet. If you need name resolution across peered VNets, you need Azure DNS Private Zones or custom DNS servers.</p>
 
-                    <h2>Network Security Groups</h2>
+                    <h2 id="network-security-groups">Network Security Groups</h2>
                     <p>Network Security Groups (NSGs) filter traffic at the network layer. They contain security rules that allow or deny traffic based on source and destination IP, port, and protocol. Every subnet and network interface can have an NSG attached.</p>
 
                     <h3>How NSG Rules Work</h3>
@@ -210,7 +211,7 @@ az network vnet peering create \
                         <strong>AZ-900 Tip:</strong> The exam asks you to compare NSGs with Azure Firewall. NSG is a distributed, basic firewall at the subnet/NIC level. Azure Firewall is a central, fully managed service with advanced features like threat intelligence, URL filtering, and application rules.
                     </div>
 
-                    <h2>VPN Gateway and ExpressRoute</h2>
+                    <h2 id="vpn-gateway-and-expressroute">VPN Gateway and ExpressRoute</h2>
                     <p>These two services connect your on-premises network to Azure. They're a core part of AZ-900's "connectivity" domain.</p>
 
                     <h3>VPN Gateway</h3>
@@ -256,7 +257,7 @@ az network vnet peering create \
                         </tbody>
                     </table>
 
-                    <h2>Azure Load Balancer</h2>
+                    <h2 id="azure-load-balancer">Azure Load Balancer</h2>
                     <p>Azure Load Balancer distributes incoming traffic across multiple VMs to improve availability and reliability. It operates at layer 4 (TCP/UDP) and supports both inbound and outbound traffic.</p>
 
                     <ul>
@@ -266,7 +267,7 @@ az network vnet peering create \
 
                     <p>For AZ-900, understand that Load Balancer uses health probes to check if backend VMs are healthy. If a VM fails its probe, traffic stops going to it until it recovers.</p>
 
-                    <h2>Choosing the Right Connectivity Solution</h2>
+                    <h2 id="choosing-the-right-connectivity-solution">Choosing the Right Connectivity Solution</h2>
                     <p>AZ-900 presents scenarios where you must pick the right networking service. Here's how they differ:</p>
 
                     <ul>
@@ -276,7 +277,7 @@ az network vnet peering create \
                         <li><strong>Azure DNS:</strong> Name resolution. Not a connectivity service, but essential for routing.</li>
                     </ul>
 
-                    <h2>Common AZ-900 Networking Scenarios</h2>
+                    <h2 id="common-az-900-networking-scenarios">Common AZ-900 Networking Scenarios</h2>
                     <p>These scenario-based questions appear frequently on the exam. Learn the pattern:</p>
 
                     <ul>
@@ -287,7 +288,7 @@ az network vnet peering create \
                         <li><strong>Scenario 5:</strong> "You need secure, encrypted connectivity for remote employees." <em>Answer: Point-to-Site VPN.</em></li>
                     </ul>
 
-                    <h2>What AZ-900 Expects You to Know</h2>
+                    <h2 id="what-az-900-expects-you-to-know">What AZ-900 Expects You to Know</h2>
                     <p>The exam objectives for networking fall under "Describe Azure compute and networking services." Here's the checklist:</p>
 
                     <ul>
@@ -307,7 +308,7 @@ az network vnet peering create \
                     </div>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>Can I change a VNet's address space after creation?</h3>
@@ -351,6 +352,7 @@ az network vnet peering create \
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/az-900-azure-virtual-machines.html">Azure Virtual Machines: What AZ-900 Expects You to Know</a> <span class="category">Microsoft</span> <time datetime="2026-07-13">2026-07-13</time></li><li><a href="../tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -418,5 +420,6 @@ az network vnet peering create \
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

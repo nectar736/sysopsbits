@@ -106,6 +106,7 @@
                         <img width="1200" height="630" src="../images/azure-mandatory-mfa.jpg" alt="Azure mandatory MFA and managed identities for automation" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-microsoft-enforces-and-when-it-started">What Microsoft enforces, and when it started</a></li><li><a href="#confirm-that-mfa-enforcement-broke-your-script">Confirm that MFA enforcement broke your script</a></li><li><a href="#find-every-user-account-your-automation-uses">Find every user account your automation uses</a></li><li><a href="#pick-the-right-workload-identity">Pick the right workload identity</a></li><li><a href="#migrate-a-script-in-five-steps">Migrate a script in five steps</a></li><li><a href="#make-sure-the-humans-are-covered-too">Make sure the humans are covered too</a></li><li><a href="#what-this-change-doesn-t-touch">What this change doesn't touch</a></li><li><a href="#why-this-matters-for-sc-300-and-az-104">Why this matters for SC-300 and AZ-104</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <div class="callout callout-info">
@@ -116,7 +117,7 @@
 
                     <p>This guide shows you how to confirm that mandatory MFA caused the failure, find every user account your automation hides behind, and replace each one with the right workload identity. Every command and date below comes from Microsoft Learn, current as of October 2026.</p>
 
-                    <h2>What Microsoft enforces, and when it started</h2>
+                    <h2 id="what-microsoft-enforces-and-when-it-started">What Microsoft enforces, and when it started</h2>
                     <p>Microsoft rolled mandatory MFA out in two phases. Phase 1 covered the admin portals. Phase 2 covers the tools your scripts use.</p>
                     <div class="table-wrapper">
                         <table>
@@ -130,7 +131,7 @@
                     <p>Global Administrators could postpone Phase 2, but only until July 1, 2026. That window has closed, so every tenant in the public Azure cloud now enforces it. Microsoft doesn't enforce it in Azure for US Government or other sovereign clouds.</p>
                     <p>The check happens on Azure Resource Manager, so any request to <code>https://management.azure.com</code> is in scope, whichever client sent it. That explains the pattern in the opening example: reads pass and writes fail.</p>
 
-                    <h2>Confirm that MFA enforcement broke your script</h2>
+                    <h2 id="confirm-that-mfa-enforcement-broke-your-script">Confirm that MFA enforcement broke your script</h2>
                     <p>Users who sign in without MFA can still open a Phase 2 tool. The failure arrives at the first create, update, or delete, as an error that asks for MFA through a claims challenge. Interactive clients sometimes turn that challenge into a prompt. A scheduled task has nobody to answer it.</p>
                     <p>Check three things:</p>
                     <ol>
@@ -139,7 +140,7 @@
                         <li><strong>Your tool versions.</strong> Microsoft recommends Azure CLI 2.76 or later and Azure PowerShell 14.3 or later. Older versions return less helpful errors.</li>
                     </ol>
 
-                    <h2>Find every user account your automation uses</h2>
+                    <h2 id="find-every-user-account-your-automation-uses">Find every user account your automation uses</h2>
                     <p>The failing script you know about is rarely the only one. Search the sign-in logs for user accounts that reach Azure through the Phase 2 tools with single-factor authentication. Microsoft publishes the app IDs:</p>
                     <ul>
                         <li>Azure CLI: <code>04b07795-8ddb-461a-bbee-02f9e1bf7b46</code></li>
@@ -154,7 +155,7 @@
 | order by SignIns desc</code></pre>
                     <p>Accounts that sign in at the same time every night, from the same server IP, are your service accounts. No workspace yet? Our <a href="azure-monitor-log-analytics-practical-guide.html">Azure Monitor and Log Analytics guide</a> walks through the diagnostic settings.</p>
 
-                    <h2>Pick the right workload identity</h2>
+                    <h2 id="pick-the-right-workload-identity">Pick the right workload identity</h2>
                     <p>Microsoft states that managed identities and service principals aren't affected by either phase. Your choice depends on where the code runs.</p>
                     <div class="table-wrapper">
                         <table>
@@ -169,7 +170,7 @@
                     </div>
                     <p>Avoid service principals with client secrets where a managed identity or federated credential works. Microsoft labels secret-based sign-in for GitHub Actions as not recommended, and a secret in a script file is one leak away from a compromised subscription.</p>
 
-                    <h2>Migrate a script in five steps</h2>
+                    <h2 id="migrate-a-script-in-five-steps">Migrate a script in five steps</h2>
 
                     <h3>1. Create the identity and grant only what the job needs</h3>
                     <p>Enable a system-assigned managed identity on the VM or Automation account that runs the job, then assign it an Azure RBAC role at the narrowest scope that works. A cleanup job that deallocates VMs in one resource group doesn't need Contributor on the subscription. If you're unsure which role system applies, read <a href="azure-rbac-vs-entra-id-roles.html">Azure RBAC vs Entra ID roles</a> first. Resource access lives in Azure RBAC, not Entra roles.</p>
@@ -209,7 +210,7 @@ Connect-AzAccount -ServicePrincipal -ApplicationId &lt;app-id&gt; -Tenant &lt;te
                     <h3>5. Retire the old account</h3>
                     <p>Disable the user account, wait a full job cycle, then delete it and reclaim its license. To keep Conditional Access control over the new identity, Microsoft offers Conditional Access for workload identities, which needs a Workload Identities license.</p>
 
-                    <h2>Make sure the humans are covered too</h2>
+                    <h2 id="make-sure-the-humans-are-covered-too">Make sure the humans are covered too</h2>
                     <p>Your admins also need MFA before they hit an error. Pick the option your license allows:</p>
                     <ul>
                         <li><strong>Microsoft Entra ID P1 or P2:</strong> create a Conditional Access policy that targets the <strong>Microsoft Admin Portals</strong> and <strong>Windows Azure Service Management API</strong> cloud apps and requires the Multifactor authentication strength. Start in report-only mode so you don't lock yourself out. Our <a href="azureConditionalAccess.html">Conditional Access step-by-step guide</a> covers policy design and exclusions.</li>
@@ -219,7 +220,7 @@ Connect-AzAccount -ServicePrincipal -ApplicationId &lt;app-id&gt; -Tenant &lt;te
                     </ul>
                     <p>Without Conditional Access licensing, you can still measure the impact with Microsoft's built-in Azure Policy definitions for MFA enforcement. Run them in Audit mode first, then Deny.</p>
 
-                    <h2>What this change doesn't touch</h2>
+                    <h2 id="what-this-change-doesn-t-touch">What this change doesn't touch</h2>
                     <ul>
                         <li><strong>Read operations</strong> through CLI, PowerShell, and the API</li>
                         <li><strong>Microsoft Graph API calls</strong>, which generally fall outside this enforcement</li>
@@ -227,11 +228,11 @@ Connect-AzAccount -ServicePrincipal -ApplicationId &lt;app-id&gt; -Tenant &lt;te
                         <li><strong>Apps and websites you host on Azure</strong>. Your app's owners control their own sign-in rules.</li>
                     </ul>
 
-                    <h2>Why this matters for SC-300 and AZ-104</h2>
+                    <h2 id="why-this-matters-for-sc-300-and-az-104">Why this matters for SC-300 and AZ-104</h2>
                     <p>The SC-300 skills outline (updated October 28, 2026) asks you to "select appropriate identities for applications and Azure workloads, including managed identities, service principals, user accounts, and managed service accounts." Expect a scenario where a script fails after MFA rollout and you must choose its replacement identity. The right answer follows the table above: managed identity inside Azure, service principal outside. AZ-104 tests the RBAC half of the same story, which is why the <a href="az-104-practice-test.html">free AZ-104 practice test</a> includes role-scope questions.</p>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>Can I still postpone Azure mandatory MFA?</h3>
@@ -284,6 +285,7 @@ Connect-AzAccount -ServicePrincipal -ApplicationId &lt;app-id&gt; -Tenant &lt;te
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-avd-resources-services-guide.html">AZ-140 Core Resources and Services for Azure Virtual Desktop Explained</a> <span class="category">Microsoft</span> <time datetime="2026-09-01">2026-09-01</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -349,5 +351,6 @@ Connect-AzAccount -ServicePrincipal -ApplicationId &lt;app-id&gt; -Tenant &lt;te
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

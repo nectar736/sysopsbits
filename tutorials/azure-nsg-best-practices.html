@@ -106,14 +106,15 @@
                         <img width="1280" height="853" src="../images/azure-nsg-best-practices.jpg" alt="Azure NSG Best Practices" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-is-an-azure-nsg">What is an Azure NSG?</a></li><li><a href="#host-level-vs-subnet-level-nsgs">Host-Level vs Subnet-Level NSGs</a></li><li><a href="#understanding-nsg-rule-priorities">Understanding NSG Rule Priorities</a></li><li><a href="#sample-rule-set-web-server">Sample Rule Set: Web Server</a></li><li><a href="#sample-rule-set-database-subnet">Sample Rule Set: Database Subnet</a></li><li><a href="#azure-portal-configuration">Azure Portal Configuration</a></li><li><a href="#troubleshooting-nsg-rules">Troubleshooting NSG Rules</a></li><li><a href="#nsg-best-practices-summary">NSG Best Practices Summary</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Network Security Groups (NSGs) are fundamental to securing your Azure infrastructure. In this guide, we'll cover practical NSG configurations for real-world scenarios, from web servers to database subnets.</p>
 
-                    <h2>What is an Azure NSG?</h2>
+                    <h2 id="what-is-an-azure-nsg">What is an Azure NSG?</h2>
                     <p>An Azure Network Security Group (NSG) filters network traffic to and from Azure resources in a virtual network. It contains security rules that allow or deny inbound and outbound traffic based on source/destination IP, port, and protocol.</p>
 
-                    <h2>Host-Level vs Subnet-Level NSGs</h2>
+                    <h2 id="host-level-vs-subnet-level-nsgs">Host-Level vs Subnet-Level NSGs</h2>
                     <p>Understanding the difference between host and subnet NSGs is crucial for proper security architecture.</p>
 
                     <h3>Subnet-Level NSGs</h3>
@@ -139,10 +140,10 @@ az network nic update \
                         <strong>Important:</strong> Azure processes NSG rules in a specific order - first subnet NSG, then NIC NSG (for inbound), and vice versa for outbound. Both must allow traffic for communication to succeed.
                     </div>
 
-                    <h2>Understanding NSG Rule Priorities</h2>
+                    <h2 id="understanding-nsg-rule-priorities">Understanding NSG Rule Priorities</h2>
                     <p>NSG rules are evaluated in priority order (100-4096), with lower numbers processed first. This allows you to create specific rules before catch-all deny rules.</p>
 
-                    <h2>Sample Rule Set: Web Server</h2>
+                    <h2 id="sample-rule-set-web-server">Sample Rule Set: Web Server</h2>
                     <p>Here's a practical NSG configuration for a web server that needs to serve HTTP/HTTPS traffic and connect to a backend database.</p>
 
                     <pre><code># Create NSG for web servers
@@ -220,7 +221,7 @@ az network nsg rule create \
   --destination-address-prefix "*" \
   --destination-port-range "*"</code></pre>
 
-                    <h2>Sample Rule Set: Database Subnet</h2>
+                    <h2 id="sample-rule-set-database-subnet">Sample Rule Set: Database Subnet</h2>
                     <p>Database subnets should have stricter rules, allowing connections only from authorized sources.</p>
 
                     <pre><code># Create NSG for database subnet
@@ -298,7 +299,7 @@ az network nsg rule create \
   --destination-address-prefix "*" \
   --destination-port-range "*"</code></pre>
 
-                    <h2>Azure Portal Configuration</h2>
+                    <h2 id="azure-portal-configuration">Azure Portal Configuration</h2>
                     <p>While CLI is efficient for automation, you can also configure NSGs through the Azure Portal:</p>
                     <ol>
                         <li>Navigate to <strong>Network security groups</strong> in the Azure Portal</li>
@@ -312,7 +313,7 @@ az network nsg rule create \
                         <strong>Pro Tip:</strong> Use service tags instead of IP addresses where possible (e.g., <code>VirtualNetwork</code>, <code>Internet</code>, <code>AzureLoadBalancer</code>) to simplify management.
                     </div>
 
-                    <h2>Troubleshooting NSG Rules</h2>
+                    <h2 id="troubleshooting-nsg-rules">Troubleshooting NSG Rules</h2>
                     <p>When traffic isn't working as expected, use these diagnostic approaches:</p>
 
                     <h3>Check Effective Security Rules</h3>
@@ -354,7 +355,7 @@ az network watcher test-connectivity \
                         <li><strong>Both NSGs must allow:</strong> When using both subnet and NIC NSGs, both must permit traffic</li>
                     </ul>
 
-                    <h2>NSG Best Practices Summary</h2>
+                    <h2 id="nsg-best-practices-summary">NSG Best Practices Summary</h2>
                     <ul>
                         <li>Use subnet-level NSGs as your primary security boundary</li>
                         <li>Create explicit allow rules for legitimate traffic</li>
@@ -367,7 +368,7 @@ az network watcher test-connectivity \
                     </ul>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>Can an NSG block Azure platform traffic?</h3>
@@ -410,6 +411,7 @@ az network watcher test-connectivity \
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/az-900-azure-virtual-machines.html">Azure Virtual Machines: What AZ-900 Expects You to Know</a> <span class="category">Microsoft</span> <time datetime="2026-07-13">2026-07-13</time></li><li><a href="../tutorials/az-900-azure-networking-fundamentals.html">Azure Networking Fundamentals: VNet, Subnets, Peering, DNS for AZ-900</a> <span class="category">Microsoft</span> <time datetime="2026-07-11">2026-07-11</time></li><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -477,5 +479,6 @@ az network watcher test-connectivity \
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

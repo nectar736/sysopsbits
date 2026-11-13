@@ -106,13 +106,14 @@
                         <img width="1200" height="630" src="../images/entra-external-id-vs-b2b.jpg" alt="Microsoft Entra External ID vs B2B Collaboration" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-is-microsoft-entra-external-id">What is Microsoft Entra External ID?</a></li><li><a href="#understanding-workforce-vs-external-tenants">Understanding Workforce vs External Tenants</a></li><li><a href="#b2b-collaboration-deep-dive">B2B Collaboration Deep Dive</a></li><li><a href="#external-tenants-for-customer-identity-ciam">External Tenants for Customer Identity (CIAM)</a></li><li><a href="#feature-comparison-workforce-vs-external-tenants">Feature Comparison: Workforce vs External Tenants</a></li><li><a href="#b2b-direct-connect-for-teams-shared-channels">B2B Direct Connect for Teams Shared Channels</a></li><li><a href="#conditional-access-for-external-identities">Conditional Access for External Identities</a></li><li><a href="#migration-from-azure-ad-b2c">Migration from Azure AD B2C</a></li><li><a href="#best-practices-for-external-identity-management">Best Practices for External Identity Management</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li><li><a href="#conclusion">Conclusion</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Microsoft Entra External ID has become the unified solution for managing external identities across business-to-business (B2B) collaboration and customer identity access management (CIAM) scenarios. With the evolution from Azure Active Directory B2C to Microsoft Entra External ID, many organizations are re-evaluating their external identity strategies. This comprehensive guide explains the differences between External ID, B2B collaboration, workforce tenants, and external tenants—helping you choose the right approach for your specific use case.</p>
 
                     <p>Whether you're enabling secure collaboration with business partners, managing customer access to consumer applications, or migrating from legacy Azure AD B2C, understanding these identity models is crucial for modern cloud security architecture.</p>
 
-                    <h2>What is Microsoft Entra External ID?</h2>
+                    <h2 id="what-is-microsoft-entra-external-id">What is Microsoft Entra External ID?</h2>
                     <p>Microsoft Entra External ID is Microsoft's unified platform for managing identities outside your organization. It combines powerful solutions for working with people outside your corporate boundary, including business partners, customers, and guests. With External ID capabilities, you can allow external identities to securely access your apps and resources while maintaining complete control over authentication and authorization policies.</p>
 
                     <p>External ID supports two primary scenarios, each with distinct tenant configurations:</p>
@@ -125,7 +126,7 @@
                         <strong>Key Concept:</strong> External ID is not a separate product—it's the evolution of Azure AD External Identities, now integrated into the Microsoft Entra platform with enhanced security, compliance, and scalability features.
                     </div>
 
-                    <h2>Understanding Workforce vs External Tenants</h2>
+                    <h2 id="understanding-workforce-vs-external-tenants">Understanding Workforce vs External Tenants</h2>
                     <p>A <strong>tenant</strong> in Microsoft Entra is a dedicated and trusted instance of Microsoft Entra ID containing an organization's resources, registered apps, and directory of users. The configuration type determines how you use the tenant:</p>
 
                     <h3>Workforce Tenant Configuration</h3>
@@ -156,7 +157,7 @@
                         <strong>Important:</strong> External tenants do NOT support Microsoft 365 services like Exchange Online or SharePoint. They are purpose-built for custom application scenarios only.
                     </div>
 
-                    <h2>B2B Collaboration Deep Dive</h2>
+                    <h2 id="b2b-collaboration-deep-dive">B2B Collaboration Deep Dive</h2>
                     <p>Microsoft Entra B2B collaboration allows your workforce to collaborate securely with business partners and guests. It's designed for scenarios where external users need access to your corporate resources—not just custom applications, but Microsoft 365 services as well.</p>
 
                     <h3>How B2B Collaboration Works</h3>
@@ -218,7 +219,7 @@ Content-type: application/json
                         <li>Control whether guests can invite other guests</li>
                     </ul>
 
-                    <h2>External Tenants for Customer Identity (CIAM)</h2>
+                    <h2 id="external-tenants-for-customer-identity-ciam">External Tenants for Customer Identity (CIAM)</h2>
                     <p>Microsoft Entra External ID in external tenants provides a complete customer identity and access management (CIAM) solution. When publishing applications to consumers and business customers, you create a separate external tenant to manage customer accounts and application registrations.</p>
 
                     <h3>Key Features of External Tenants</h3>
@@ -276,7 +277,7 @@ Content-type: application/json
                         <li>Drive business growth through data-driven decisions</li>
                     </ul>
 
-                    <h2>Feature Comparison: Workforce vs External Tenants</h2>
+                    <h2 id="feature-comparison-workforce-vs-external-tenants">Feature Comparison: Workforce vs External Tenants</h2>
                     <p>Understanding the differences between External ID in workforce tenants (B2B) and external tenants (CIAM) is critical for choosing the right approach:</p>
 
                     <table>
@@ -331,7 +332,7 @@ Content-type: application/json
                         </tbody>
                     </table>
 
-                    <h2>B2B Direct Connect for Teams Shared Channels</h2>
+                    <h2 id="b2b-direct-connect-for-teams-shared-channels">B2B Direct Connect for Teams Shared Channels</h2>
                     <p>B2B direct connect enables two-way trust relationships with other Microsoft Entra organizations specifically for Teams Shared Channels. Unlike B2B collaboration where guests are added to your directory, B2B direct connect users are NOT added as guests—they authenticate in their home organization and receive a token from your resource organization.</p>
 
                     <p>Key capabilities include:</p>
@@ -346,7 +347,7 @@ Content-type: application/json
                         <strong>Pro Tip:</strong> Use B2B direct connect specifically for Teams collaboration. For broader resource access (SharePoint, custom apps), continue using standard B2B collaboration.
                     </div>
 
-                    <h2>Conditional Access for External Identities</h2>
+                    <h2 id="conditional-access-for-external-identities">Conditional Access for External Identities</h2>
                     <p>Microsoft Entra Conditional Access brings signals together to make decisions and enforce security policies. External ID supports Conditional Access for both B2B collaboration and external tenant scenarios.</p>
 
                     <h3>Conditional Access in Workforce Tenants (B2B)</h3>
@@ -389,7 +390,7 @@ Content-type: application/json
   }
 }</code></pre>
 
-                    <h2>Migration from Azure AD B2C</h2>
+                    <h2 id="migration-from-azure-ad-b2c">Migration from Azure AD B2C</h2>
                     <div class="callout callout-warning">
                         <strong>Important:</strong> Effective May 1, 2025, Azure Active Directory B2C (Azure AD B2C) is no longer available for new customers to purchase. Microsoft Entra External ID is the next-generation CIAM solution with all new features being built on this platform.
                     </div>
@@ -404,7 +405,7 @@ Content-type: application/json
 
                     <p>Use the <a href="https://learn.microsoft.com/en-us/entra/external-id/customers/plan-your-migration-from-b2c-to-external-id">migration planning guide</a> to transition from Azure AD B2C to External ID.</p>
 
-                    <h2>Best Practices for External Identity Management</h2>
+                    <h2 id="best-practices-for-external-identity-management">Best Practices for External Identity Management</h2>
 
                     <h3>For B2B Collaboration</h3>
                     <ul>
@@ -437,7 +438,7 @@ Content-type: application/json
                     </ul>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>When should I use B2B collaboration vs external tenants?</h3>
@@ -466,7 +467,7 @@ Content-type: application/json
                         </div>
                     </section>
 
-                    <h2>Conclusion</h2>
+                    <h2 id="conclusion">Conclusion</h2>
                     <p>Microsoft Entra External ID provides a unified platform for all your external identity needs. By understanding the differences between B2B collaboration in workforce tenants and CIAM in external tenants, you can architect the right solution for each scenario:</p>
                     <ul>
                         <li><strong>Choose B2B collaboration</strong> when enabling secure collaboration with business partners who need access to Microsoft 365 and your organizational resources</li>
@@ -506,6 +507,7 @@ Content-type: application/json
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/azureConditionalAccess.html">Step-by-Step Guide: Implement Azure AD Conditional Access for Zero Trust Security</a> <span class="category">Microsoft</span> <time datetime="2026-05-06">2026-05-06</time></li><li><a href="../tutorials/azure-point-to-site-vpn.html">Point-to-Site VPN for Remote Admins: OpenVPN &amp; Azure AD Auth</a> <span class="category">Microsoft</span> <time datetime="2026-03-05">2026-03-05</time></li><li><a href="../tutorials/autopilot-device-preparation-vs-windows-autopilot.html">Autopilot Device Preparation vs Windows Autopilot: Which to Use</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -573,5 +575,6 @@ Content-type: application/json
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

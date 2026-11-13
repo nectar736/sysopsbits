@@ -106,16 +106,17 @@
                         <img width="784" height="1168" src="../images/ollama-llm.jpg" alt="Getting Started with Ollama" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-is-ollama">What is Ollama?</a></li><li><a href="#installing-ollama">Installing Ollama</a></li><li><a href="#pulling-your-first-model">Pulling Your First Model</a></li><li><a href="#running-ollama-interactively">Running Ollama Interactively</a></li><li><a href="#using-ollama-as-a-local-api-server">Using Ollama as a Local API Server</a></li><li><a href="#connecting-vs-code">Connecting VS Code</a></li><li><a href="#connecting-opencode">Connecting OpenCode</a></li><li><a href="#basic-examples">Basic Examples</a></li><li><a href="#multi-modal-using-vision-models">Multi-Modal: Using Vision Models</a></li><li><a href="#troubleshooting-common-issues">Troubleshooting Common Issues</a></li><li><a href="#creating-custom-models">Creating Custom Models</a></li><li><a href="#next-steps">Next Steps</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Running large language models locally gives you privacy, no API costs, and full control over your AI workflows. Ollama makes this accessible by bundling model weights and runtime into a simple executable.</p>
 
                     <p>This guide walks you through installing Ollama, pulling models, and using them for code generation.</p>
 
-                    <h2>What is Ollama?</h2>
+                    <h2 id="what-is-ollama">What is Ollama?</h2>
                     <p>Ollama is an open-source framework for running large language models locally. It supports a variety of models optimized for coding, reasoning, and multi-modal tasks. With Ollama, you can run models like Llama 3.1, Qwen 2.5, and DeepSeek-Coder directly on your machine.</p>
 
-                    <h2>Installing Ollama</h2>
+                    <h2 id="installing-ollama">Installing Ollama</h2>
 
                     <h3>macOS</h3>
                     <pre><code># Download and install from the website
@@ -147,7 +148,7 @@ ollama serve
 # In another terminal, verify it works
 ollama --version</code></pre>
 
-                    <h2>Pulling Your First Model</h2>
+                    <h2 id="pulling-your-first-model">Pulling Your First Model</h2>
 
                     <p>Ollama uses a simple <code>pull</code> command to download models. Let's start with a coding-focused model:</p>
 
@@ -204,7 +205,7 @@ ollama list</code></pre>
                         </tbody>
                     </table>
 
-                    <h2>Running Ollama Interactively</h2>
+                    <h2 id="running-ollama-interactively">Running Ollama Interactively</h2>
 
                     <p>The simplest way to use Ollama is in interactive chat mode:</p>
 
@@ -214,7 +215,7 @@ ollama run qwen2.5-coder:7b
 # You can now chat with the model
 # Try: "Write a Python function to reverse a string"</code></pre>
 
-                    <h2>Using Ollama as a Local API Server</h2>
+                    <h2 id="using-ollama-as-a-local-api-server">Using Ollama as a Local API Server</h2>
 
                     <p>For integration with editors and tools, run Ollama as a server:</p>
 
@@ -237,7 +238,7 @@ curl http://localhost:11434/api/generate -d '{
   "format": "json"
 }'</code></pre>
 
-                    <h2>Connecting VS Code</h2>
+                    <h2 id="connecting-vs-code">Connecting VS Code</h2>
 
                     <p>You can use Ollama with VS Code through the Continue extension or similar:</p>
 
@@ -259,7 +260,7 @@ curl http://localhost:11434/api/generate -d '{
                     <h3>Using CodeGPT or Other Extensions</h3>
                     <p>Most VS Code AI extensions support custom endpoints. Configure them to point to <code>http://localhost:11434</code>.</p>
 
-                    <h2>Connecting OpenCode</h2>
+                    <h2 id="connecting-opencode">Connecting OpenCode</h2>
 
                     <p>To use Ollama with OpenCode or other AI coding assistants:</p>
 
@@ -276,7 +277,7 @@ ollama serve
   "api_base": "http://localhost:11434"
 }</code></pre>
 
-                    <h2>Basic Examples</h2>
+                    <h2 id="basic-examples">Basic Examples</h2>
 
                     <h3>Generating a Python Script</h3>
                     <pre><code>curl http://localhost:11434/api/generate -d '{
@@ -299,7 +300,7 @@ ollama serve
   "stream": false
 }'</code></pre>
 
-                    <h2>Multi-Modal: Using Vision Models</h2>
+                    <h2 id="multi-modal-using-vision-models">Multi-Modal: Using Vision Models</h2>
 
                     <p>Ollama also supports vision models that can analyze images:</p>
 
@@ -313,7 +314,7 @@ curl http://localhost:11434/api/generate -d '{
   "images": ["$(base64 -w0 /path/to/image.jpg)"]
 }'</code></pre>
 
-                    <h2>Troubleshooting Common Issues</h2>
+                    <h2 id="troubleshooting-common-issues">Troubleshooting Common Issues</h2>
 
                     <h3>MIME Type Errors</h3>
                     <p>If you see MIME type errors when serving files:</p>
@@ -364,7 +365,7 @@ ollama list
 # Pull the model again if needed
 ollama pull qwen2.5-coder:7b</code></pre>
 
-                    <h2>Creating Custom Models</h2>
+                    <h2 id="creating-custom-models">Creating Custom Models</h2>
 
                     <p>You can create custom Ollama models using Modelfiles:</p>
 
@@ -384,7 +385,7 @@ ollama create my-coder -f MyCoder
 # Use it
 ollama run my-coder</code></pre>
 
-                    <h2>Next Steps</h2>
+                    <h2 id="next-steps">Next Steps</h2>
 
                     <p>Now that you have Ollama running locally, you can:</p>
                     <ul>
@@ -411,6 +412,7 @@ ollama run my-coder</code></pre>
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/automated-linux-backups-restic.html">How to Set Up Automated Linux Backups with Restic</a> <span class="category">Guided Labs</span> <time datetime="2026-01-18">2026-01-18</time></li><li><a href="../tutorials/secure-linux-smb-server-ubuntu.html">How to Set Up a Secure Linux SMB Server on Ubuntu</a> <span class="category">Guided Labs</span> <time datetime="2026-01-15">2026-01-15</time></li><li><a href="../tools/top-10-cli-tools-sysadmin.html">Top 10 CLI Tools Every Sysadmin Should Know</a> <span class="category">Guided Labs</span> <time datetime="2026-01-12">2026-01-12</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -478,5 +480,6 @@ ollama run my-coder</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

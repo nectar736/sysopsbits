@@ -106,16 +106,17 @@
                         <img width="1024" height="460" src="../images/create-secure-linux-vm-azure.jpg" alt="Secure Linux VM Azure" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#why-security-matters">Why Security Matters</a></li><li><a href="#understanding-azure-networking">Understanding Azure Networking</a></li><li><a href="#deploy-the-virtual-network-and-subnet">Deploy the Virtual Network and Subnet</a></li><li><a href="#create-the-nsg-and-configure-ssh-rules">Create the NSG and Configure SSH Rules</a></li><li><a href="#associate-nsg-with-the-subnet">Associate NSG with the Subnet</a></li><li><a href="#generate-ssh-key-pair">Generate SSH Key Pair</a></li><li><a href="#deploy-the-ubuntu-vm">Deploy the Ubuntu VM</a></li><li><a href="#ssh-key-authentication">SSH Key Authentication</a></li><li><a href="#ubuntu-hardening-fail2ban">Ubuntu Hardening: Fail2Ban</a></li><li><a href="#additional-security-hardening">Additional Security Hardening</a></li><li><a href="#testing-your-configuration">Testing Your Configuration</a></li><li><a href="#summary">Summary</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Deploying a Linux virtual machine in Azure is straightforward, but securing it properly requires careful planning. This guide covers deploying an Ubuntu VM with SSH key authentication, Network Security Group rules, and Fail2Ban for brute-force protection.</p>
 
-                    <h2>Why Security Matters</h2>
+                    <h2 id="why-security-matters">Why Security Matters</h2>
                     <p>Every publicly accessible SSH server faces constant brute-force attacks. By default, SSH listens on port 22, and attackers use automated scripts to try common usernames and passwords. A single misconfigured VM can be compromised within hours of deployment.</p>
 
                     <p>The key principles we'll apply are: deny by default, use strong authentication, and add layers of defense.</p>
 
-                    <h2>Understanding Azure Networking</h2>
+                    <h2 id="understanding-azure-networking">Understanding Azure Networking</h2>
                     <p>Before deploying your VM, it's important to understand how Azure networking works. When you create a VM in Azure, it's placed within a Virtual Network (VNet). All network traffic to and from the VM flows through the VNet's subnets.</p>
 
                     <p>Network Security Groups (NSGs) act as firewalls at the network level. They control what traffic can enter or leave a subnet or network interface. By associating an NSG with your VM's subnet or network interface, you can filter traffic before it reaches your server.</p>
@@ -124,7 +125,7 @@
                         <strong>Best Practice:</strong> Always place VMs in a dedicated subnet and apply NSG rules at the subnet level for centralized management.
                     </div>
 
-                    <h2>Deploy the Virtual Network and Subnet</h2>
+                    <h2 id="deploy-the-virtual-network-and-subnet">Deploy the Virtual Network and Subnet</h2>
                     <p>First, create the networking infrastructure that will host your VM.</p>
 
                     <pre><code>az group create --name myResourceGroup --location eastus
@@ -142,7 +143,7 @@ az network subnet create \
 
                     <p>This creates a VNet with the 10.0.0.0/16 address space and a single subnet using 10.0.1.0/24. The VM will receive an IP in this range.</p>
 
-                    <h2>Create the NSG and Configure SSH Rules</h2>
+                    <h2 id="create-the-nsg-and-configure-ssh-rules">Create the NSG and Configure SSH Rules</h2>
                     <p>Now create an NSG with rules that allow SSH only from specific sources while denying everything else.</p>
 
                     <pre><code>az network nsg create \
@@ -183,7 +184,7 @@ az network nsg rule create \
                         <strong>Important:</strong> Replace <code>your.public.ip.address</code> with your actual public IP. Find it by visiting <code>whatismyip.com</code>.
                     </div>
 
-                    <h2>Associate NSG with the Subnet</h2>
+                    <h2 id="associate-nsg-with-the-subnet">Associate NSG with the Subnet</h2>
                     <pre><code>az network vnet subnet update \
   --resource-group myResourceGroup \
   --vnet-name myVnet \
@@ -192,7 +193,7 @@ az network nsg rule create \
 
                     <p>Associating the NSG with the subnet means all VMs in that subnet inherit these security rules.</p>
 
-                    <h2>Generate SSH Key Pair</h2>
+                    <h2 id="generate-ssh-key-pair">Generate SSH Key Pair</h2>
                     <p>Password authentication is vulnerable to brute-force attacks. SSH key pairs provide much stronger security through asymmetric cryptography.</p>
 
                     <pre><code># Generate SSH key pair (Linux/macOS)
@@ -203,7 +204,7 @@ ssh-keygen -t ed25519 -C "azure-vm"</code></pre>
 
                     <p>This creates two files: a private key (keep this secret, never share it) and a public key (safe to distribute). The public key will be placed on your Azure VM during creation.</p>
 
-                    <h2>Deploy the Ubuntu VM</h2>
+                    <h2 id="deploy-the-ubuntu-vm">Deploy the Ubuntu VM</h2>
                     <pre><code>az vm create \
   --resource-group myResourceGroup \
   --name myUbuntuVM \
@@ -225,14 +226,14 @@ ssh-keygen -t ed25519 -C "azure-vm"</code></pre>
                         <li><strong>NSG:</strong> We're not associating an NSG here since we attached one to the subnet</li>
                     </ul>
 
-                    <h2>SSH Key Authentication</h2>
+                    <h2 id="ssh-key-authentication">SSH Key Authentication</h2>
                     <p>Once the VM is deployed, connect using your private key:</p>
 
                     <pre><code>ssh -i ~/.ssh/id_ed25519 azureuser@your-vm-ip</code></pre>
 
                     <p>Using key-based authentication eliminates the risk of password brute-force attacks. The private key never leaves your local machine, and the public key is stored on the server.</p>
 
-                    <h2>Ubuntu Hardening: Fail2Ban</h2>
+                    <h2 id="ubuntu-hardening-fail2ban">Ubuntu Hardening: Fail2Ban</h2>
                     <p>Even with restricted NSG rules, it's wise to add another layer of protection. Fail2Ban monitors failed login attempts and automatically bans IP addresses that show malicious behavior.</p>
 
                     <h3>Install Fail2Ban</h3>
@@ -259,7 +260,7 @@ sudo systemctl start fail2ban</code></pre>
                     <h3>Verify Fail2Ban Status</h3>
                     <pre><code>sudo fail2ban-client status</code></pre>
 
-                    <h2>Additional Security Hardening</h2>
+                    <h2 id="additional-security-hardening">Additional Security Hardening</h2>
                     <p>Beyond Fail2Ban, consider these additional hardening steps:</p>
 
                     <h3>Disable Password Authentication</h3>
@@ -289,7 +290,7 @@ sudo ufw allow 2222/tcp
 sudo ufw enable
 sudo ufw status verbose</code></pre>
 
-                    <h2>Testing Your Configuration</h2>
+                    <h2 id="testing-your-configuration">Testing Your Configuration</h2>
                     <p>After hardening, verify everything works:</p>
 
                     <pre><code># Test SSH connection
@@ -304,7 +305,7 @@ sudo ufw status
 # Review SSH daemon configuration
 sudo sshd -t</code></pre>
 
-                    <h2>Summary</h2>
+                    <h2 id="summary">Summary</h2>
                     <p>Your Ubuntu VM is now secured with multiple layers of protection:</p>
                     <ul>
                         <li><strong>Network level:</strong> NSG allows SSH only from your specific IP</li>
@@ -314,7 +315,7 @@ sudo sshd -t</code></pre>
                     </ul>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>Can I use a bastion host instead?</h3>
@@ -362,6 +363,7 @@ sudo sshd -t</code></pre>
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/azure-rbac-vs-entra-id-roles.html">Azure RBAC vs Entra ID Roles: What AZ-104 Expects You to Know</a> <span class="category">Microsoft</span> <time datetime="2026-07-18">2026-07-18</time></li><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -429,5 +431,6 @@ sudo sshd -t</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

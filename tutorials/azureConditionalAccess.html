@@ -106,6 +106,7 @@
                         <img width="1200" height="630" src="../images/conditional-access-zero-trust.jpg" alt="Azure AD Conditional Access" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#finding-conditional-access-in-the-azure-portal">Finding Conditional Access in the Azure Portal</a></li><li><a href="#creating-your-first-policy-require-mfa-for-admins">Creating Your First Policy: Require MFA for Admins</a></li><li><a href="#blocking-legacy-authentication">Blocking Legacy Authentication</a></li><li><a href="#named-locations">Named Locations</a></li><li><a href="#authentication-context">Authentication Context</a></li><li><a href="#testing-your-policies">Testing Your Policies</a></li><li><a href="#common-pitfalls">Common Pitfalls</a></li><li><a href="#microsoft-recommended-practices">Microsoft Recommended Practices</a></li><li><a href="#conclusion">Conclusion</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Traditional perimeter-based security is no longer sufficient in today's distributed cloud environments. Zero Trust follows the principle of "never trust, always verify" - every access request is authenticated, authorized, and encrypted regardless of where it originates.</p>
@@ -116,7 +117,7 @@
                         <strong>What you'll learn:</strong> This guide covers creating Conditional Access policies, testing them safely, and avoiding common implementation mistakes. Perfect preparation for the Microsoft SC-300 Identity and Access Administrator exam.
                     </div>
 
-                    <h2>Prerequisites</h2>
+                    <h2 id="prerequisites">Prerequisites</h2>
                     <p>Before implementing Conditional Access, ensure you have:</p>
                     <ul>
                         <li><strong>Azure AD Premium P1 or P2 license</strong> - Most Conditional Access features require P1 (included in Microsoft 365 E3/E5)</li>
@@ -129,7 +130,7 @@
                         <strong>Important:</strong> Conditional Access policies affect sign-in flows for all users. Always test new policies with a pilot group before deploying organization-wide. Never lock yourself out - ensure at least one account is excluded from restrictive policies.
                     </div>
 
-                    <h2>Finding Conditional Access in the Azure Portal</h2>
+                    <h2 id="finding-conditional-access-in-the-azure-portal">Finding Conditional Access in the Azure Portal</h2>
                     <p>Navigate to Conditional Access through the Azure portal:</p>
                     <ol>
                         <li>Sign in to <a href="https://portal.azure.com">portal.azure.com</a></li>
@@ -142,7 +143,7 @@
 
                     <p>The Conditional Access blade shows your existing policies, allows you to create new ones, and provides quick access to the What-If tool for testing policies.</p>
 
-                    <h2>Creating Your First Policy: Require MFA for Admins</h2>
+                    <h2 id="creating-your-first-policy-require-mfa-for-admins">Creating Your First Policy: Require MFA for Admins</h2>
                     <p>One of the most impactful policies is requiring multi-factor authentication for all administrative users. Here's the step-by-step:</p>
 
                     <pre><code># For reference: The Azure AD PowerShell module approach
@@ -210,7 +211,7 @@ New-AzureADMSConditionalAccessPolicy -DisplayName "Require MFA for Admin Users"<
                         <strong>Pro tip:</strong> Always start in Report-only mode to see who the policy would affect without blocking users.
                     </div>
 
-                    <h2>Blocking Legacy Authentication</h2>
+                    <h2 id="blocking-legacy-authentication">Blocking Legacy Authentication</h2>
                     <p>Legacy authentication protocols (IMAP, POP3, SMTP, older Exchange ActiveSync) don't support modern authentication and can bypass Conditional Access policies. Blocking these protocols is critical for Zero Trust.</p>
 
                     <p>Legacy auth is used by:</p>
@@ -265,7 +266,7 @@ New-AzureADMSConditionalAccessPolicy -DisplayName "Require MFA for Admin Users"<
                         <strong>Warning:</strong> Before enabling, notify users who need legacy auth (deprecated equipment, third-party integrations). Create exceptions for specific service accounts that cannot use modern authentication.
                     </div>
 
-                    <h2>Named Locations</h2>
+                    <h2 id="named-locations">Named Locations</h2>
                     <p>Named locations let you define trusted IP ranges (public IPs or ranges) and countries/regions that can be used in Conditional Access policies.</p>
 
                     <h3>Creating a Named Location</h3>
@@ -312,7 +313,7 @@ New-AzureADMSConditionalAccessPolicy -DisplayName "Require MFA for Admin Users"<
 │               │    │  Block)           │
 └───────────────┘    └───────────────────┘</code></pre>
 
-                    <h2>Authentication Context</h2>
+                    <h2 id="authentication-context">Authentication Context</h2>
                     <p>Authentication Context (requires Azure AD P2) lets you create more granular access controls by marking sensitive apps and resources, then requiring additional verification when users access them.</p>
 
                     <p>Unlike standard Conditional Access policies that apply based on user/app, Authentication Context lets applications themselves signal their sensitivity level to Azure AD.</p>
@@ -366,7 +367,7 @@ const config = {
                         <strong>Note:</strong> Authentication Context is a Premium P2 feature. Your applications or services must also support receiving and enforcing the authentication context claim.
                     </div>
 
-                    <h2>Testing Your Policies</h2>
+                    <h2 id="testing-your-policies">Testing Your Policies</h2>
                     <p>Always test Conditional Access policies before enabling them organization-wide. Azure provides two testing approaches:</p>
 
                     <h3>What-If Tool</h3>
@@ -399,7 +400,7 @@ const config = {
                         <li>Clear cookies between tests</li>
                     </ul>
 
-                    <h2>Common Pitfalls</h2>
+                    <h2 id="common-pitfalls">Common Pitfalls</h2>
                     <p>Avoid these common implementation mistakes:</p>
 
                     <h3>1. Locking Yourself Out</h3>
@@ -426,7 +427,7 @@ const config = {
                     <p>Service accounts without MFA or running automated tasks can be blocked.</p>
                     <p><strong>Prevention:</strong> Exclude service accounts (managed identities, service principals) explicitly.</p>
 
-                    <h2>Microsoft Recommended Practices</h2>
+                    <h2 id="microsoft-recommended-practices">Microsoft Recommended Practices</h2>
                     <p>Microsoft recommends the following for Zero Trust Conditional Access implementation:</p>
 
                     <ul>
@@ -448,7 +449,7 @@ const config = {
 
                     <p>See <a href="https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/overview">Microsoft Learn: Conditional Access documentation</a> for the official documentation.</p>
 
-                    <h2>Conclusion</h2>
+                    <h2 id="conclusion">Conclusion</h2>
                     <p>Azure AD Conditional Access is foundational to Zero Trust security. Start with these core policies:</p>
                     <ol>
                         <li>Require MFA for all admins</li>
@@ -490,6 +491,7 @@ const config = {
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-avd-resources-services-guide.html">AZ-140 Core Resources and Services for Azure Virtual Desktop Explained</a> <span class="category">Microsoft</span> <time datetime="2026-09-01">2026-09-01</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -556,5 +558,6 @@ const config = {
 
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

@@ -106,15 +106,16 @@
                         <img width="1200" height="630" src="../images/network-troubleshooting-tools.jpg" alt="Network Troubleshooting Tools for Linux" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#introduction-why-network-troubleshooting-matters-for-sysadmins">Introduction: Why Network Troubleshooting Matters for Sysadmins</a></li><li><a href="#packet-capture-and-analysis-tools">Packet Capture and Analysis Tools</a></li><li><a href="#port-scanning-and-network-discovery">Port Scanning and Network Discovery</a></li><li><a href="#route-tracing-and-path-analysis">Route Tracing and Path Analysis</a></li><li><a href="#connection-and-socket-statistics">Connection and Socket Statistics</a></li><li><a href="#bandwidth-testing">Bandwidth Testing</a></li><li><a href="#dns-diagnostics">DNS Diagnostics</a></li><li><a href="#network-connectivity-testing">Network Connectivity Testing</a></li><li><a href="#security-and-monitoring">Security and Monitoring</a></li><li><a href="#additional-essential-network-utilities">Additional Essential Network Utilities</a></li><li><a href="#comparison-which-tool-for-which-job">Comparison: Which Tool for Which Job?</a></li><li><a href="#building-an-efficient-network-troubleshooting-workflow">Building an Efficient Network Troubleshooting Workflow</a></li><li><a href="#conclusion-equip-yourself-for-network-success">Conclusion: Equip Yourself for Network Success</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
 
-                    <h2>Introduction: Why Network Troubleshooting Matters for Sysadmins</h2>
+                    <h2 id="introduction-why-network-troubleshooting-matters-for-sysadmins">Introduction: Why Network Troubleshooting Matters for Sysadmins</h2>
                     <p>Network issues are among the most frustrating problems sysadmins face. Unlike application bugs that often present clear error messages, network problems can manifest in subtle ways—slow page loads, intermittent timeouts, mysterious connection failures. When your infrastructure depends on reliable network connectivity, the difference between a five-minute diagnosis and a five-hour debugging session often comes down to knowing the right tools.</p>
                     <p>Modern sysadmins need a comprehensive toolkit for network diagnostics that spans multiple domains: packet capture, port scanning, bandwidth testing, DNS resolution, and real-time traffic monitoring. Whether you're debugging a connection issue between <a href="../comparisons/digitalocean-vs-linode-vs-hetzner-2026.html">cloud providers</a>, investigating suspicious traffic, or optimizing network performance, having the right <a href="top-10-cli-tools-sysadmin.html">sysadmin tools</a> at your disposal is essential.</p>
                     <p>This guide covers the most essential network troubleshooting tools that every Linux sysadmin should know in 2026. From classic command-line utilities to modern packet analysis solutions, these tools form the backbone of effective network diagnostics.</p>
 
-                    <h2>Packet Capture and Analysis Tools</h2>
+                    <h2 id="packet-capture-and-analysis-tools">Packet Capture and Analysis Tools</h2>
                     <p>When you need to see what's actually traveling across your network, packet capture tools provide the raw visibility you need. These tools are indispensable for diagnosing complex network issues, investigating security incidents, and understanding network behavior.</p>
 
                     <h3>tcpdump: The Classic Command-Line Packet Sniffer</h3>
@@ -226,7 +227,7 @@ sudo tshark -i eth0 -T ek -c 10 > capture.json
 # Filter and display specific protocol
 sudo tshark -i eth0 -Y "http.request.method == GET"</code></pre>
 
-                    <h2>Port Scanning and Network Discovery</h2>
+                    <h2 id="port-scanning-and-network-discovery">Port Scanning and Network Discovery</h2>
                     <p>Understanding what's accessible on your network is fundamental to both security and troubleshooting. These tools help you map network resources and identify open services.</p>
 
                     <h3>nmap: The Network Mapper</h3>
@@ -278,7 +279,7 @@ nmap -sV 192.168.1.1
 # UDP scan
 nmap -sU 192.168.1.1</code></pre>
 
-                    <h2>Route Tracing and Path Analysis</h2>
+                    <h2 id="route-tracing-and-path-analysis">Route Tracing and Path Analysis</h2>
                     <p>Understanding the path packets take through the network is crucial for diagnosing latency and routing issues.</p>
 
                     <h3>traceroute and mtr: Path Tracing Tools</h3>
@@ -325,7 +326,7 @@ mtr -c 10 google.com
 # mtr with report mode
 mtr --report --report-cycles 5 google.com</code></pre>
 
-                    <h2>Connection and Socket Statistics</h2>
+                    <h2 id="connection-and-socket-statistics">Connection and Socket Statistics</h2>
                     <p>Understanding active network connections is fundamental to troubleshooting network issues and identifying unusual activity.</p>
 
                     <h3>netstat and ss: Socket Statistics</h3>
@@ -364,7 +365,7 @@ ss -tn dst 192.168.1.100
 # Show TCP connections with process info
 ss -tlnp</code></pre>
 
-                    <h2>Bandwidth Testing</h2>
+                    <h2 id="bandwidth-testing">Bandwidth Testing</h2>
                     <p>When network performance is the issue, bandwidth testing tools help quantify throughput and identify bottlenecks.</p>
 
                     <h3>iperf3: Network Bandwidth Testing</h3>
@@ -404,7 +405,7 @@ iperf3 -c 192.168.1.100 -R
 # Run for specific duration
 iperf3 -c 192.168.1.100 -t 30</code></pre>
 
-                    <h2>DNS Diagnostics</h2>
+                    <h2 id="dns-diagnostics">DNS Diagnostics</h2>
                     <p>DNS issues can cause mysterious failures that are hard to diagnose. These tools help verify DNS resolution and troubleshoot related problems.</p>
 
                     <h3>dig and nslookup: DNS Lookup Tools</h3>
@@ -447,7 +448,7 @@ dig +short google.com
 # nslookup for basic queries
 nslookup google.com</code></pre>
 
-                    <h2>Network Connectivity Testing</h2>
+                    <h2 id="network-connectivity-testing">Network Connectivity Testing</h2>
                     <p>These versatile tools can be used for both testing basic connectivity and as multi-purpose network utilities.</p>
 
                     <h3>netcat: The Swiss Army Knife of Networking</h3>
@@ -517,7 +518,7 @@ sudo iftop -P -i eth0
 # bmon interface
 bmon -p eth0</code></pre>
 
-                    <h2>Security and Monitoring</h2>
+                    <h2 id="security-and-monitoring">Security and Monitoring</h2>
                     <p>These tools help monitor network activity for security purposes and integrate with broader monitoring infrastructure.</p>
 
                     <h3>OpenSnitch: Application Firewall</h3>
@@ -578,7 +579,7 @@ python3 ui/opensnitch-ui.py</code></pre>
 # Monitor specific port
 /usr/lib/nagios/plugins/check_tcp -H 192.168.1.1 -p 22</code></pre>
 
-                    <h2>Additional Essential Network Utilities</h2>
+                    <h2 id="additional-essential-network-utilities">Additional Essential Network Utilities</h2>
                     <p>These supplementary tools round out your network troubleshooting toolkit for specific scenarios.</p>
 
                     <h3>Additional Tools Every Sysadmin Should Know</h3>
@@ -593,7 +594,7 @@ python3 ui/opensnitch-ui.py</code></pre>
                         <li><strong>whois</strong> - Query domain registration information.</li>
                     </ul>
 
-                    <h2>Comparison: Which Tool for Which Job?</h2>
+                    <h2 id="comparison-which-tool-for-which-job">Comparison: Which Tool for Which Job?</h2>
                     <p>Here's a quick reference to help you choose the right tool for your specific network troubleshooting need:</p>
                     <table>
                         <thead>
@@ -662,7 +663,7 @@ python3 ui/opensnitch-ui.py</code></pre>
                         </tbody>
                     </table>
 
-                    <h2>Building an Efficient Network Troubleshooting Workflow</h2>
+                    <h2 id="building-an-efficient-network-troubleshooting-workflow">Building an Efficient Network Troubleshooting Workflow</h2>
                     <p>Having the right tools is only half the battle. Here's how to build an efficient workflow for diagnosing network issues:</p>
 
                     <h3>Step 1: Verify Basic Connectivity</h3>
@@ -714,7 +715,7 @@ wireshark capture.pcap</code></pre>
                     <pre><code># Run iperf3 test (requires server on other end)
 iperf3 -c iperf-server.example.com</code></pre>
 
-                    <h2>Conclusion: Equip Yourself for Network Success</h2>
+                    <h2 id="conclusion-equip-yourself-for-network-success">Conclusion: Equip Yourself for Network Success</h2>
                     <p>Network troubleshooting is an essential skill for every sysadmin, and having the right tools at your disposal can dramatically reduce Mean Time to Resolution (MTTR). The tools covered in this guide—from lightweight utilities like ping and netcat to powerful analyzers like Wireshark—form the foundation of effective network diagnostics.</p>
                     <p>Key takeaways to remember:</p>
                     <ul>
@@ -738,6 +739,7 @@ iperf3 -c iperf-server.example.com</code></pre>
                         <span class="tag">#nmap</span>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tools/top-10-cli-tools-sysadmin.html">Top 10 CLI Tools Every Sysadmin Should Know</a> <span class="category">Guided Labs</span> <time datetime="2026-01-12">2026-01-12</time></li><li><a href="../tutorials/automated-linux-backups-restic.html">How to Set Up Automated Linux Backups with Restic</a> <span class="category">Guided Labs</span> <time datetime="2026-01-18">2026-01-18</time></li><li><a href="../tutorials/secure-linux-smb-server-ubuntu.html">How to Set Up a Secure Linux SMB Server on Ubuntu</a> <span class="category">Guided Labs</span> <time datetime="2026-01-15">2026-01-15</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -805,5 +807,6 @@ iperf3 -c iperf-server.example.com</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

@@ -106,11 +106,12 @@
                         <img width="1200" height="630" src="../images/event-viewer-vs-powershell.jpg" alt="Event Viewer vs PowerShell Logging" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-is-event-viewer">What is Event Viewer?</a></li><li><a href="#what-is-powershell-logging">What is PowerShell Logging?</a></li><li><a href="#key-differences-event-viewer-vs-powershell-logging">Key Differences: Event Viewer vs PowerShell Logging</a></li><li><a href="#event-viewer-advantages">Event Viewer Advantages</a></li><li><a href="#powershell-logging-advantages">PowerShell Logging Advantages</a></li><li><a href="#when-to-use-event-viewer">When to Use Event Viewer</a></li><li><a href="#when-to-use-powershell-logging">When to Use PowerShell Logging</a></li><li><a href="#enhanced-powershell-logging-setup">Enhanced PowerShell Logging Setup</a></li><li><a href="#combining-both-approaches">Combining Both Approaches</a></li><li><a href="#head-to-head-which-should-you-choose">Head-to-Head: Which Should You Choose?</a></li><li><a href="#best-practices">Best Practices</a></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#recommended-tools-for-windows-logging">Recommended Tools for Windows Logging</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>When it comes to monitoring Windows systems and troubleshooting issues, IT professionals have two primary logging approaches: the traditional Event Viewer and PowerShell scripting. Both methods have distinct advantages, use cases, and limitations. This comprehensive guide compares Event Viewer and PowerShell logging to help you choose the right approach for your Windows administration needs.</p>
 
-                    <h2>What is Event Viewer?</h2>
+                    <h2 id="what-is-event-viewer">What is Event Viewer?</h2>
                     <p><strong>Event Viewer</strong> is a Windows built-in graphical utility that provides a centralized interface for viewing and managing system, security, application, and custom event logs. Available in every Windows version since Windows NT, Event Viewer has been the go-to tool for Windows administrators for decades.</p>
 
                     <p>Event Viewer organizes events into five main log categories: System, Security, Application, Setup, and Forwarded Events. Each event contains metadata including timestamp, source, event ID, severity level, and detailed description text.</p>
@@ -139,7 +140,7 @@
                         </tbody>
                     </table>
 
-                    <h2>What is PowerShell Logging?</h2>
+                    <h2 id="what-is-powershell-logging">What is PowerShell Logging?</h2>
                     <p><strong>PowerShell logging</strong> encompasses multiple logging mechanisms built into PowerShell, including transcription, script block logging, module logging, and the PSReadLine history. PowerShell provides both built-in cmdlets and the ability to create custom logging solutions for scripts and automation.</p>
 
                     <p>PowerShell's flexibility allows administrators to log exactly what they need, when they need it, with full programmatic control. This makes it ideal for both ad-hoc troubleshooting and enterprise-scale monitoring solutions.</p>
@@ -167,7 +168,7 @@ function Write-Log {
     "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" | Add-Content -Path $Path
 }</code></pre>
 
-                    <h2>Key Differences: Event Viewer vs PowerShell Logging</h2>
+                    <h2 id="key-differences-event-viewer-vs-powershell-logging">Key Differences: Event Viewer vs PowerShell Logging</h2>
                     <table>
                         <thead>
                             <tr><th>Feature</th><th>Event Viewer</th><th>PowerShell Logging</th></tr>
@@ -186,7 +187,7 @@ function Write-Log {
                         </tbody>
                     </table>
 
-                    <h2>Event Viewer Advantages</h2>
+                    <h2 id="event-viewer-advantages">Event Viewer Advantages</h2>
                     <h3>1. Zero Learning Curve</h3>
                     <p>Event Viewer requires no scripting knowledge. Anyone with basic Windows familiarity can navigate logs, filter events, and understand system health. This makes it perfect for quick checks and initial troubleshooting.</p>
 
@@ -202,7 +203,7 @@ function Write-Log {
                     <h3>5. Remote Event Collection</h3>
                     <p>Windows Event Log subscriptions allow centralized collection from multiple servers without additional software. This is useful for monitoring small server environments.</p>
 
-                    <h2>PowerShell Logging Advantages</h2>
+                    <h2 id="powershell-logging-advantages">PowerShell Logging Advantages</h2>
                     <h3>1. Complete Script Visibility</h3>
                     <p>PowerShell logging captures every command executed, every output generated, and every error encountered during script execution. This is essential for debugging automation and proving compliance.</p>
 
@@ -221,7 +222,7 @@ function Write-Log {
                     <h3>6. GitOps and Version Control</h3>
                     <p>Your PowerShell logging scripts can be version-controlled, peer-reviewed, and deployed consistently across environments—something impossible with manual Event Viewer configuration.</p>
 
-                    <h2>When to Use Event Viewer</h2>
+                    <h2 id="when-to-use-event-viewer">When to Use Event Viewer</h2>
                     <p>Event Viewer is the right choice when:</p>
                     <ul>
                         <li>Performing initial troubleshooting on a single Windows machine</li>
@@ -242,7 +243,7 @@ function Write-Log {
                         <li>Quick remote server log review without scripting</li>
                     </ul>
 
-                    <h2>When to Use PowerShell Logging</h2>
+                    <h2 id="when-to-use-powershell-logging">When to Use PowerShell Logging</h2>
                     <p>PowerShell logging is the right choice when:</p>
                     <ul>
                         <li>Running automated scripts that need audit trails</li>
@@ -265,7 +266,7 @@ function Write-Log {
                         <li>Alerting on specific PowerShell command patterns</li>
                     </ul>
 
-                    <h2>Enhanced PowerShell Logging Setup</h2>
+                    <h2 id="enhanced-powershell-logging-setup">Enhanced PowerShell Logging Setup</h2>
                     <p>For comprehensive PowerShell logging, enable these Group Policy settings:</p>
 
                     <pre><code># PowerShell Transcription (logs to files)
@@ -284,7 +285,7 @@ function Write-Log {
 $transcriptPath = "\\FileServer\PowerShellLogs\$env:COMPUTERNAME"
 Start-Transcript -Path "$transcriptPath\$(Get-Date -Format 'yyyyMMdd').log" -Append</code></pre>
 
-                    <h2>Combining Both Approaches</h2>
+                    <h2 id="combining-both-approaches">Combining Both Approaches</h2>
                     <p>The most effective Windows administration strategy uses both Event Viewer and PowerShell logging together:</p>
 
                     <h3>Recommended Architecture</h3>
@@ -296,7 +297,7 @@ Start-Transcript -Path "$transcriptPath\$(Get-Date -Format 'yyyyMMdd').log" -App
                         <li><strong>PowerShell-based Analysis</strong> to parse and alert on collected logs</li>
                     </ul>
 
-                    <h2>Head-to-Head: Which Should You Choose?</h2>
+                    <h2 id="head-to-head-which-should-you-choose">Head-to-Head: Which Should You Choose?</h2>
                     <table>
                         <thead>
                             <tr><th>Scenario</th><th>Recommended</th></tr>
@@ -315,7 +316,7 @@ Start-Transcript -Path "$transcriptPath\$(Get-Date -Format 'yyyyMMdd').log" -App
                         </tbody>
                     </table>
 
-                    <h2>Best Practices</h2>
+                    <h2 id="best-practices">Best Practices</h2>
                     <h3>Event Viewer Best Practices</h3>
                     <ul>
                         <li>Configure appropriate log sizes (Security: 196MB+, Application: 20MB+)</li>
@@ -336,7 +337,7 @@ Start-Transcript -Path "$transcriptPath\$(Get-Date -Format 'yyyyMMdd').log" -App
                         <li>Store logs centrally for enterprise-wide visibility</li>
                     </ul>
 
-                    <h2>Conclusion</h2>
+                    <h2 id="conclusion">Conclusion</h2>
                     <p>Both Event Viewer and PowerShell logging are essential tools in the Windows administrator's toolkit, but they serve different purposes. <strong>Event Viewer</strong> excels at providing a quick, GUI-based view of system events, security audits, and application errors—perfect for initial troubleshooting and security investigations.</p>
 
                     <p><strong>PowerShell logging</strong> provides the flexibility, automation, and customizability needed for modern IT operations. Whether you're auditing deployment scripts, integrating with SIEM platforms, or building compliance reports, PowerShell gives you complete control over what gets logged and how it's analyzed.</p>
@@ -344,7 +345,7 @@ Start-Transcript -Path "$transcriptPath\$(Get-Date -Format 'yyyyMMdd').log" -App
                     <p>For comprehensive Windows monitoring, use both tools in tandem: Event Viewer for passive system monitoring and security auditing, PowerShell logging for active script auditing and custom monitoring. This layered approach ensures you never miss critical events while maintaining complete visibility into administrative actions.</p>
 
                     <div class="product-recommendations">
-                        <h2>Recommended Tools for Windows Logging</h2>
+                        <h2 id="recommended-tools-for-windows-logging">Recommended Tools for Windows Logging</h2>
                         <p>Enhance your Windows logging capabilities with these recommended tools:</p>
 
                         <div class="product-grid">
@@ -393,6 +394,7 @@ Start-Transcript -Path "$transcriptPath\$(Get-Date -Format 'yyyyMMdd').log" -App
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/cmd-vs-powershell-2026.html">CMD vs PowerShell in 2026: Why SysAdmins Must Switch (With Real Command Mappings)</a> <span class="category">Microsoft</span> <time datetime="2026-04-12">2026-04-12</time></li><li><a href="../tutorials/fix-vpn-issues-windows-powershell.html">Fix 90% of VPN Issues in Windows Using PowerShell (DNS, WAN Miniport, and More)</a> <span class="category">Microsoft</span> <time datetime="2026-04-12">2026-04-12</time></li><li><a href="../tutorials/azure-monitor-log-analytics-practical-guide.html">Azure Monitor and Log Analytics: A Practical Guide for AZ-104</a> <span class="category">Microsoft</span> <time datetime="2026-07-20">2026-07-20</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -460,5 +462,6 @@ Start-Transcript -Path "$transcriptPath\$(Get-Date -Format 'yyyyMMdd').log" -App
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

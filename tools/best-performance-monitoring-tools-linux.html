@@ -106,10 +106,11 @@
                         <img width="1200" height="630" src="../images/linux-performance-monitoring.jpg" alt="Linux Performance Monitoring Tools" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#introduction-to-linux-performance-monitoring">Introduction to Linux Performance Monitoring</a></li><li><a href="#top-performance-monitoring-tools-for-linux">Top Performance Monitoring Tools for Linux</a></li><li><a href="#how-to-choose-the-right-performance-monitoring-tool-for-your-linux-system">How to Choose the Right Performance Monitoring Tool for Your Linux System</a></li><li><a href="#conclusion-optimizing-system-performance-with-the-right-tools">Conclusion: Optimizing System Performance with the Right Tools</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
 
-                    <h2>Introduction to Linux Performance Monitoring</h2>
+                    <h2 id="introduction-to-linux-performance-monitoring">Introduction to Linux Performance Monitoring</h2>
                     <p>Performance monitoring is a critical aspect of system administration that often gets overlooked until problems arise. In Linux environments, understanding how your system resources are being utilized can mean the difference between a smoothly running infrastructure and one plagued by downtime, slow response times, and frustrated users.</p>
                     <p>Without proper monitoring, you risk encountering several common issues that can cripple your systems:</p>
                     <ul>
@@ -120,7 +121,7 @@
                     </ul>
                     <p>For sysadmins in 2026, having the right <a href="top-10-cli-tools-sysadmin.html">Linux monitoring tools</a> in your arsenal is essential. Whether you're managing a single server or a fleet of machines, understanding how to measure and analyze system performance is a fundamental skill that can save you countless hours of troubleshooting.</p>
 
-                    <h2>Top Performance Monitoring Tools for Linux</h2>
+                    <h2 id="top-performance-monitoring-tools-for-linux">Top Performance Monitoring Tools for Linux</h2>
                     <p>Let's explore the most powerful and popular performance monitoring tools available for Linux systems in 2026.</p>
 
                     <h3>Netdata: Real-time Monitoring and Analytics</h3>
@@ -227,7 +228,7 @@ sudo apt install grafana
 docker run -d -p 9090:9090 -v prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
 docker run -d -p 3000:3000 grafana/grafana</code></pre>
 
-                    <h2>How to Choose the Right Performance Monitoring Tool for Your Linux System</h2>
+                    <h2 id="how-to-choose-the-right-performance-monitoring-tool-for-your-linux-system">How to Choose the Right Performance Monitoring Tool for Your Linux System</h2>
                     <p>Selecting the right monitoring tool depends on your specific use case. Here's a breakdown to help you decide:</p>
                     <table>
                         <thead>
@@ -267,7 +268,7 @@ docker run -d -p 3000:3000 grafana/grafana</code></pre>
                     </table>
                     <p>For answering questions like "How do I monitor CPU usage in Linux?", tools like htop and top provide immediate answers. For more complex needs like tracking performance trends over months, Prometheus with Grafana provides the necessary infrastructure.</p>
 
-                    <h2>Conclusion: Optimizing System Performance with the Right Tools</h2>
+                    <h2 id="conclusion-optimizing-system-performance-with-the-right-tools">Conclusion: Optimizing System Performance with the Right Tools</h2>
                     <p>Effective performance monitoring is the foundation of reliable Linux system administration. Whether you're managing a single development machine or a complex production infrastructure, having the right tools can help you identify issues before they become problems.</p>
                     <p>In 2026, the Linux monitoring landscape offers solutions for every need and budget. From lightweight CLI tools like htop for quick diagnostics to comprehensive platforms like Netdata and Prometheus + Grafana for enterprise monitoring, there's a perfect tool for every situation.</p>
                     <p>Remember, the best monitoring strategy often combines multiple tools. Use htop for quick checks, iostat for disk performance analysis, and a comprehensive solution like Prometheus for long-term trend analysis and alerting. By implementing proper monitoring practices, you'll be well-equipped to maintain optimal system performance and quickly resolve any issues that arise.</p>
@@ -288,6 +289,7 @@ docker run -d -p 3000:3000 grafana/grafana</code></pre>
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tools/top-10-cli-tools-sysadmin.html">Top 10 CLI Tools Every Sysadmin Should Know</a> <span class="category">Guided Labs</span> <time datetime="2026-01-12">2026-01-12</time></li><li><a href="../tutorials/automated-linux-backups-restic.html">How to Set Up Automated Linux Backups with Restic</a> <span class="category">Guided Labs</span> <time datetime="2026-01-18">2026-01-18</time></li><li><a href="../tutorials/secure-linux-smb-server-ubuntu.html">How to Set Up a Secure Linux SMB Server on Ubuntu</a> <span class="category">Guided Labs</span> <time datetime="2026-01-15">2026-01-15</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -355,5 +357,6 @@ docker run -d -p 3000:3000 grafana/grafana</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

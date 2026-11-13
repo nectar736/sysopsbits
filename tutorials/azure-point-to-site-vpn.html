@@ -106,11 +106,12 @@
                         <img width="1024" height="536" src="../images/azure-point-to-site-vpn.jpg" alt="Point-to-Site VPN Azure" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-is-point-to-site-vpn">What is Point-to-Site VPN?</a></li><li><a href="#authentication-methods">Authentication Methods</a></li><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#method-1-azure-ad-authentication">Method 1: Azure AD Authentication</a></li><li><a href="#method-2-certificate-based-authentication">Method 2: Certificate-Based Authentication</a></li><li><a href="#client-setup">Client Setup</a></li><li><a href="#connection-troubleshooting">Connection Troubleshooting</a></li><li><a href="#testing-your-connection">Testing Your Connection</a></li><li><a href="#security-best-practices">Security Best Practices</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Point-to-Site (P2S) VPN allows individual clients to securely connect to your Azure virtual network without a site-to-site VPN connection. This is ideal for remote developers and administrators who need access to Azure resources.</p>
 
-                    <h2>What is Point-to-Site VPN?</h2>
+                    <h2 id="what-is-point-to-site-vpn">What is Point-to-Site VPN?</h2>
                     <p>P2S VPN creates a secure connection from a single client computer to Azure virtual networks. It's commonly used for:</p>
                     <ul>
                         <li>Remote work access to development environments</li>
@@ -118,7 +119,7 @@
                         <li>Testing connectivity without exposing resources publicly</li>
                     </ul>
 
-                    <h2>Authentication Methods</h2>
+                    <h2 id="authentication-methods">Authentication Methods</h2>
                     <p>Azure P2S VPN supports two primary authentication methods:</p>
 
                     <h3>Certificate-Based Authentication</h3>
@@ -131,7 +132,7 @@
                         <strong>Recommendation:</strong> Azure AD authentication is easier to manage for most organizations and provides stronger security through conditional access policies.
                     </div>
 
-                    <h2>Prerequisites</h2>
+                    <h2 id="prerequisites">Prerequisites</h2>
                     <ul>
                         <li>Azure subscription with contributor access</li>
                         <li>Existing virtual network with a subnet for VPN gateway</li>
@@ -139,7 +140,7 @@
                         <li>For certificate auth: OpenSSL for generating certificates</li>
                     </ul>
 
-                    <h2>Method 1: Azure AD Authentication</h2>
+                    <h2 id="method-1-azure-ad-authentication">Method 1: Azure AD Authentication</h2>
 
                     <h3>Step 1: Create the Virtual Network Gateway</h3>
                     <pre><code>az network vnet create \
@@ -194,7 +195,7 @@ az ad sp create --id <app-id></code></pre>
                         <li>Save the configuration</li>
                     </ol>
 
-                    <h2>Method 2: Certificate-Based Authentication</h2>
+                    <h2 id="method-2-certificate-based-authentication">Method 2: Certificate-Based Authentication</h2>
 
                     <h3>Step 1: Generate Root Certificate</h3>
                     <pre><code># Generate root CA private key
@@ -242,7 +243,7 @@ $cert = Get-Content -Path "rootCA.cer" -Encoding Byte
                         <li>Save the configuration</li>
                     </ol>
 
-                    <h2>Client Setup</h2>
+                    <h2 id="client-setup">Client Setup</h2>
 
                     <h3>Windows</h3>
                     <p>Download the Azure VPN Client from the Microsoft Store or Azure Portal:</p>
@@ -317,7 +318,7 @@ verb 3
 # Paste client.key content here
 &lt;/key&gt;</code></pre>
 
-                    <h2>Connection Troubleshooting</h2>
+                    <h2 id="connection-troubleshooting">Connection Troubleshooting</h2>
 
                     <h3>Common Issues and Solutions</h3>
 
@@ -369,7 +370,7 @@ openssl x509 -req -in clientrenewal.csr -CA rootCA.cer \
   -CAkey rootCA.key -CAcreateserial \
   -out clientrenewal.cer -days 365 -sha256</code></pre>
 
-                    <h2>Testing Your Connection</h2>
+                    <h2 id="testing-your-connection">Testing Your Connection</h2>
                     <pre><code># After connecting, verify your IP address
 ipconfig  # Windows
 ip addr   # Linux/macOS
@@ -382,7 +383,7 @@ ping 10.0.0.4  # Replace with your VM private IP
 # Test DNS resolution
 nslookup mydatabase.internal.cloudapp.net</code></pre>
 
-                    <h2>Security Best Practices</h2>
+                    <h2 id="security-best-practices">Security Best Practices</h2>
                     <ul>
                         <li>Use Azure AD authentication with MFA for stronger security</li>
                         <li>Implement conditional access policies for VPN access</li>
@@ -394,7 +395,7 @@ nslookup mydatabase.internal.cloudapp.net</code></pre>
                     </ul>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>How many concurrent P2S connections does Azure support?</h3>
@@ -442,6 +443,7 @@ nslookup mydatabase.internal.cloudapp.net</code></pre>
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -509,5 +511,6 @@ nslookup mydatabase.internal.cloudapp.net</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

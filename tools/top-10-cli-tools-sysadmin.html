@@ -107,11 +107,12 @@
                         <img width="784" height="1168" src="../images/sysadmin-cli.jpg" alt="CLI Tools for Sysadmin" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#install-all-ten-at-once">Install all ten at once</a></li><li><a href="#1-htop-interactive-process-monitor">1. htop: interactive process monitor</a></li><li><a href="#2-tmux-sessions-that-survive-disconnects">2. tmux: sessions that survive disconnects</a></li><li><a href="#3-rsync-fast-resumable-file-sync">3. rsync: fast, resumable file sync</a></li><li><a href="#4-ss-sockets-and-ports">4. ss: sockets and ports</a></li><li><a href="#5-lsof-what-has-this-file-or-port-open">5. lsof: what has this file or port open?</a></li><li><a href="#6-dig-dns-answers-you-can-trust">6. dig: DNS answers you can trust</a></li><li><a href="#7-curl-test-endpoints-without-a-browser">7. curl: test endpoints without a browser</a></li><li><a href="#8-jq-make-json-readable">8. jq: make JSON readable</a></li><li><a href="#9-find-locate-files-by-any-attribute">9. find: locate files by any attribute</a></li><li><a href="#10-awk-and-sed-text-processing">10. awk and sed: text processing</a></li><li><a href="#windows-admin-the-powershell-equivalents">Windows admin? The PowerShell equivalents</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Ten command-line tools cover most of what a Linux sysadmin does in a day: finding what's eating CPU, keeping a session alive through an SSH drop, moving data, checking ports and DNS, testing an endpoint, and digging through logs. For each tool below you get what it's for, how to install it, and the commands worth memorizing.</p>
 
-                    <h2>Install all ten at once</h2>
+                    <h2 id="install-all-ten-at-once">Install all ten at once</h2>
                     <pre><code># Ubuntu / Debian
 sudo apt install htop tmux rsync iproute2 lsof dnsutils curl jq findutils gawk sed
 
@@ -137,7 +138,7 @@ sudo dnf install htop tmux rsync iproute lsof bind-utils curl jq findutils gawk 
                         </table>
                     </div>
 
-                    <h2>1. htop: interactive process monitor</h2>
+                    <h2 id="1-htop-interactive-process-monitor">1. htop: interactive process monitor</h2>
                     <p>htop shows per-core CPU, memory, swap, and a sortable, searchable process list. You can kill or renice a process without typing its PID.</p>
                     <pre><code>htop                 # start
 htop -u www-data     # only one user's processes
@@ -145,7 +146,7 @@ htop -p 1234,5678    # watch specific PIDs
 htop -d 20           # refresh every 2 seconds (units are tenths of a second)</code></pre>
                     <p>Inside htop, <kbd>F6</kbd> picks the sort column, <kbd>F4</kbd> filters, <kbd>F5</kbd> toggles the tree view (handy for runaway child processes), and <kbd>F9</kbd> sends a signal.</p>
 
-                    <h2>2. tmux: sessions that survive disconnects</h2>
+                    <h2 id="2-tmux-sessions-that-survive-disconnects">2. tmux: sessions that survive disconnects</h2>
                     <p>Start every long-running job, such as an upgrade, a migration, or a big rsync, inside tmux. If your SSH connection drops, the job keeps running and you reattach later.</p>
                     <pre><code>tmux new -s maint      # new named session
 # Ctrl-b d             detach (session keeps running)
@@ -155,7 +156,7 @@ tmux attach -t maint   # reattach
 # Ctrl-b "             split top/bottom
 # Ctrl-b arrow keys    move between panes</code></pre>
 
-                    <h2>3. rsync: fast, resumable file sync</h2>
+                    <h2 id="3-rsync-fast-resumable-file-sync">3. rsync: fast, resumable file sync</h2>
                     <p>rsync copies only what changed, preserves permissions and timestamps, and resumes cleanly, which makes it the right tool for migrations and simple backups.</p>
                     <pre><code># Preview first: -n (dry run) shows what would change
 rsync -avhn --delete /srv/www/ backup@nas:/backups/www/
@@ -169,20 +170,20 @@ rsync -avh -e "ssh -p 2222" /etc/nginx/ admin@web02:/etc/nginx/</code></pre>
                         <p><strong>The trailing slash matters.</strong> <code>/srv/www/</code> copies the <em>contents</em> of www; <code>/srv/www</code> copies the directory itself. Combined with <code>--delete</code>, the wrong one can wipe a destination. Always dry-run first.</p>
                     </div>
 
-                    <h2>4. ss: sockets and ports</h2>
+                    <h2 id="4-ss-sockets-and-ports">4. ss: sockets and ports</h2>
                     <p><code>ss</code> is the modern replacement for <code>netstat</code>. It's faster and installed by default on current distributions.</p>
                     <pre><code>sudo ss -tulpn                              # listening TCP/UDP ports + owning process
 ss -tn state established '( dport = :443 )' # established connections to port 443
 ss -s                                       # summary counts (spot connection floods)</code></pre>
 
-                    <h2>5. lsof: what has this file or port open?</h2>
+                    <h2 id="5-lsof-what-has-this-file-or-port-open">5. lsof: what has this file or port open?</h2>
                     <pre><code>sudo lsof -i :8080        # which process is using port 8080
 sudo lsof -u deploy       # everything one user has open
 sudo lsof -p 1234         # every file a process has open
 sudo lsof +L1             # deleted files still held open</code></pre>
                     <p>That last one solves a classic mystery: <code>df</code> says the disk is full, but <code>du</code> can't find the space. A process is still holding a deleted log file. Restart or reload that process and the space comes back.</p>
 
-                    <h2>6. dig: DNS answers you can trust</h2>
+                    <h2 id="6-dig-dns-answers-you-can-trust">6. dig: DNS answers you can trust</h2>
                     <pre><code>dig +short example.com A        # just the answer
 dig @1.1.1.1 example.com        # ask a specific resolver
 dig example.com MX +noall +answer
@@ -190,14 +191,14 @@ dig +trace example.com          # follow delegation from the root
 dig -x 203.0.113.10             # reverse lookup</code></pre>
                     <p>When "DNS is broken", compare your internal resolver with a public one (<code>dig @your-dns</code> vs <code>dig @1.1.1.1</code>). That tells you within seconds whether the problem is your server or the record itself.</p>
 
-                    <h2>7. curl: test endpoints without a browser</h2>
+                    <h2 id="7-curl-test-endpoints-without-a-browser">7. curl: test endpoints without a browser</h2>
                     <pre><code>curl -I https://example.com                       # headers only
 curl -sS -o /dev/null -w '%{http_code} %{time_total}s\n' https://example.com
 curl -v --resolve example.com:443:10.0.0.5 https://example.com/health
 curl -X POST -H 'Content-Type: application/json' -d '{"ping":true}' https://api.example.com/v1/test</code></pre>
                     <p><code>--resolve</code> sends the request to a specific backend IP while keeping the right hostname and TLS certificate, so you can test one server behind a load balancer.</p>
 
-                    <h2>8. jq: make JSON readable</h2>
+                    <h2 id="8-jq-make-json-readable">8. jq: make JSON readable</h2>
                     <p>Cloud CLIs, APIs, and many logs speak JSON. jq filters and reshapes it.</p>
                     <pre><code>curl -s https://api.github.com/repos/restic/restic | jq '{name, stars: .stargazers_count}'
 az vm list -o json | jq -r '.[].name'
@@ -205,7 +206,7 @@ az vm list -d -o json | jq -r '.[] | select(.powerState=="VM running") | .name'
 cat app.log.json | jq -r 'select(.level=="error") | "\(.time) \(.msg)"'</code></pre>
                     <p><code>-r</code> prints raw strings without quotes, ready to pipe into another command.</p>
 
-                    <h2>9. find: locate files by any attribute</h2>
+                    <h2 id="9-find-locate-files-by-any-attribute">9. find: locate files by any attribute</h2>
                     <pre><code>sudo find / -xdev -type f -size +1G 2&gt;/dev/null           # big files on the root filesystem
 find /var/log -name '*.log' -mtime +14                    # logs older than 14 days
 find /var/log -name '*.log' -mtime +14 -print -delete     # same, then delete them
@@ -213,7 +214,7 @@ sudo find / -xdev -perm -4000 -type f 2&gt;/dev/null         # SUID binaries (se
 find /srv/www -type f -name '*.php' -exec grep -l 'eval(' {} +</code></pre>
                     <p>Run any <code>-delete</code> command once without it first, and check the list.</p>
 
-                    <h2>10. awk and sed: text processing</h2>
+                    <h2 id="10-awk-and-sed-text-processing">10. awk and sed: text processing</h2>
                     <p>awk pulls columns out of structured text. sed edits streams and files in place.</p>
                     <pre><code># Top 10 client IPs in an nginx access log
 awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head
@@ -227,12 +228,13 @@ sudo sed -i.bak 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_conf
 # Print lines 100-120 of a big file
 sed -n '100,120p' /var/log/syslog</code></pre>
 
-                    <h2>Windows admin? The PowerShell equivalents</h2>
+                    <h2 id="windows-admin-the-powershell-equivalents">Windows admin? The PowerShell equivalents</h2>
                     <p>If you manage both platforms: <code>Get-Process</code> for htop, <code>Get-NetTCPConnection -State Listen</code> for ss, <code>Resolve-DnsName</code> for dig, <code>Invoke-RestMethod</code> for curl and jq, and <code>robocopy /MIR</code> for rsync. See <a href="../tutorials/cmd-vs-powershell-2026.html">CMD vs PowerShell</a> for the full mapping.</p>
 
                     <p>Ready to use these on a real server? Put them to work in <a href="../tutorials/automated-linux-backups-restic.html">automated Linux backups with Restic</a> and the <a href="essential-network-troubleshooting-tools.html">network troubleshooting tools guide</a>.</p>
                 </div>
 
+                <!-- auto:cta:start --><p class="store-line">Studying for a certification? <a href="../store.html">Browse the study guides</a>.</p><!-- auto:cta:end -->
                 <footer class="post-footer">
                     <div class="post-tags">
                         <span class="tag">#cli</span>
@@ -245,6 +247,7 @@ sed -n '100,120p' /var/log/syslog</code></pre>
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/automated-linux-backups-restic.html">How to Set Up Automated Linux Backups with Restic</a> <span class="category">Guided Labs</span> <time datetime="2026-01-18">2026-01-18</time></li><li><a href="../tutorials/secure-linux-smb-server-ubuntu.html">How to Set Up a Secure Linux SMB Server on Ubuntu</a> <span class="category">Guided Labs</span> <time datetime="2026-01-15">2026-01-15</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -312,5 +315,6 @@ sed -n '100,120p' /var/log/syslog</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

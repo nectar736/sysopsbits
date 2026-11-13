@@ -106,12 +106,13 @@
                         <img width="1200" height="630" src="../images/azure-rbac-vs-entra-id-roles.jpg" alt="Azure RBAC vs Entra ID Roles Comparison" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-each-system-controls">What Each System Controls</a></li><li><a href="#scope-hierarchy">Scope Hierarchy</a></li><li><a href="#fundamental-azure-rbac-roles">Fundamental Azure RBAC Roles</a></li><li><a href="#key-entra-id-roles">Key Entra ID Roles</a></li><li><a href="#the-overlap-where-they-meet">The Overlap: Where They Meet</a></li><li><a href="#custom-roles">Custom Roles</a></li><li><a href="#privileged-identity-management-pim">Privileged Identity Management (PIM)</a></li><li><a href="#attribute-based-access-control-abac">Attribute-Based Access Control (ABAC)</a></li><li><a href="#practical-powershell-and-cli-commands">Practical PowerShell and CLI Commands</a></li><li><a href="#how-az-104-tests-this">How AZ-104 Tests This</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>If you are studying for the AZ-104 exam or managing Azure day-to-day, the difference between Azure RBAC and Entra ID roles is one of the most confusing concepts to nail down. Both control access. Both use roles. They share a portal and some terminology. But they are completely separate authorization systems.</p>
                     <p>This guide breaks down exactly what each system controls, where they overlap, and what AZ-104 expects you to know.</p>
 
-                    <h2>What Each System Controls</h2>
+                    <h2 id="what-each-system-controls">What Each System Controls</h2>
                     <p>Azure RBAC (Role-Based Access Control) governs access to Azure resources through Azure Resource Manager. That includes VMs, storage accounts, virtual networks, subscriptions, and resource groups. It is the authorization system that answers: "Who can create, read, update, or delete this Azure resource?"</p>
                     <p>Entra ID roles (formerly Azure AD roles) govern access to Microsoft Entra ID itself and some Microsoft 365 services. These roles control who can manage users, groups, applications, conditional access policies, and security settings inside the Entra ID tenant. They answer: "Who can modify this user account or this application registration?"</p>
                     <p>Both systems use different underlying APIs. Azure RBAC operates through Azure Resource Manager. Entra ID roles operate through Microsoft Graph. A role assignment in one system has no effect in the other.</p>
@@ -120,7 +121,7 @@
                         <strong>Key Point for AZ-104:</strong> Azure RBAC and Entra ID roles are independent. You need to understand both to pass Domain 1 (Identity). Expect scenario questions that test whether you know which role type applies to which resource.
                     </div>
 
-                    <h2>Scope Hierarchy</h2>
+                    <h2 id="scope-hierarchy">Scope Hierarchy</h2>
                     <p>The scope at which you assign a role fundamentally affects its impact. The two systems use different scope models.</p>
 
                     <h3>Azure RBAC Scopes</h3>
@@ -140,7 +141,7 @@
                         <li><strong>Application (for app management roles)</strong> - Some roles can be scoped to a single application registration or enterprise application.</li>
                     </ul>
 
-                    <h2>Fundamental Azure RBAC Roles</h2>
+                    <h2 id="fundamental-azure-rbac-roles">Fundamental Azure RBAC Roles</h2>
                     <p>AZ-104 tests on these four built-in roles heavily. You must know what each can do.</p>
                     <table>
                         <thead>
@@ -185,7 +186,7 @@
                     </table>
                     <p>Owner and User Access Administrator can grant access to others, which is why they are considered privileged roles. AZ-104 questions frequently test the distinction between Contributor and Owner - the single difference is the ability to manage role assignments.</p>
 
-                    <h2>Key Entra ID Roles</h2>
+                    <h2 id="key-entra-id-roles">Key Entra ID Roles</h2>
                     <p>Entra ID has 60+ built-in roles. AZ-104 focuses on these:</p>
                     <ul>
                         <li><strong>Global Administrator</strong> - Full access to all Entra ID features and Microsoft 365 services (Exchange Online, SharePoint Online, Microsoft Entra). Can also elevate to Azure RBAC access.</li>
@@ -197,7 +198,7 @@
                         <strong>Important for AZ-104:</strong> A Global Administrator does NOT automatically have access to Azure resources. They only have tenant-level access to Entra ID and Microsoft 365. To access Azure resources, they must either be assigned an Azure RBAC role or use the "Access management for Azure resources" elevation feature.
                     </div>
 
-                    <h2>The Overlap: Where They Meet</h2>
+                    <h2 id="the-overlap-where-they-meet">The Overlap: Where They Meet</h2>
                     <p>By default, Azure RBAC and Entra ID roles operate completely independently. There is exactly one bridge: the Global Administrator can enable the "Access management for Azure resources" toggle in the Azure portal. This assigns them the Azure RBAC User Access Administrator role at the tenant root scope, giving them access to all subscriptions in the tenant.</p>
                     <p>This is often used to recover a tenant when all other administrators have been locked out. Once you enable this toggle, you can assign other Azure RBAC roles at the top-level management group or individual subscription.</p>
                     <p>AZ-104 exam questions test this scenario regularly. Expect a question where someone is a Global Administrator but cannot see VMs in a subscription - the answer is always that Entra ID roles do not grant Azure resource access by default.</p>
@@ -211,7 +212,7 @@
                     </ul>
                     <p>As of May 2026, all classic administrator roles are fully retired. You must use Azure RBAC roles instead. If you have legacy processes depending on these roles, migrate them to Owner or Contributor role assignments immediately.</p>
 
-                    <h2>Custom Roles</h2>
+                    <h2 id="custom-roles">Custom Roles</h2>
                     <p>Both systems support custom roles for when built-in roles do not provide the right level of access.</p>
 
                     <h3>Azure RBAC Custom Roles</h3>
@@ -268,12 +269,12 @@ New-MgRoleManagementDirectoryRoleDefinition `
     -Description "Can reset passwords for users in assigned AU only" `
     -RolePermissions @(@{AllowedResourceActions=@("microsoft.directory/users/password/update")})</code></pre>
 
-                    <h2>Privileged Identity Management (PIM)</h2>
+                    <h2 id="privileged-identity-management-pim">Privileged Identity Management (PIM)</h2>
                     <p>Both Azure RBAC and Entra ID roles integrate with Microsoft Entra Privileged Identity Management (PIM). PIM provides just-in-time activation of privileged roles, requiring approval and multi-factor authentication before a user gains elevated permissions.</p>
                     <p>For Azure RBAC roles, PIM supports time-bound assignments to roles like Owner or Contributor at subscription or resource group scope. For Entra ID roles, PIM supports the same for Global Administrator, User Administrator, and other directory roles.</p>
                     <p>AZ-104 expects you to know that PIM can be used for both role types, and that it supports both permanent assignments and eligible (time-bound) assignments.</p>
 
-                    <h2>Attribute-Based Access Control (ABAC)</h2>
+                    <h2 id="attribute-based-access-control-abac">Attribute-Based Access Control (ABAC)</h2>
                     <p>ABAC extends Azure RBAC by adding conditions to role assignments. Instead of granting blanket access, you can restrict access based on resource or request attributes such as tags, IP address ranges, or the caller's principal type.</p>
                     <p>For example, you can grant Contributor access but only for resources tagged <code>Environment=Development</code>, or grant read access only from a specific IP range.</p>
 
@@ -297,7 +298,7 @@ New-AzRoleAssignment `
     -Condition $condition `
     -ConditionVersion "2.0"</code></pre>
 
-                    <h2>Practical PowerShell and CLI Commands</h2>
+                    <h2 id="practical-powershell-and-cli-commands">Practical PowerShell and CLI Commands</h2>
                     <p>You will need these for both the AZ-104 exam and real administration.</p>
 
                     <h3>Azure RBAC</h3>
@@ -344,7 +345,7 @@ New-MgRoleManagementDirectoryRoleAssignment `
 az rest --method GET \
     --uri "https://graph.microsoft.com/v1.0/me/memberOf"</code></pre>
 
-                    <h2>How AZ-104 Tests This</h2>
+                    <h2 id="how-az-104-tests-this">How AZ-104 Tests This</h2>
                     <p>Domain 1 (Identity) of the AZ-104 exam covers Azure RBAC and Entra ID roles through scenario-based questions. Expect these question types:</p>
                     <ul>
                         <li>"A user is a Global Administrator but cannot see VMs in a subscription. What is the issue?" - Entra ID roles do not grant Azure RBAC access.</li>
@@ -357,7 +358,7 @@ az rest --method GET \
                     <p>This topic is tested heavily in AZ-104 Domain 1. Our <a href="https://buymeacoffee.com/mattyhip/e/537655" target="_blank" rel="noopener">AZ-104 Exam Cram</a> covers 50+ RBAC scenario questions across all five domains, including detailed explanations for every answer.</p>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>Can an Entra ID Global Administrator access Azure resources?</h3>
@@ -387,6 +388,7 @@ az rest --method GET \
                         <p><strong>Related:</strong> <a href="azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a>.</p>
                     </div>
 
+                <!-- auto:cta:start --><p class="store-line">Studying for a certification? <a href="../store.html">Browse the study guides</a>.</p><!-- auto:cta:end -->
                 <footer class="post-footer">
                     <div class="post-tags">
                         <span class="tag">#azure</span>
@@ -402,6 +404,7 @@ az rest --method GET \
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/azure-monitor-log-analytics-practical-guide.html">Azure Monitor and Log Analytics: A Practical Guide for AZ-104</a> <span class="category">Microsoft</span> <time datetime="2026-07-20">2026-07-20</time></li><li><a href="../tutorials/create-secure-linux-vm-azure.html">Create and Secure a Linux VM in Azure: Ubuntu Step-by-Step</a> <span class="category">Microsoft</span> <time datetime="2026-03-05">2026-03-05</time></li><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -469,5 +472,6 @@ az rest --method GET \
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

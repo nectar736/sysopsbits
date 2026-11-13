@@ -106,12 +106,13 @@
                         <img width="1200" height="630" src="../images/azure-monitor-log-analytics-guide.jpg" alt="Azure Monitor and Log Analytics Architecture" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#azure-monitor-overview">Azure Monitor Overview</a></li><li><a href="#log-analytics-workspace">Log Analytics Workspace</a></li><li><a href="#data-collection">Data Collection</a></li><li><a href="#kusto-query-language-kql">Kusto Query Language (KQL)</a></li><li><a href="#alerts-and-action-groups">Alerts and Action Groups</a></li><li><a href="#workbooks-and-dashboards">Workbooks and Dashboards</a></li><li><a href="#cost-management">Cost Management</a></li><li><a href="#how-az-104-tests-monitoring">How AZ-104 Tests Monitoring</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Monitoring is not optional in Azure. Every VM, database, and application generates telemetry, and you need a unified system to collect, query, and act on it. Azure Monitor is that system. Log Analytics is its data store.</p>
                     <p>This guide covers the practical setup, querying, and alerting patterns that AZ-104 expects you to know for Domain 5 (Monitoring).</p>
 
-                    <h2>Azure Monitor Overview</h2>
+                    <h2 id="azure-monitor-overview">Azure Monitor Overview</h2>
                     <p>Azure Monitor collects, analyzes, and responds to telemetry from Azure resources, on-premises infrastructure, and third-party services. It has two data platforms:</p>
                     <ul>
                         <li><strong>Metrics</strong> - Numeric time-series data (CPU percentage, disk IOPS, HTTP 4xx count). Stored for 93 days by default. Supports near-real-time alerting at 1-minute granularity.</li>
@@ -122,7 +123,7 @@
                         <strong>AZ-104 Tip:</strong> Metrics are best for real-time dashboards and quick threshold alerts (CPU > 90%). Logs are best for troubleshooting, correlation across resources, and custom queries. Know when to use each.
                     </div>
 
-                    <h2>Log Analytics Workspace</h2>
+                    <h2 id="log-analytics-workspace">Log Analytics Workspace</h2>
                     <p>A Log Analytics workspace is a container for log data. Every Azure subscription can have multiple workspaces. The workspace is both a storage boundary and a security boundary - cross-workspace queries are possible but require explicit configuration.</p>
 
                     <h3>Creating a Workspace</h3>
@@ -153,7 +154,7 @@ az monitor log-analytics workspace create \
                     </ul>
                     <p>After interactive retention expires, you can configure long-term retention up to 12 years. Data moves to a low-cost archive tier with 30-day restoration windows.</p>
 
-                    <h2>Data Collection</h2>
+                    <h2 id="data-collection">Data Collection</h2>
                     <p>There are three main paths for getting data into Log Analytics. AZ-104 expects you to know when to use each.</p>
 
                     <h3>1. Diagnostic Settings</h3>
@@ -236,7 +237,7 @@ New-AzDataCollectionRule `
                     <h3>3. Logs Ingestion API</h3>
                     <p>For custom or third-party data, use the Logs Ingestion API. You create a DCR with a JSON schema, then send data over HTTPS with Azure AD authentication. This supports custom tables and custom JSON payloads.</p>
 
-                    <h2>Kusto Query Language (KQL)</h2>
+                    <h2 id="kusto-query-language-kql">Kusto Query Language (KQL)</h2>
                     <p>KQL is the query language for Log Analytics. AZ-104 expects you to read and interpret basic KQL queries, not write complex ones. These patterns cover the scenarios you will see.</p>
 
                     <h3>Basic Queries</h3>
@@ -276,7 +277,7 @@ Usage
 | summarize TotalBillableGB = sum(Quantity)
 | where TotalBillableGB > 50</code></pre>
 
-                    <h2>Alerts and Action Groups</h2>
+                    <h2 id="alerts-and-action-groups">Alerts and Action Groups</h2>
                     <p>An alert rule monitors a data source (metric or log query) and fires when conditions are met. When an alert fires, it triggers one or more action groups.</p>
 
                     <h3>Action Groups</h3>
@@ -330,7 +331,7 @@ $alert = @{
 
 New-AzScheduledQueryRule @alert</code></pre>
 
-                    <h2>Workbooks and Dashboards</h2>
+                    <h2 id="workbooks-and-dashboards">Workbooks and Dashboards</h2>
                     <p>Azure Monitor Workbooks are interactive reports built on KQL queries. They combine text, charts, grids, and parameters into reusable monitoring templates. Common use cases include:</p>
                     <ul>
                         <li>VM performance overview with selectable time ranges</li>
@@ -340,7 +341,7 @@ New-AzScheduledQueryRule @alert</code></pre>
                     </ul>
                     <p>Workbooks can be pinned to Azure dashboards and shared across teams. You can also export them as ARM templates for version control.</p>
 
-                    <h2>Cost Management</h2>
+                    <h2 id="cost-management">Cost Management</h2>
                     <p>Log Analytics costs come from two sources: data ingestion and data retention. Pay-as-you-go pricing is approximately $2.76 per GB ingested for Analytics tables, with lower rates for Basic tables.</p>
 
                     <h3>Controlling Costs</h3>
@@ -376,7 +377,7 @@ az monitor log-analytics workspace update \
                         <strong>Warning:</strong> The daily cap stops all data ingestion, including security logs and event data. If you have compliance requirements, set the cap higher than your expected usage rather than using it as a strict budget. Workspace transformations are a safer cost control mechanism.
                     </div>
 
-                    <h2>How AZ-104 Tests Monitoring</h2>
+                    <h2 id="how-az-104-tests-monitoring">How AZ-104 Tests Monitoring</h2>
                     <p>Domain 5 (Monitoring) of the AZ-104 exam covers Azure Monitor through multiple question types:</p>
                     <ul>
                         <li>"You need to collect performance data from 50 VMs. What should you use?" - Azure Monitor Agent with a DCR.</li>
@@ -389,7 +390,7 @@ az monitor log-analytics workspace update \
                     <p>AZ-104 tests your understanding of Azure Monitor architecture, Log Analytics workspaces, and alert configuration. Our <a href="https://buymeacoffee.com/mattyhip/e/537655" target="_blank" rel="noopener">AZ-104 Exam Cram</a> includes monitoring scenario questions that mirror the exam format with detailed explanations.</p>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>What is the difference between Azure Monitor Metrics and Logs?</h3>
@@ -415,6 +416,7 @@ az monitor log-analytics workspace update \
                     </section>
                 </div>
 
+                <!-- auto:cta:start --><p class="store-line">Studying for a certification? <a href="../store.html">Browse the study guides</a>.</p><!-- auto:cta:end -->
                 <footer class="post-footer">
                     <div class="post-tags">
                         <span class="tag">#azure</span>
@@ -430,6 +432,7 @@ az monitor log-analytics workspace update \
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/azure-rbac-vs-entra-id-roles.html">Azure RBAC vs Entra ID Roles: What AZ-104 Expects You to Know</a> <span class="category">Microsoft</span> <time datetime="2026-07-18">2026-07-18</time></li><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -497,5 +500,6 @@ az monitor log-analytics workspace update \
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

@@ -107,6 +107,7 @@
                         <img width="1200" height="630" src="../images/automated-linux-backups-restic.jpg" alt="Automated Linux Backups with Restic" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#why-restic">Why Restic</a></li><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#step-1-install-restic">Step 1: Install Restic</a></li><li><a href="#step-2-create-a-protected-config-and-password">Step 2: Create a protected config and password</a></li><li><a href="#step-3-initialize-the-repository">Step 3: Initialize the repository</a></li><li><a href="#step-4-run-and-inspect-your-first-backup">Step 4: Run and inspect your first backup</a></li><li><a href="#step-5-back-up-databases-the-right-way">Step 5: Back up databases the right way</a></li><li><a href="#step-6-write-the-backup-script">Step 6: Write the backup script</a></li><li><a href="#step-7-schedule-it-with-a-systemd-timer">Step 7: Schedule it with a systemd timer</a></li><li><a href="#step-8-practice-a-restore-don-t-skip-this">Step 8: Practice a restore (don't skip this)</a></li><li><a href="#hardening-and-best-practices">Hardening and best practices</a></li><li><a href="#where-to-store-the-repository">Where to store the repository</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <p>Restic is a fast, open-source backup tool that encrypts everything on the client and stores each file chunk only once, no matter how many snapshots reference it. This guide takes a Linux server from zero to automated, verified, offsite backups: install, repository setup, a backup script, a systemd timer, retention, integrity checks, and the restore drill most guides skip.</p>
@@ -115,7 +116,7 @@
                         <p><strong>What you'll build:</strong> a nightly backup of <code>/etc</code>, <code>/home</code>, <code>/var/www</code>, and database dumps to an encrypted Restic repository, pruned to 7 daily, 4 weekly, and 12 monthly snapshots, with a weekly integrity check. Plan on about 30 minutes.</p>
                     </div>
 
-                    <h2>Why Restic</h2>
+                    <h2 id="why-restic">Why Restic</h2>
                     <ul>
                         <li><strong>Client-side encryption.</strong> Data is encrypted with AES-256 (with Poly1305 authentication) before it leaves the server. The storage provider only ever sees ciphertext.</li>
                         <li><strong>Deduplication.</strong> Files are split into content-defined chunks, so a 1 GB log file that grows by 10 MB only uploads the new 10 MB.</li>
@@ -124,20 +125,20 @@
                         <li><strong>One static binary.</strong> No agent, no database, nothing to keep running between backups.</li>
                     </ul>
 
-                    <h2>Prerequisites</h2>
+                    <h2 id="prerequisites">Prerequisites</h2>
                     <ul>
                         <li>Ubuntu 22.04/24.04, Debian 12, or RHEL 9 family (commands below use Ubuntu)</li>
                         <li>sudo access</li>
                         <li>A backup destination: a second disk, a NAS reachable over SFTP, or an S3-compatible / Azure Blob bucket</li>
                     </ul>
 
-                    <h2>Step 1: Install Restic</h2>
+                    <h2 id="step-1-install-restic">Step 1: Install Restic</h2>
                     <pre><code>sudo apt update
 sudo apt install restic
 restic version</code></pre>
                     <p>Distribution packages lag behind upstream. For the newest release, download the binary from the <a href="https://github.com/restic/restic/releases" target="_blank" rel="noopener">Restic GitHub releases</a> page into <code>/usr/local/bin</code>; after that, <code>sudo restic self-update</code> keeps it current. (The Debian/Ubuntu package disables self-update.) On RHEL-family systems, Restic is in EPEL: <code>sudo dnf install restic</code>.</p>
 
-                    <h2>Step 2: Create a protected config and password</h2>
+                    <h2 id="step-2-create-a-protected-config-and-password">Step 2: Create a protected config and password</h2>
                     <p>Keep repository settings in one root-only file so the backup script, the systemd unit, and your interactive shell all use the same values.</p>
                     <pre><code>sudo mkdir -p /etc/restic
 sudo sh -c 'openssl rand -base64 32 &gt; /etc/restic/password'
@@ -166,13 +167,13 @@ AZURE_ACCOUNT_KEY=your-storage-account-key
 RESTIC_PASSWORD_FILE=/etc/restic/password</code></pre>
                     <pre><code>sudo chmod 600 /etc/restic/restic.env</code></pre>
 
-                    <h2>Step 3: Initialize the repository</h2>
+                    <h2 id="step-3-initialize-the-repository">Step 3: Initialize the repository</h2>
                     <pre><code>sudo -i
 set -a; . /etc/restic/restic.env; set +a
 restic init</code></pre>
                     <p><code>set -a</code> exports every variable in the file, so Restic sees them. You should see <code>created restic repository ... at ...</code>. Run this once per repository.</p>
 
-                    <h2>Step 4: Run and inspect your first backup</h2>
+                    <h2 id="step-4-run-and-inspect-your-first-backup">Step 4: Run and inspect your first backup</h2>
                     <p>Create an exclude list so caches and temporary files don't waste space:</p>
                     <pre><code>cat &gt; /etc/restic/excludes &lt;&lt;'EOF'
 /home/*/.cache
@@ -192,7 +193,7 @@ restic ls latest /etc/nginx       # browse a snapshot
 restic diff &lt;old-id&gt; &lt;new-id&gt;     # what changed between two runs
 restic stats --mode raw-data      # real space used after dedup</code></pre>
 
-                    <h2>Step 5: Back up databases the right way</h2>
+                    <h2 id="step-5-back-up-databases-the-right-way">Step 5: Back up databases the right way</h2>
                     <p>Copying the live files of a running database gives you a backup that may not restore. Dump first, then let Restic back up the dump:</p>
                     <pre><code># PostgreSQL
 sudo -u postgres pg_dumpall | restic backup --stdin --stdin-filename postgres.sql --tag db
@@ -202,7 +203,7 @@ mysqldump --all-databases --single-transaction --routines --events \
     | restic backup --stdin --stdin-filename mysql.sql --tag db</code></pre>
                     <p>Streaming with <code>--stdin</code> means the dump never touches local disk, and deduplication still works between nights.</p>
 
-                    <h2>Step 6: Write the backup script</h2>
+                    <h2 id="step-6-write-the-backup-script">Step 6: Write the backup script</h2>
                     <p>Save as <code>/usr/local/sbin/restic-backup.sh</code>:</p>
                     <pre><code>#!/usr/bin/env bash
 set -euo pipefail
@@ -233,7 +234,7 @@ fi</code></pre>
 sudo /usr/local/sbin/restic-backup.sh</code></pre>
                     <p><code>set -euo pipefail</code> makes the script stop on the first failure, including a failed <code>pg_dumpall</code> in a pipe, so a broken dump never quietly becomes "last night's backup".</p>
 
-                    <h2>Step 7: Schedule it with a systemd timer</h2>
+                    <h2 id="step-7-schedule-it-with-a-systemd-timer">Step 7: Schedule it with a systemd timer</h2>
                     <p>A systemd timer beats cron here. It logs to the journal, catches up after the server was off (<code>Persistent=true</code>), and won't start a second run while one is still going.</p>
                     <p><code>/etc/systemd/system/restic-backup.service</code>:</p>
                     <pre><code>[Unit]
@@ -263,7 +264,7 @@ systemctl list-timers restic-backup.timer
 journalctl -u restic-backup.service -n 50   # read the last run</code></pre>
                     <p>Prefer cron? <code>0 2 * * * /usr/local/sbin/restic-backup.sh &gt;&gt; /var/log/restic.log 2&gt;&amp;1</code> in root's crontab does the same job without the catch-up behavior.</p>
 
-                    <h2>Step 8: Practice a restore (don't skip this)</h2>
+                    <h2 id="step-8-practice-a-restore-don-t-skip-this">Step 8: Practice a restore (don't skip this)</h2>
                     <p>A backup you've never restored is a hope, not a backup. Restore into a scratch directory, never on top of live data:</p>
                     <pre><code># Restore one directory from the latest snapshot
 restic restore latest --tag nightly --target /tmp/restore --include /etc/nginx
@@ -275,7 +276,7 @@ restic dump latest --tag db /postgres.sql &gt; /tmp/postgres.sql
 mkdir -p /mnt/restic &amp;&amp; restic mount /mnt/restic</code></pre>
                     <p>The <code>--tag</code> filter matters. Files and database dumps are separate snapshots, so plain <code>latest</code> means whichever ran last. Put a monthly restore test on your calendar. Restore a random directory and one database dump, and confirm the files open.</p>
 
-                    <h2>Hardening and best practices</h2>
+                    <h2 id="hardening-and-best-practices">Hardening and best practices</h2>
                     <ul>
                         <li><strong>Follow 3-2-1.</strong> Three copies, two kinds of media, one offsite. A local repository plus a cloud repository is easy: run the script twice with two env files, or use <code>restic copy</code>.</li>
                         <li><strong>Protect against ransomware.</strong> If an attacker gets root, they get your repository credentials. Use an append-only REST server (<code>rest-server --append-only</code>) or object lock / immutability on the bucket, and run <code>forget --prune</code> from a separate trusted machine.</li>
@@ -284,7 +285,7 @@ mkdir -p /mnt/restic &amp;&amp; restic mount /mnt/restic</code></pre>
                         <li><strong>Keep the password offline too.</strong> If the server dies, the password file dies with it.</li>
                     </ul>
 
-                    <h2>Where to store the repository</h2>
+                    <h2 id="where-to-store-the-repository">Where to store the repository</h2>
                     <div class="table-wrapper">
                         <table>
                             <thead><tr><th>Destination</th><th>Good for</th><th>Watch out for</th></tr></thead>
@@ -299,7 +300,7 @@ mkdir -p /mnt/restic &amp;&amp; restic mount /mnt/restic</code></pre>
                     </div>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>How long does a Restic backup take?</h3>
@@ -323,6 +324,7 @@ mkdir -p /mnt/restic &amp;&amp; restic mount /mnt/restic</code></pre>
                     <p>Next, protect the files you're backing up. See <a href="secure-linux-smb-server-ubuntu.html">how to set up a secure Samba file server on Ubuntu</a>, or monitor the server with the <a href="../tools/top-10-cli-tools-sysadmin.html">CLI tools every sysadmin should know</a>.</p>
                 </div>
 
+                <!-- auto:cta:start --><p class="store-line">Studying for a certification? <a href="../store.html">Browse the study guides</a>.</p><!-- auto:cta:end -->
                 <footer class="post-footer">
                     <div class="post-tags">
                         <span class="tag">#backups</span>
@@ -335,6 +337,7 @@ mkdir -p /mnt/restic &amp;&amp; restic mount /mnt/restic</code></pre>
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tools/top-10-cli-tools-sysadmin.html">Top 10 CLI Tools Every Sysadmin Should Know</a> <span class="category">Guided Labs</span> <time datetime="2026-01-12">2026-01-12</time></li><li><a href="../tutorials/secure-linux-smb-server-ubuntu.html">How to Set Up a Secure Linux SMB Server on Ubuntu</a> <span class="category">Guided Labs</span> <time datetime="2026-01-15">2026-01-15</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -402,5 +405,6 @@ mkdir -p /mnt/restic &amp;&amp; restic mount /mnt/restic</code></pre>
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

@@ -106,6 +106,7 @@
                         <img width="1200" height="630" src="../images/az-140-entra-kerberos.jpg" alt="Microsoft Entra Kerberos ticket flow from AVD session host to Azure Files" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#how-the-ticket-flow-works">How the ticket flow works</a></li><li><a href="#before-you-start-what-has-to-be-true">Before you start: what has to be true</a></li><li><a href="#step-1-enable-entra-kerberos-on-the-storage-account">Step 1: Enable Entra Kerberos on the storage account</a></li><li><a href="#step-2-assign-share-level-and-ntfs-permissions">Step 2: Assign share-level and NTFS permissions</a></li><li><a href="#step-3-the-session-host-script-line-by-line">Step 3: The session host script, line by line</a></li><li><a href="#step-4-validate">Step 4: Validate</a></li><li><a href="#common-failure-points">Common failure points</a></li><li><a href="#intune-instead-of-a-script">Intune instead of a script</a></li><li><a href="#what-az-140-asks-about-this">What AZ-140 asks about this</a></li><li><a href="#resources">Resources</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <div class="callout callout-info">
@@ -115,7 +116,7 @@
 
                     <p>Entra joined session hosts are the default for new AVD deployments. They skip domain join, they work with Intune, and they remove the need for a VPN or ExpressRoute to a domain controller. The catch shows up the moment you add FSLogix. An SMB share needs Kerberos, and classic Kerberos needs a KDC. Microsoft Entra Kerberos solves that: Entra ID acts as the KDC for the storage account and hands the session host a cloud ticket during sign-in.</p>
 
-                    <h2>How the ticket flow works</h2>
+                    <h2 id="how-the-ticket-flow-works">How the ticket flow works</h2>
                     <figure class="chart-figure">
                         <div class="chart-diagram" style="max-width:560px">
                             <svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Entra Kerberos ticket flow">
@@ -143,7 +144,7 @@
                         <figcaption>Entra ID replaces the domain controller as the ticket issuer. The session host only asks for the ticket if the registry tells it to.</figcaption>
                     </figure>
 
-                    <h2>Before you start: what has to be true</h2>
+                    <h2 id="before-you-start-what-has-to-be-true">Before you start: what has to be true</h2>
                     <ul>
                         <li><strong>Session hosts are Entra joined or Entra hybrid joined.</strong> Hosts joined only to AD DS or to Entra Domain Services are not supported for this flow.</li>
                         <li><strong>Supported OS.</strong> Windows 11 Enterprise single or multi-session, Windows 10 Enterprise 2004+, or Windows Server 2022/2025 with current cumulative updates. Cloud-only identities need newer builds (recent Windows 11 24H2/25H2 updates or Server 2025), so check the Learn prerequisites before you pick an image.</li>
@@ -156,7 +157,7 @@
                         <strong>Cost control:</strong> Use a Premium (SSD) file share for production profiles, because logon storms punish standard HDD shares. For a lab, a small provisioned premium share or a standard share is fine. You pay for what you provision on premium, not what you use, so start small and grow.
                     </div>
 
-                    <h2>Step 1: Enable Entra Kerberos on the storage account</h2>
+                    <h2 id="step-1-enable-entra-kerberos-on-the-storage-account">Step 1: Enable Entra Kerberos on the storage account</h2>
                     <p>Create a storage account and file share (this example uses <code>fxlogics</code> and a share called <code>premium</code>). Then turn on Entra Kerberos. In the portal: storage account, <strong>File shares</strong>, <strong>Identity-based access</strong>, <strong>Microsoft Entra Kerberos</strong>, <strong>Set up</strong>. Or from PowerShell:</p>
                     <pre><code>Set-AzStorageAccount -ResourceGroupName rg-avd-lab `
   -StorageAccountName fxlogics `
@@ -174,7 +175,7 @@
                         <strong>Exam trap:</strong> “Users get System error 1327: Account restrictions are preventing this user from signing in” when mapping the share. That is Conditional Access requiring MFA on the storage app. The fix is the exclusion, not a new share permission.
                     </div>
 
-                    <h2>Step 2: Assign share-level and NTFS permissions</h2>
+                    <h2 id="step-2-assign-share-level-and-ntfs-permissions">Step 2: Assign share-level and NTFS permissions</h2>
                     <p>Permissions work in two layers, same as any SMB share.</p>
                     <ul>
                         <li><strong>Share level (Azure RBAC):</strong> assign <strong>Storage File Data SMB Share Contributor</strong> to the AVD users group, and <strong>Storage File Data SMB Share Elevated Contributor</strong> to admins who set ACLs. Or set a default share-level permission for all authenticated identities.</li>
@@ -187,7 +188,7 @@ icacls \\fxlogics.file.core.windows.net\premium /grant "CONTOSO\AVD-Users:(M)"
 icacls \\fxlogics.file.core.windows.net\premium /grant "CONTOSO\AVD-Admins:(OI)(CI)(F)"</code></pre>
                     <p>Note that the users group gets Modify on <em>this folder only</em>. CREATOR OWNER gives each user full control of the folder they create. That combination stops users from browsing other profiles.</p>
 
-                    <h2>Step 3: The session host script, line by line</h2>
+                    <h2 id="step-3-the-session-host-script-line-by-line">Step 3: The session host script, line by line</h2>
                     <p>Run this on every session host, elevated, or bake it into your golden image. You can also push the same values with Intune Settings Catalog or Group Policy. Replace the storage path with yours.</p>
                     <pre><code># --- Entra Kerberos: CRITICAL for cloud Kerberos authentication ---
 reg add "HKLM\System\CurrentControlSet\Control\Lsa\Kerberos\Parameters" /v CloudKerberosTicketRetrievalEnabled /t REG_DWORD /d 1 /f
@@ -244,7 +245,7 @@ Restart-Computer</code></pre>
                         <strong>Exam angle:</strong> If a question says “Entra joined session hosts, FSLogix on Azure Files, users get temporary profiles,” look for the answer that enables cloud Kerberos ticket retrieval on the hosts (Intune, GPO, or registry). If it says “no line of sight to domain controllers,” Entra Kerberos is the storage identity choice, not AD DS.
                     </div>
 
-                    <h2>Step 4: Validate</h2>
+                    <h2 id="step-4-validate">Step 4: Validate</h2>
                     <p>Sign in as a test user who has never logged on to the pool. Then check from inside the session:</p>
                     <pre><code># Should list a ticket for cifs/fxlogics.file.core.windows.net
 klist get cifs/fxlogics.file.core.windows.net
@@ -257,7 +258,7 @@ klist cloud_debug
 Get-Content "C:\ProgramData\FSLogix\Logs\Profile\Profile-$(Get-Date -f yyyyMMdd).log" -Tail 40</code></pre>
                     <p>In the storage account, you should see a folder named like <code>jdoe_S-1-12-1-...</code>. Cloud-only SIDs start with <code>S-1-12-1</code>, synced hybrid users carry their on-premises SID.</p>
 
-                    <h2>Common failure points</h2>
+                    <h2 id="common-failure-points">Common failure points</h2>
                     <table>
                         <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
                         <tbody>
@@ -275,17 +276,17 @@ Get-Content "C:\ProgramData\FSLogix\Logs\Profile\Profile-$(Get-Date -f yyyyMMdd)
                         <strong>Watch the RC4 change:</strong> The April 2026 Windows Server update changed the default Kerberos encryption type from RC4 to AES-SHA1. Microsoft warns that SMB storage holding FSLogix containers that wasn't moved to AES can hit access issues. Entra Kerberos tickets always use AES-256, but if you also run AD DS-joined storage accounts, check their encryption settings.
                     </div>
 
-                    <h2>Intune instead of a script</h2>
+                    <h2 id="intune-instead-of-a-script">Intune instead of a script</h2>
                     <p>For Entra joined hosts, Intune is the natural management plane. Use the <strong>Settings Catalog</strong> for <code>Kerberos/CloudKerberosTicketRetrievalEnabled</code>. Microsoft notes that the OMA-URI method doesn't work on AVD multi-session devices. FSLogix settings are also in the Settings Catalog under FSLogix. The registry script is still useful for images and labs, and it shows you exactly what the policy writes.</p>
 
-                    <h2>What AZ-140 asks about this</h2>
+                    <h2 id="what-az-140-asks-about-this">What AZ-140 asks about this</h2>
                     <p>The exam treats this as part of the user environment and identity domains. Know which storage identity source fits which host join type: AD DS for domain-joined hosts, Entra Kerberos for Entra joined hosts, and that one storage account takes only one. Know the client-side requirement (cloud Kerberos ticket retrieval), the MFA exclusion on the storage app, the two-layer permission model, and that hybrid identities still need a DC-connected machine to set NTFS ACLs while sign-in itself does not.</p>
 
                     <div class="callout callout-info">
                         <strong>Next step:</strong> Go deeper on profile design with the <a href="az-140-fslogix-profile-containers-guide.html">FSLogix Profile Containers complete guide</a>: ODFC, Cloud Cache, application masking, and Azure Files versus Azure NetApp Files.
                     </div>
 
-                    <h2>Resources</h2>
+                    <h2 id="resources">Resources</h2>
                     <ul>
                         <li><a href="https://learn.microsoft.com/fslogix/how-to-configure-profile-container-azure-ad" target="_blank" rel="noopener">Store FSLogix profile containers on Azure Files using Microsoft Entra ID – Microsoft Learn</a></li>
                         <li><a href="https://learn.microsoft.com/azure/storage/files/storage-files-identity-auth-hybrid-identities-enable" target="_blank" rel="noopener">Enable Microsoft Entra Kerberos authentication on Azure Files</a></li>
@@ -328,6 +329,7 @@ Get-Content "C:\ProgramData\FSLogix\Logs\Profile\Profile-$(Get-Date -f yyyyMMdd)
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/az-140-avd-resources-services-guide.html">AZ-140 Core Resources and Services for Azure Virtual Desktop Explained</a> <span class="category">Microsoft</span> <time datetime="2026-09-01">2026-09-01</time></li><li><a href="../tutorials/az-140-fslogix-profile-containers-guide.html">FSLogix Profile Containers for Azure Virtual Desktop: Complete AZ-140 Guide</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -393,5 +395,6 @@ Get-Content "C:\ProgramData\FSLogix\Logs\Profile\Profile-$(Get-Date -f yyyyMMdd)
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

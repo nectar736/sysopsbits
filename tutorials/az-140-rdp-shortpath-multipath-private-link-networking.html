@@ -106,6 +106,7 @@
                         <img width="1200" height="630" src="../images/az-140-networking.jpg" alt="Azure Virtual Desktop network paths with RDP Shortpath, Multipath, and Private Link" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#how-an-avd-connection-actually-travels">How an AVD connection actually travels</a></li><li><a href="#step-1-assess-capacity-and-speed">Step 1: Assess capacity and speed</a></li><li><a href="#step-2-design-the-session-host-network">Step 2: Design the session host network</a></li><li><a href="#step-3-rdp-shortpath-four-options">Step 3: RDP Shortpath (four options)</a></li><li><a href="#step-4-rdp-multipath">Step 4: RDP Multipath</a></li><li><a href="#step-5-qos-for-rdp-shortpath">Step 5: QoS for RDP Shortpath</a></li><li><a href="#step-6-azure-private-link">Step 6: Azure Private Link</a></li><li><a href="#step-7-troubleshoot-connectivity-in-order">Step 7: Troubleshoot connectivity in order</a></li><li><a href="#resources">Resources</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <div class="callout callout-info">
@@ -113,7 +114,7 @@
                         Networking lives in the largest domain, “Plan and implement an Azure Virtual Desktop infrastructure.” The study guide lists capacity and speed assessment, session host network design, RDP Shortpath and QoS, Private Link, and connectivity troubleshooting. Each one gets a section below.
                     </div>
 
-                    <h2>How an AVD connection actually travels</h2>
+                    <h2 id="how-an-avd-connection-actually-travels">How an AVD connection actually travels</h2>
                     <p>Every connection starts the same way. The client talks to the AVD gateway over TCP 443, and the session host has already opened an outbound connection to the same service. This is <strong>reverse connect</strong>. No inbound ports open on the session host, and no public IP is needed. After that first TCP connection, the client and host try to upgrade to a UDP transport called <strong>RDP Shortpath</strong>. If UDP works, graphics, input, and redirection move to it. If not, the session stays on TCP.</p>
 
                     <figure class="chart-figure">
@@ -154,7 +155,7 @@
                         <figcaption>TCP reverse connect always comes first. UDP transports are upgrades, and Multipath keeps backups ready.</figcaption>
                     </figure>
 
-                    <h2>Step 1: Assess capacity and speed</h2>
+                    <h2 id="step-1-assess-capacity-and-speed">Step 1: Assess capacity and speed</h2>
                     <p>Before you pick a region or a VM size, measure the user side.</p>
                     <ul>
                         <li><strong>Latency target:</strong> Microsoft recommends round-trip time under 150 ms from the client network to the Azure region hosting the pool. 150 to 200 ms is acceptable for text work. Above 200 ms, users notice. Use the Azure network round-trip latency statistics to pick the closest region and recheck every few months.</li>
@@ -170,7 +171,7 @@ WVDConnectionNetworkData
                         <strong>Exam angle:</strong> “Users in Europe report lag, session hosts are in East US.” The fix is a host pool in a region near the users, not a bigger VM. Bandwidth and VM size don't fix physics.
                     </div>
 
-                    <h2>Step 2: Design the session host network</h2>
+                    <h2 id="step-2-design-the-session-host-network">Step 2: Design the session host network</h2>
                     <ul>
                         <li><strong>VNet in the same region as the hosts.</strong> Create it before the host pool so it appears in the deployment wizard.</li>
                         <li><strong>Size the subnet for growth.</strong> One IP per session host, plus room for scaling and image rebuilds. A /24 holds about 250 hosts after Azure's five reserved addresses. Keep private endpoints in their own subnet.</li>
@@ -184,7 +185,7 @@ WVDConnectionNetworkData
                         <strong>Cost control:</strong> NAT gateway and Azure Firewall both bill hourly plus per GB processed. Azure Firewall is usually the larger line item. For a lab, skip the firewall and use NSGs. In production, a shared hub firewall serving several spokes spreads the cost.
                     </div>
 
-                    <h2>Step 3: RDP Shortpath (four options)</h2>
+                    <h2 id="step-3-rdp-shortpath-four-options">Step 3: RDP Shortpath (four options)</h2>
                     <table>
                         <thead><tr><th>Option</th><th>Network</th><th>What you configure</th></tr></thead>
                         <tbody>
@@ -211,7 +212,7 @@ Get-AzWvdHostPool -Name hp01 -ResourceGroupName rg-avd-lab | FL ManagedPrivateUd
                         <strong>Exam trap:</strong> Shortpath for managed networks needs <em>direct line of sight</em>, meaning a VPN or ExpressRoute <strong>private</strong> peering. ExpressRoute Microsoft peering or plain internet is public-network Shortpath (STUN/TURN). Also, Shortpath doesn't replace reverse connect. The TCP connection always comes first.
                     </div>
 
-                    <h2>Step 4: RDP Multipath</h2>
+                    <h2 id="step-4-rdp-multipath">Step 4: RDP Multipath</h2>
                     <p>RDP Multipath went GA in July 2025 and finished rolling out in November 2025. It keeps several transport paths alive at once and switches when the active one degrades. Paths can include several UDP routes (STUN and TURN) plus redundant TCP reverse connect paths. Redundant TCP began its GA rollout in May 2026.</p>
                     <ul>
                         <li><strong>No configuration switch.</strong> It works automatically when RDP Shortpath is available and the client supports it.</li>
@@ -223,7 +224,7 @@ Get-AzWvdHostPool -Name hp01 -ResourceGroupName rg-avd-lab | FL ManagedPrivateUd
                         <strong>Exam angle:</strong> Shortpath improves <em>performance</em> (UDP, lower latency). Multipath improves <em>reliability</em> (failover between paths). If the scenario is “sessions drop when Wi-Fi blips,” think Multipath plus Shortpath.
                     </div>
 
-                    <h2>Step 5: QoS for RDP Shortpath</h2>
+                    <h2 id="step-5-qos-for-rdp-shortpath">Step 5: QoS for RDP Shortpath</h2>
                     <p>QoS lets routers move RDP ahead of bulk traffic like downloads. It reduces jitter, packet loss, and delay on congested links. Two rules decide whether it works:</p>
                     <ol>
                         <li><strong>QoS needs RDP Shortpath for managed networks.</strong> It isn't supported over the reverse connect transport.</li>
@@ -241,7 +242,7 @@ Get-AzWvdHostPool -Name hp01 -ResourceGroupName rg-avd-lab | FL ManagedPrivateUd
                         <strong>Exam trap:</strong> A question asks you to prioritize RDP traffic for office users and lists “configure QoS” and “enable RDP Shortpath for managed networks” as separate steps. You need both, and Shortpath comes first. QoS on reverse connect does nothing.
                     </div>
 
-                    <h2>Step 6: Azure Private Link</h2>
+                    <h2 id="step-6-azure-private-link">Step 6: Azure Private Link</h2>
                     <p>Private Link puts AVD service traffic on private IPs in your VNet so clients and hosts don't use public routes for the TCP side. Three sub-resources map to three workflows:</p>
                     <table>
                         <thead><tr><th>Workflow</th><th>Resource</th><th>Sub-resource</th><th>How many</th><th>Private DNS zone</th></tr></thead>
@@ -275,7 +276,7 @@ New-AzPrivateEndpoint -Name pe-ws01-feed -ResourceGroupName rg-avd-lab -Location
                         <strong>Cost control:</strong> Each private endpoint bills hourly plus per GB. One per host pool and one per workspace adds up across many pools. Use the narrowest scenario that meets the requirement, such as host pool connections only.
                     </div>
 
-                    <h2>Step 7: Troubleshoot connectivity in order</h2>
+                    <h2 id="step-7-troubleshoot-connectivity-in-order">Step 7: Troubleshoot connectivity in order</h2>
                     <ol>
                         <li><strong>Host health:</strong> host shows Unavailable or Needs assistance? Run the Azure Virtual Desktop Agent URL Tool (<code>WVDAgentUrlTool.exe</code>) on the host to find blocked required URLs.</li>
                         <li><strong>Name resolution:</strong> with Private Link, run <code>Resolve-DnsName rdweb.wvd.microsoft.com</code> from client and host. A public IP means the private DNS zone isn't linked or forwarded.</li>
@@ -299,7 +300,7 @@ New-AzPrivateEndpoint -Name pe-ws01-feed -ResourceGroupName rg-avd-lab -Location
                         <strong>Related labs:</strong> Build the pool first with the <a href="az-140-deploy-host-pool-step-by-step.html">host pool lab</a>, then add profiles with the <a href="az-140-fslogix-profile-containers-guide.html">FSLogix guide</a>. For NSG design patterns, see <a href="azure-nsg-best-practices.html">Azure NSG best practices</a>.
                     </div>
 
-                    <h2>Resources</h2>
+                    <h2 id="resources">Resources</h2>
                     <ul>
                         <li><a href="https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/" target="_blank" rel="noopener">Implement and manage networking for Azure Virtual Desktop – Microsoft Learn training module</a></li>
                         <li><a href="https://learn.microsoft.com/azure/virtual-desktop/rdp-shortpath" target="_blank" rel="noopener">RDP Shortpath for Azure Virtual Desktop</a></li>
@@ -348,6 +349,7 @@ New-AzPrivateEndpoint -Name pe-ws01-feed -ResourceGroupName rg-avd-lab -Location
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files (Registry Script Explained)</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-fslogix-profile-containers-guide.html">FSLogix Profile Containers for Azure Virtual Desktop: Complete AZ-140 Guide</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li><li><a href="../tutorials/az-140-avd-resources-services-guide.html">AZ-140 Core Resources and Services for Azure Virtual Desktop Explained</a> <span class="category">Microsoft</span> <time datetime="2026-09-01">2026-09-01</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -413,5 +415,6 @@ New-AzPrivateEndpoint -Name pe-ws01-feed -ResourceGroupName rg-avd-lab -Location
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

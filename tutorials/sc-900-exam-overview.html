@@ -106,6 +106,7 @@
                                 <img width="1200" height="630" src="../images/sc-900-exam.jpg" alt="SC-900 Exam Overview" loading="eager" fetchpriority="high">
                             </div>
                         </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#understanding-the-sc-900-exam">Understanding the SC-900 Exam</a></li><li><a href="#domain-1-security-compliance-and-identity-concepts-15-20">Domain 1: Security, Compliance, and Identity Concepts (15-20%)</a></li><li><a href="#domain-2-microsoft-entra-identity-and-access-capabilities-30-35">Domain 2: Microsoft Entra Identity and Access Capabilities (30-35%)</a></li><li><a href="#domain-3-microsoft-security-solutions-capabilities-25-30">Domain 3: Microsoft Security Solutions Capabilities (25-30%)</a></li><li><a href="#domain-4-microsoft-compliance-solutions-capabilities-15-20">Domain 4: Microsoft Compliance Solutions Capabilities (15-20%)</a></li><li><a href="#sc-900-sample-questions-with-detailed-explanations">SC-900 Sample Questions with Detailed Explanations</a></li><li><a href="#exam-preparation-tips">Exam Preparation Tips</a></li><li><a href="#recommended-resources">Recommended Resources</a></li><li><a href="#conclusion">Conclusion</a></li></ol></details></nav><!-- auto:toc:end -->
 
                         <div class="post-content">
                             <p>Are you preparing for the Microsoft Security, Compliance, and Identity Fundamentals (SC-900) certification exam? This comprehensive guide covers everything you need to know to pass the exam on your first attempt. We'll break down all four exam domains, provide real-world scenarios, and include sample questions with detailed explanations to test your knowledge.</p>
@@ -114,7 +115,7 @@
                                 <strong>What you'll learn:</strong> This guide covers all SC-900 exam objectives including security concepts, identity and access management, security solutions, and compliance solutions. Perfect for beginners looking to validate their foundational knowledge of Microsoft security, compliance, and identity solutions.
                             </div>
 
-                            <h2>Understanding the SC-900 Exam</h2>
+                            <h2 id="understanding-the-sc-900-exam">Understanding the SC-900 Exam</h2>
                             <p>The SC-900: Microsoft Security, Compliance, and Identity Fundamentals exam validates foundational knowledge of security, compliance, and identity concepts and related cloud-based Microsoft solutions. This exam is designed for candidates looking to demonstrate foundational-level knowledge across the security, compliance, and identity (SCI) space.</p>
 
                             <p>The exam measures your ability to accomplish the following technical tasks:</p>
@@ -125,7 +126,7 @@
                                 <li>Describe the capabilities of Microsoft compliance solutions (15-20%)</li>
                             </ul>
 
-                            <h2>Domain 1: Security, Compliance, and Identity Concepts (15-20%)</h2>
+                            <h2 id="domain-1-security-compliance-and-identity-concepts-15-20">Domain 1: Security, Compliance, and Identity Concepts (15-20%)</h2>
                             <p>This domain covers the foundational concepts that are essential to understanding Microsoft's security, compliance, and identity solutions.</p>
 
                             <h3>Key Concepts Covered:</h3>
@@ -145,7 +146,7 @@
                             <p>A company wants to implement a Zero Trust security model for their remote workforce. They need to ensure that only compliant devices can access corporate resources, and that access is continuously verified based on risk signals. Which Microsoft solutions would they primarily use?</p>
                             <p><strong>Answer:</strong> They would use Microsoft Entra ID for identity and access management with Conditional Access policies, Microsoft Defender for Endpoint for device compliance, and Microsoft Intune for device management to ensure only compliant devices can access resources.</p>
 
-                            <h2>Domain 2: Microsoft Entra Identity and Access Capabilities (30-35%)</h2>
+                            <h2 id="domain-2-microsoft-entra-identity-and-access-capabilities-30-35">Domain 2: Microsoft Entra Identity and Access Capabilities (30-35%)</h2>
                             <p>This domain focuses on Microsoft's cloud-based identity and access management solution, Microsoft Entra ID (formerly Azure Active Directory).</p>
 
                             <h3>Key Concepts Covered:</h3>
@@ -165,7 +166,7 @@
                             <p>An organization wants to ensure that users accessing sensitive financial applications from untrusted networks must use multi-factor authentication, while users accessing from the corporate network can use single sign-on. How can they achieve this using Microsoft Entra ID?</p>
                             <p><strong>Answer:</strong> They would configure Conditional Access policies in Microsoft Entra ID that require MFA for the financial applications when accessed from untrusted locations (based on IP ranges or named locations), while allowing single sign-on access from trusted corporate network locations.</p>
 
-                            <h2>Domain 3: Microsoft Security Solutions Capabilities (25-30%)</h2>
+                            <h2 id="domain-3-microsoft-security-solutions-capabilities-25-30">Domain 3: Microsoft Security Solutions Capabilities (25-30%)</h2>
                             <p>This domain covers Microsoft's security solutions that help protect against threats across identities, data, applications, and infrastructure.</p>
 
                             <h3>Key Concepts Covered:</h3>
@@ -185,7 +186,7 @@
                             <p>A security analyst notices suspicious login attempts from unusual geographic locations targeting executive accounts. They want to automatically detect, investigate, and respond to these potential identity-based threats. Which Microsoft solution would be most appropriate?</p>
                             <p><strong>Answer:</strong> Microsoft Defender for Identity (formerly Azure ATP) would be most appropriate as it specializes in detecting and investigating identity-based threats, including suspicious login attempts, credential theft, and lateral movement activities targeting user accounts.</p>
 
-                            <h2>Domain 4: Microsoft Compliance Solutions Capabilities (15-20%)</h2>
+                            <h2 id="domain-4-microsoft-compliance-solutions-capabilities-15-20">Domain 4: Microsoft Compliance Solutions Capabilities (15-20%)</h2>
                             <p>This domain covers Microsoft's compliance solutions that help organizations meet regulatory requirements and manage data governance.</p>
 
                             <h3>Key Concepts Covered:</h3>
@@ -205,7 +206,7 @@
                             <p>A healthcare organization needs to ensure that patient health information (PHI) contained in emails and documents is properly protected according to HIPAA regulations. They want to automatically detect and prevent unauthorized sharing of this sensitive information. Which Microsoft solution would help them achieve this?</p>
                             <p><strong>Answer:</strong> Microsoft Purview Data Loss Prevention (DLP) would help them automatically detect, monitor, and protect PHI content in emails, documents, and other locations based on predefined policies, helping ensure HIPAA compliance.</p>
 
-                            <h2>SC-900 Sample Questions with Detailed Explanations</h2>
+                            <h2 id="sc-900-sample-questions-with-detailed-explanations">SC-900 Sample Questions with Detailed Explanations</h2>
                             <p>Test your knowledge with these sample questions that cover all four domains of the SC-900 exam.</p>
 
                             <h3>Question 1: Security Concepts</h3>
@@ -263,7 +264,7 @@
                             <p><strong>Correct Answer:</strong> B</p>
                             <p><strong>Explanation:</strong> In the shared responsibility model, the customer is always responsible for their data and information, regardless of the cloud service model (IaaS, PaaS, or SaaS). This includes data classification, data protection, and ensuring that data handling complies with relevant regulations. Microsoft is responsible for the security of the cloud infrastructure, but customers must secure their data within that infrastructure.</p>
 
-                            <h2>Exam Preparation Tips</h2>
+                            <h2 id="exam-preparation-tips">Exam Preparation Tips</h2>
                             <p>To maximize your chances of passing the SC-900 exam on your first attempt, consider these preparation strategies:</p>
                             <ul>
                                 <li><strong>Start with the fundamentals:</strong> Ensure you have a solid understanding of basic networking, cloud computing, and IT concepts before diving into the exam topics.</li>
@@ -274,7 +275,7 @@
                                 <li><strong>Join study communities:</strong> Participate in Microsoft certification forums and study groups to share knowledge and get answers to your questions.</li>
                             </ul>
 
-                            <h2>Recommended Resources</h2>
+                            <h2 id="recommended-resources">Recommended Resources</h2>
                             <p>To further enhance your preparation, consider these authoritative resources:</p>
                             <ul>
                                 <li><a href="https://learn.microsoft.com/training/paths/describe-concepts-of-security-compliance-identity/" target="_blank">Introduction to security, compliance, and identity concepts</a></li>
@@ -288,7 +289,7 @@
                                 <strong>Pro tip:</strong> When studying for the SC-900 exam, focus on understanding the "why" behind each concept rather than just memorizing facts. This approach will help you tackle scenario-based questions more effectively and apply your knowledge in real-world situations.
                             </div>
 
-                            <h2>Conclusion</h2>
+                            <h2 id="conclusion">Conclusion</h2>
                             <p>The SC-900 Microsoft Security, Compliance, and Identity Fundamentals certification is an excellent starting point for anyone looking to build a career in cloud security, compliance, or identity management. By mastering the four domains covered in this guide—security concepts, identity and access capabilities, security solutions, and compliance solutions—you'll be well-prepared to pass the exam and demonstrate your foundational knowledge of Microsoft's security, compliance, and identity solutions.</p>
                             <p>Remember that the SC-900 is designed as an entry-point certification, so don't be intimidated if you're new to these concepts. Focus on understanding the core principles and how Microsoft's solutions address real-world security, compliance, and identity challenges. With proper preparation using the resources and strategies outlined in this guide, you'll be on your way to earning your SC-900 certification.</p>
 
@@ -299,6 +300,8 @@
                         <div class="post-footer">
                             <p>Categories: <a href="../tutorials.html">Tutorials</a>, <a href="../terms.html">SC-900</a>, <a href="../terms.html">Microsoft Certified</a>, <a href="../terms.html">Security Fundamentals</a></p>
                         </div>
+                <!-- auto:cta:start --><p class="store-line">Studying for a certification? <a href="../store.html">Browse the study guides</a>.</p><!-- auto:cta:end -->
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/autopilot-device-preparation-vs-windows-autopilot.html">Autopilot Device Preparation vs Windows Autopilot: Which to Use</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li></ul></section></div><!-- auto:post-end:end -->
                     </div>
                 </article>
     </main>
@@ -365,5 +368,6 @@
 
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

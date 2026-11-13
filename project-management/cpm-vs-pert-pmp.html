@@ -105,6 +105,7 @@
                     <img width="832" height="1248" src="../images/cpm_pert.jpg" alt="Network diagram comparing Critical Path Method and PERT schedule calculations" loading="eager" fetchpriority="high">
                 </div>
             </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-is-the-critical-path">What Is the Critical Path?</a></li><li><a href="#what-is-cpm">What Is CPM?</a></li><li><a href="#what-is-pert">What Is PERT?</a></li><li><a href="#same-project-solved-both-ways">Same Project, Solved Both Ways</a></li><li><a href="#cpm-vs-pert-key-differences">CPM vs PERT: Key Differences</a></li><li><a href="#when-to-use-each-on-the-exam">When to Use Each on the Exam</a></li><li><a href="#critical-chain-the-related-method">Critical Chain: The Related Method</a></li><li><a href="#pmp-exam-traps">PMP Exam Traps</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
             <div class="post-content">
 
@@ -112,7 +113,7 @@
 
                 <p>This post solves the same project both ways. You see the critical path calculation once with fixed durations, once with three-point estimates. Then you get the exam rules for choosing between them.</p>
 
-                <h2>What Is the Critical Path?</h2>
+                <h2 id="what-is-the-critical-path">What Is the Critical Path?</h2>
 
                 <p>The critical path is the longest path through a network diagram from start to finish. It determines the earliest the project can complete. Activities on the critical path have zero float, so any delay to one of them delays the whole project.</p>
 
@@ -124,7 +125,7 @@
                     <strong>One sentence to keep:</strong> The critical path is the longest path through the network, and it sets the earliest possible completion date for the project.
                 </div>
 
-                <h2>What Is CPM?</h2>
+                <h2 id="what-is-cpm">What Is CPM?</h2>
 
                 <p>Critical Path Method treats each activity as a single, deterministic duration. You estimate one number per activity, build the network diagram, and run two passes to find the path.</p>
 
@@ -150,7 +151,7 @@
 
                 <p>Activities with zero total float sit on the critical path. The path with the longest duration, and therefore the least float, is the critical path.</p>
 
-                <h2>What Is PERT?</h2>
+                <h2 id="what-is-pert">What Is PERT?</h2>
 
                 <p>PERT, the Program Evaluation and Review Technique, handles uncertainty. Each activity gets three estimates instead of one: optimistic (tO), most likely (tM), and pessimistic (tP). The technique combines them into a single expected duration.</p>
 
@@ -168,7 +169,7 @@
                     <strong>Exam trap:</strong> Many questions present three-point estimates and ask for the expected duration. Read the distribution. Beta distribution means (tO + 4tM + tP) / 6. Triangular distribution means (tO + tM + tP) / 3. Mixing the two is the most common calculation error on this topic.
                 </div>
 
-                <h2>Same Project, Solved Both Ways</h2>
+                <h2 id="same-project-solved-both-ways">Same Project, Solved Both Ways</h2>
 
                 <p>Consider a small project with four activities.</p>
 
@@ -296,7 +297,7 @@
                     <strong>Why this matters:</strong> With skewed estimates, the PERT expected duration changes the path totals. An activity with wide optimism and pessimism swings can pull its path above another path that looked longer under single-point estimates. The critical path under PERT is not always the critical path under CPM.
                 </div>
 
-                <h2>CPM vs PERT: Key Differences</h2>
+                <h2 id="cpm-vs-pert-key-differences">CPM vs PERT: Key Differences</h2>
 
                 <div class="comparison-table">
                     <table>
@@ -339,7 +340,7 @@
 
                 <p>CPM suits repetitive work where you have history. PERT suits novel work where estimates carry wide ranges. The exam picks the technique from the scenario, not from your preference.</p>
 
-                <h2>When to Use Each on the Exam</h2>
+                <h2 id="when-to-use-each-on-the-exam">When to Use Each on the Exam</h2>
 
                 <p>The exam frames the choice with context clues.</p>
 
@@ -351,7 +352,7 @@
 
                 <p>A question that asks "how much delay can this activity absorb before the project slips?" is asking for total float. Compute LS - ES (or LF - EF). A zero answer means the activity sits on the critical path.</p>
 
-                <h2>Critical Chain: The Related Method</h2>
+                <h2 id="critical-chain-the-related-method">Critical Chain: The Related Method</h2>
 
                 <p>PMBOK 8 groups critical chain method (CCPM) with CPM because both rest on critical path analysis. CCPM adds buffers. It removes safety from individual tasks, pools that safety into a project buffer, and protects the critical chain from variation.</p>
 
@@ -359,7 +360,7 @@
 
                 <p>This distinction pairs with the <a href="burnup-vs-burndown-charts-pmp.html">burnup vs burndown post</a> for schedule-tracking questions. Those charts show progress against the plan. The critical path explains why the plan holds the duration it does.</p>
 
-                <h2>PMP Exam Traps</h2>
+                <h2 id="pmp-exam-traps">PMP Exam Traps</h2>
 
                 <ul>
                     <li><strong>Beta vs triangular.</strong> The formula changes with the distribution. Beta weights tM four times. Triangular averages all three.</li>
@@ -373,7 +374,7 @@
                     <strong>Quick self-check:</strong> An activity has an Early Start of day 4 and a Late Start of day 9. How much can it slip before the project end date moves? Answer: 5 days of total float. On the critical path, that answer would be zero.
                 </div>
 
-                <h2>Frequently Asked Questions</h2>
+                <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
 
                 <p><strong>Is PERT the same as the critical path method?</strong> No. PERT is an estimating technique that produces expected durations. CPM is a scheduling method that finds the longest path. You can run a critical path analysis on PERT-derived durations, which is how the two combine.</p>
 
@@ -396,6 +397,8 @@
 
             <div class="post-footer">
                 <p>Categories: <a href="../project-management.html">Project Management</a>, <a href="../terms.html">PMP</a>, <a href="../terms.html">CPM</a>, <a href="../terms.html">PERT</a>, <a href="../terms.html">Critical Path</a></p>
+                <!-- auto:cta:start --><aside class="product-cta" aria-label="Study guide"><img src="../images/pmp-exam.png" alt="PMP Exam Cracker cover" width="1248" height="832" loading="lazy"><div class="product-cta-body"><p class="product-cta-eyebrow">Studying for the PMP?</p><h3 class="product-cta-title">PMP Exam Cracker</h3><p>The PMP exam content outline condensed into 64 pages, plus an 80-question practice test with an explanation for every answer.</p><a class="btn btn-primary" href="https://buymeacoffee.com/mattyhip/e/537680" target="_blank" rel="noopener" data-product="pmp">Get the PMP Exam Cracker, $8.99</a><p class="product-cta-note">Written by the author of this guide. Free practice tests stay free.</p></div></aside><!-- auto:cta:end -->
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../project-management/psm1-exam-guide.html">How to Pass the PSM I Exam: A Complete Study Guide</a> <span class="category">Project Management</span> <time datetime="2026-08-09">2026-08-09</time></li><li><a href="../project-management/psm1-vs-csm.html">PSM I vs CSM: Which Scrum Master Certification Should You Choose?</a> <span class="category">Project Management</span> <time datetime="2026-08-09">2026-08-09</time></li><li><a href="../project-management/raci-matrix-guide-pmp.html">RACI Matrix Explained: Build One in 5 Steps + PMP Exam Traps</a> <span class="category">Project Management</span> <time datetime="2026-08-02">2026-08-02</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -463,5 +466,6 @@
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

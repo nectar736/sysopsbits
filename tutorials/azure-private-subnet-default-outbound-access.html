@@ -106,6 +106,7 @@
                         <img width="1200" height="630" src="../images/azure-private-subnets.jpg" alt="Azure private subnet with a NAT gateway providing outbound access" loading="eager" fetchpriority="high">
                     </div>
                 </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#what-changed-default-outbound-access-is-off-for-new-vnets">What changed: default outbound access is off for new VNets</a></li><li><a href="#confirm-a-private-subnet-is-your-problem">Confirm a private subnet is your problem</a></li><li><a href="#choose-an-explicit-outbound-method">Choose an explicit outbound method</a></li><li><a href="#fix-it-add-a-nat-gateway-with-the-azure-cli">Fix it: add a NAT gateway with the Azure CLI</a></li><li><a href="#five-traps-during-the-switch">Five traps during the switch</a></li><li><a href="#azure-virtual-desktop-session-hosts-need-this-too">Azure Virtual Desktop session hosts need this too</a></li><li><a href="#can-you-turn-default-outbound-access-back-on">Can you turn default outbound access back on?</a></li><li><a href="#what-az-700-and-az-104-expect-you-to-know">What AZ-700 and AZ-104 expect you to know</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
                 <div class="post-content">
                     <div class="callout callout-info">
@@ -115,7 +116,7 @@
                     <p>You deploy a fresh VNet and a Windows VM from a template you've used a dozen times. The VM boots, you connect through Bastion, and then nothing works. Windows won't activate. Windows Update times out. An Azure Virtual Desktop session host never registers with its host pool. The NSG allows everything outbound, so the firewall isn't the problem.</p>
                     <p>The subnet is. Azure stopped handing out free internet access to new networks, and this guide shows you how to confirm it, fix it properly, and avoid the traps that catch people during the switch.</p>
 
-                    <h2>What changed: default outbound access is off for new VNets</h2>
+                    <h2 id="what-changed-default-outbound-access-is-off-for-new-vnets">What changed: default outbound access is off for new VNets</h2>
                     <p>For years, Azure gave any VM without an explicit outbound method a hidden public IP so it could reach the internet. Microsoft calls this <strong>default outbound access</strong>. That IP belongs to Microsoft, can change without notice, and doesn't appear anywhere you can manage it.</p>
                     <div class="table-wrapper">
                         <table>
@@ -131,7 +132,7 @@
                     </div>
                     <p>Microsoft gives three reasons for the change. Implicit internet access contradicts Zero Trust. Explicit connectivity is easier to reason about. The default IP isn't yours and can change. It also misbehaves: VMs with multiple NICs can get inconsistent outbound IPs, scale set instances don't share predictable IPs, and default outbound IPs don't support fragmented packets or ICMP ping.</p>
 
-                    <h2>Confirm a private subnet is your problem</h2>
+                    <h2 id="confirm-a-private-subnet-is-your-problem">Confirm a private subnet is your problem</h2>
                     <p>Check the subnet property first:</p>
                     <pre><code>az network vnet subnet show \
     --resource-group rg-app \
@@ -141,7 +142,7 @@
                     <p><code>false</code> means the subnet is private. Then check whether anything else gives the VM a way out: a NAT gateway on the subnet, a public IP on the NIC, a Standard load balancer with outbound rules, or a route table that sends <code>0.0.0.0/0</code> to a firewall. If none of those exist, the VM has no egress.</p>
                     <p>Microsoft's documentation names Windows Activation and Windows Update as services that fail on a private subnet without explicit egress. The same applies to anything that calls a public endpoint, including package repositories and the Azure Virtual Desktop agent.</p>
 
-                    <h2>Choose an explicit outbound method</h2>
+                    <h2 id="choose-an-explicit-outbound-method">Choose an explicit outbound method</h2>
                     <div class="table-wrapper">
                         <table>
                             <thead><tr><th>Method</th><th>Best for</th><th>Watch out for</th></tr></thead>
@@ -155,7 +156,7 @@
                     </div>
                     <p>Microsoft documents that a NAT gateway takes precedence over load balancer outbound rules and instance-level public IPs on the same subnet for new connections. Existing connections finish on their old path, so adding one causes no outbound downtime. The exception is routing: a user-defined route that sends <code>0.0.0.0/0</code> to a firewall or NVA overrides the NAT gateway.</p>
 
-                    <h2>Fix it: add a NAT gateway with the Azure CLI</h2>
+                    <h2 id="fix-it-add-a-nat-gateway-with-the-azure-cli">Fix it: add a NAT gateway with the Azure CLI</h2>
                     <p>Three commands, taken from Microsoft's NAT gateway quickstart. First, a Standard static public IP:</p>
                     <pre><code>az network public-ip create \
     --resource-group rg-app \
@@ -176,7 +177,7 @@
     --nat-gateway natgw-app</code></pre>
                     <p>Test from the VM with <code>Test-NetConnection www.microsoft.com -Port 443</code> on Windows or <code>curl -I https://www.microsoft.com</code> on Linux. If you need many outbound IPs, give the NAT gateway a public IP prefix instead of a single address. Microsoft also offers a Standard V2 NAT gateway SKU with zone-redundant deployments. Check its documentation before you choose between the two.</p>
 
-                    <h2>Five traps during the switch</h2>
+                    <h2 id="five-traps-during-the-switch">Five traps during the switch</h2>
                     <h3>1. Changes need a stop and deallocate</h3>
                     <p>When you flip an existing subnet between private and non-private, existing VMs keep their old NIC state until you stop and deallocate them. A restart from inside the OS doesn't count.</p>
 
@@ -192,18 +193,18 @@
                     <h3>5. The Advisor alert won't clear</h3>
                     <p>Azure Advisor flags NICs under the Operational Excellence recommendation "Add explicit outbound method to disable default outbound". A VM in a non-private subnet can keep a default outbound IP even after you add a NAT gateway, although it no longer uses that IP. To clear the alert, make the subnet private and stop and deallocate the VM.</p>
 
-                    <h2>Azure Virtual Desktop session hosts need this too</h2>
+                    <h2 id="azure-virtual-desktop-session-hosts-need-this-too">Azure Virtual Desktop session hosts need this too</h2>
                     <p>A session host in a private subnet can't reach the service endpoints its agent needs, so it never shows up as available in the host pool. Microsoft's Tech Community published separate transition guidance for Azure Virtual Desktop and Windows 365 customers. Add the NAT gateway before you deploy hosts with the steps in our <a href="az-140-deploy-host-pool-step-by-step.html">AZ-140 host pool lab</a>.</p>
                     <p>The egress design also affects connection quality. Azure Firewall and NAT gateway use symmetric NAT, which pushes RDP Shortpath for public networks from a direct STUN path to a relayed TURN path. Our <a href="az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath and Private Link guide</a> lists the firewall rules TURN needs.</p>
 
-                    <h2>Can you turn default outbound access back on?</h2>
+                    <h2 id="can-you-turn-default-outbound-access-back-on">Can you turn default outbound access back on?</h2>
                     <p>Yes. You can still create non-private subnets with the portal, ARM, PowerShell, or CLI (<code>az network vnet subnet update ... --default-outbound true</code>), then stop and deallocate the VMs. Treat that as a bridge while you build NAT gateways, not a destination. Microsoft recommends explicit outbound connectivity for every workload, including those in existing networks.</p>
 
-                    <h2>What AZ-700 and AZ-104 expect you to know</h2>
+                    <h2 id="what-az-700-and-az-104-expect-you-to-know">What AZ-700 and AZ-104 expect you to know</h2>
                     <p>The AZ-700 skills outline lists "Identify appropriate use cases for Azure NAT Gateway", "Implement Azure NAT Gateway", and "Create and configure explicit outbound rules, including source network address translation (SNAT)". Expect a scenario where VMs in a new subnet can't download updates and you choose the fix. NAT gateway wins unless the VMs already sit behind a Standard load balancer. AZ-104 tests the same networking domain. Review <a href="az-900-azure-networking-fundamentals.html">Azure networking fundamentals</a> if subnets and routing still feel shaky, then try the <a href="az-104-practice-test.html">free AZ-104 practice test</a>.</p>
 
                     <section class="faq-section">
-                        <h2>Frequently Asked Questions</h2>
+                        <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                         <div class="faq-list">
                             <div class="faq-item">
                                 <h3>Why can't my new Azure VM reach the internet?</h3>
@@ -256,6 +257,7 @@
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p><section class="related-posts" aria-labelledby="related-h"><h2 id="related-h">Related</h2><ul><li><a href="../tutorials/az-900-azure-networking-fundamentals.html">Azure Networking Fundamentals: VNet, Subnets, Peering, DNS for AZ-900</a> <span class="category">Microsoft</span> <time datetime="2026-07-11">2026-07-11</time></li><li><a href="../tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a> <span class="category">Microsoft</span> <time datetime="2026-10-30">2026-10-30</time></li><li><a href="../tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, Private Link, and Network Design for Azure Virtual Desktop</a> <span class="category">Microsoft</span> <time datetime="2026-10-21">2026-10-21</time></li></ul></section></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -321,5 +323,6 @@
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>

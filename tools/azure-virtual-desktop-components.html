@@ -105,13 +105,14 @@
                     <img width="1024" height="1024" src="../images/avd-image.png" alt="Azure Virtual Desktop Components" loading="eager" fetchpriority="high">
                 </div>
             </header>
+                <!-- auto:toc:start --><nav class="post-toc" aria-label="Table of contents"><details><summary>On this page</summary><ol><li><a href="#core-azure-virtual-desktop-architecture">Core Azure Virtual Desktop Architecture</a></li><li><a href="#essential-avd-components-explained">Essential AVD Components Explained</a></li><li><a href="#architecture-best-practices">Architecture Best Practices</a></li><li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li></ol></details></nav><!-- auto:toc:end -->
 
             <div class="post-content">
                 <p>As organizations continue to embrace hybrid work models, <strong>Azure Virtual Desktop (AVD)</strong> has emerged as a leading solution for delivering secure, scalable virtual desktop experiences. Understanding the core components of AVD is essential for IT professionals tasked with planning, deploying, and managing these environments.</p>
 
                 <p>In this comprehensive guide, we'll break down each Azure Virtual Desktop component, explain its purpose, and provide practical insights for implementation and management.</p>
 
-                <h2>Core Azure Virtual Desktop Architecture</h2>
+                <h2 id="core-azure-virtual-desktop-architecture">Core Azure Virtual Desktop Architecture</h2>
 
                 <p>Before diving into individual components, let's understand how AVD fits into the broader Azure ecosystem:</p>
 
@@ -121,7 +122,7 @@
                     <li><strong>User Experience Layer</strong>: Client applications that connect to your AVD deployment</li>
                 </ul>
 
-                <h2>Essential AVD Components Explained</h2>
+                <h2 id="essential-avd-components-explained">Essential AVD Components Explained</h2>
 
                 <h3>1. Host Pools</h3>
                 <p>The foundational building block of any AVD deployment, host pools are collections of Azure virtual machines that register to the AVD service as session hosts.</p>
@@ -244,7 +245,7 @@
                     <li><strong>Thin Client</strong>: Partner certified devices</li>
                 </ul>
 
-                <h2>Architecture Best Practices</h2>
+                <h2 id="architecture-best-practices">Architecture Best Practices</h2>
                 <ul>
                     <li>Use separate subnets for management and session host traffic</li>
                     <li>Implement network security groups at subnet level</li>
@@ -255,7 +256,7 @@
                 </ul>
 
                 <section class="faq-section">
-                    <h2>Frequently Asked Questions</h2>
+                    <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
                     <div class="faq-list">
                         <div class="faq-item">
                             <h3>What's the difference between pooled and personal host pools?</h3>
@@ -302,6 +303,7 @@
                         <p><a href="../about.html">Matthew Hippensteel</a> is a PMP-certified systems administrator who holds the Azure Virtual Desktop (AZ-140), Azure Administrator, Azure Network Engineer, Identity and Access Administrator, and Microsoft 365 Administrator Expert certifications, plus CompTIA Security+ and Cisco CCNA. He writes the labs and study guides he wished he had for each exam.</p>
                     </div>
                 </footer>
+                <!-- auto:post-end:start --><div class="post-end"><p class="post-end-coffee">Found this useful? <a class="bmc-btn bmc-btn-inline" href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/></svg><span>Buy me a coffee</span></a></p></div><!-- auto:post-end:end -->
             </div>
         </article>
     </main>
@@ -369,5 +371,6 @@
     <script src="../js/main.js" defer></script>
     <script src="../js/partials.js" defer></script>
     <script src="../js/motion.js" defer></script>
+    <script src="../js/article.js" defer></script>
 </body>
 </html>
