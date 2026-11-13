@@ -48,9 +48,7 @@ test.describe('article at 1280px', () => {
     await pre.locator('.copy-button').click();
     await expect(pre.locator('.copy-button')).toHaveText('Copied');
     const copied = await page.evaluate(() => navigator.clipboard.readText());
-    expect(copied.replace(/
-/g, '
-')).toBe(await pre.locator('code').textContent());
+    expect(copied.replace(/\r\n/g, '\n')).toBe(await pre.locator('code').textContent());
   });
 
   test('no element inside .post-content is animated', async ({ page }) => {
