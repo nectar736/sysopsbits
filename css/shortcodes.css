@@ -361,78 +361,48 @@
     }
 }
 /* ===== Homepage sections ===== */
-.hero-eyebrow {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  color: #f59e0b;
-  margin-bottom: 0.75rem;
-}
-
-.trust-chips {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-  margin: 2rem 0 0;
-  padding: 0;
-}
-
-.trust-chips li {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #c4c4d6;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 999px;
-  padding: 0.25rem 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
-}
-
 .home-section {
-  margin: 3.5rem 0;
+  margin: 4.5rem 0;
 }
 
 .home-section-head {
-  text-align: center;
-  max-width: 680px;
-  margin: 0 auto 2rem;
+  max-width: 62ch;
+  margin: 0 0 1.75rem;
 }
 
 .home-section-head h2 {
   margin-bottom: 0.5rem;
 }
 
-.home-section-head p {
+.home-section-head p:not(.section-path) {
   color: var(--text-secondary);
   margin: 0;
 }
 
 .home-section-foot {
-  text-align: center;
-  margin-top: 1.5rem;
+  margin: 1.25rem 0 0;
 }
 
-.post-meta-note {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+.home-section-foot .read-more { padding-top: 0; }
+
+/* Featured guides: three across */
+.featured-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
+/* Study guides shown as book covers */
 .guide-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 1rem;
 }
 
 @media (max-width: 1000px) {
-  .guide-grid { grid-template-columns: repeat(3, 1fr); }
+  .guide-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 520px) {
-  .guide-grid { grid-template-columns: repeat(2, 1fr); }
+  .guide-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 .guide-card {
@@ -444,53 +414,139 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  transition: all var(--transition);
+  text-decoration: none;
+  transition: border-color var(--dur-fast), background-color var(--dur-fast);
 }
 
-.guide-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: var(--surface-shadow);
+.guide-card:hover,
+.guide-card:focus-visible {
+  border-color: var(--accent-text);
   color: var(--text-primary);
 }
 
-.guide-card img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
+/* 3:4 cover with a spine edge; the whole image stays visible whatever its shape */
+.guide-cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
   margin-bottom: 0.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 2px 6px 6px 2px;
+}
+
+.guide-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 1;
+  width: 7px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+}
+
+.guide-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .guide-name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.95rem;
+  font-weight: 600;
+  font-size: 0.9rem;
   line-height: 1.3;
 }
 
 .guide-detail {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-secondary);
 }
 
 .guide-price {
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--accent-text);
   margin-top: auto;
   padding-top: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--accent-text);
 }
 
+/* Latest articles as a text log */
+.post-log {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border-color);
+}
+
+.log-row {
+  display: grid;
+  grid-template-columns: 6.5rem 12.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.log-row time {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.log-title {
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.log-title::after {
+  content: " \2192";
+  color: var(--accent-text);
+}
+
+.log-title:hover { color: var(--accent-text); }
+
+@media (max-width: 720px) {
+  .log-row {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.25rem 1rem;
+  }
+
+  .log-title { grid-column: 1 / -1; }
+}
+
+/* Topic links */
 .topic-card {
   display: block;
   color: var(--text-primary);
-  text-align: left;
+  text-decoration: none;
+  transition: border-color var(--dur-fast), background-color var(--dur-fast);
 }
 
-.topic-card:hover {
+.topic-card:hover,
+.topic-card:focus-visible {
+  border-color: var(--accent-text);
   color: var(--text-primary);
-  border-color: var(--accent-secondary);
+}
+
+.topic-card h3::after {
+  content: " \2192";
+  color: var(--accent-text);
+}
+
+/* "Why" statements: plain columns, no cards */
+.why h2 { margin-bottom: 1.5rem; }
+
+.why-grid { gap: 2rem; }
+
+.why-grid .why-item {
+  padding: 1rem 0 0;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  border-radius: 0;
 }
 
 /* ===== In-article study guide promotion ===== */

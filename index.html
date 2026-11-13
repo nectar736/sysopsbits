@@ -91,43 +91,38 @@
 <!-- partial:header:end --></div>
 
     <main id="main-content">
-        <!-- Hero Section -->
-        <div class="hero">
-            <div class="hero-background">
-                <div class="tech-grid"></div>
-                <div class="floating-particles">
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
+        <!-- Hero: the SVG is the permanent fallback; js/home.js draws the live scene on the canvas when allowed -->
+        <section class="hero" aria-labelledby="hero-title">
+            <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
+            <div class="container hero-inner">
+                <div class="hero-content">
+                    <p class="hero-eyebrow">$ sysopsbits<span class="cursor" aria-hidden="true">▍</span></p>
+                    <h1 class="hero-title" id="hero-title">Pass your Azure and PMP exams with labs that actually work</h1>
+                    <p class="hero-subtitle">Free practice tests, step-by-step Azure Virtual Desktop and AZ-104 labs, and compressed study guides, written by a PMP-certified sysadmin with seven Microsoft certifications.</p>
+                    <div class="cta-buttons">
+                        <a href="#practice-tests" class="btn btn-primary">Take a free practice test</a>
+                        <a href="store.html" class="btn btn-secondary">Browse study guides</a>
+                    </div>
+                    <ul class="trust-chips" aria-label="Author certifications">
+                        <li>AZ-140</li>
+                        <li>AZ-104</li>
+                        <li>M365 Administrator Expert</li>
+                        <li>PMP</li>
+                        <li>Security+</li>
+                        <li>CCNA</li>
+                    </ul>
+                </div>
+                <div class="hero-scene" aria-hidden="true">
+                    <svg class="hero-fallback" viewBox="0 0 400 400" width="400" height="400" fill="none" focusable="false"><path d="M107.7 77L186.6 58.1M72.2 144.4L107.7 77M107.7 77L127.6 97.1M49.5 213.4L72.2 144.4M85.1 221.7L72.2 144.4M125.9 157.7L72.2 144.4M72.2 144.4L127.6 97.1M85.1 221.7L125.9 157.7M127.6 97.1L186.6 58.1M189.2 110.4L186.6 58.1M260.8 90.8L186.6 58.1M186.6 58.1L257.3 57.8M189.2 110.4L260.8 90.8M286.1 314.8L319 240.9M341.6 261.5L319 240.9M262.7 277.5L286.1 314.8M208.8 320.8L286.1 314.8M208.8 320.8L214.4 353.3M262.7 277.5L208.8 320.8M201.6 256.9L208.8 320.8M135.6 285.7L208.8 320.8M208.8 320.8L145.9 334.2M201.6 256.9L135.6 285.7M262.7 277.5L201.6 256.9M263.5 211.6L201.6 256.9M194.6 182.1L201.6 256.9M201.6 256.9L142.8 223.2M263.5 211.6L194.6 182.1M319 240.9L262.7 277.5M262.7 277.5L263.5 211.6M319 240.9L263.5 211.6M308.8 158.5L263.5 211.6M263.5 211.6L248.3 145M348.2 186.8L319 240.9M319 240.9L308.8 158.5M85.1 221.7L142.8 223.2M142.8 223.2L135.6 285.7M85.1 221.7L135.6 285.7M145.9 334.2L81 287.9M81 287.9L135.6 285.7M135.6 285.7L145.9 334.2M81 287.9L49.5 213.4M49.5 213.4L85.1 221.7M85.1 221.7L81 287.9M189.2 110.4L248.3 145M248.3 145L194.6 182.1M189.2 110.4L194.6 182.1M142.8 223.2L125.9 157.7M125.9 157.7L194.6 182.1M194.6 182.1L142.8 223.2M125.9 157.7L127.6 97.1M127.6 97.1L189.2 110.4M189.2 110.4L125.9 157.7M348.2 186.8L308.8 158.5M322 109.9L308.8 158.5M248.3 145L260.8 90.8M260.8 90.8L308.8 158.5M308.8 158.5L248.3 145M260.8 90.8L257.3 57.8M322 109.9L260.8 90.8" stroke="currentColor" stroke-width="1" opacity="0.28"/><path d="M197.6 112.6L104.1 182.5M208.7 229L104.1 182.5M197.6 112.6L208.7 229M114.7 94.5L197.6 112.6M189.1 50.3L197.6 112.6M285.1 86.7L197.6 112.6M197.6 112.6L287 164.8M189.1 50.3L285.1 86.7M114.7 94.5L189.1 50.3M107.7 77L189.1 50.3M186.6 58.1L189.1 50.3M189.1 50.3L257.3 57.8M114.7 94.5L107.7 77M56.2 150.6L107.7 77M56.2 150.6L72.2 144.4M104.1 182.5L114.7 94.5M114.7 94.5L56.2 150.6M104.1 182.5L56.2 150.6M62 252.6L56.2 150.6M56.2 150.6L49.5 213.4M128.5 281.4L104.1 182.5M104.1 182.5L62 252.6M257.3 57.8L285.1 86.7M322 109.9L285.1 86.7M345.4 172.6L285.1 86.7M285.1 86.7L287 164.8M322 109.9L345.4 172.6M287 164.8L208.7 229M305.9 260.5L208.7 229M215.3 326.1L208.7 229M208.7 229L128.5 281.4M305.9 260.5L215.3 326.1M128.5 281.4L62 252.6M126.2 332.6L62 252.6M81 287.9L62 252.6M62 252.6L49.5 213.4M126.2 332.6L81 287.9M286.1 314.8L341.6 261.5M214.4 353.3L286.1 314.8M286.1 314.8L287.5 324.4M305.9 260.5L287.5 324.4M287.5 324.4L341.6 261.5M305.9 260.5L341.6 261.5M348.2 186.8L345.4 172.6M345.4 172.6L341.6 261.5M341.6 261.5L348.2 186.8M345.4 172.6L287 164.8M287 164.8L305.9 260.5M305.9 260.5L345.4 172.6M126.2 332.6L145.9 334.2M145.9 334.2L214.4 353.3M126.2 332.6L214.4 353.3M287.5 324.4L215.3 326.1M215.3 326.1L214.4 353.3M214.4 353.3L287.5 324.4M215.3 326.1L128.5 281.4M128.5 281.4L126.2 332.6M126.2 332.6L215.3 326.1M322 109.9L348.2 186.8M257.3 57.8L322 109.9" stroke="currentColor" stroke-width="1" opacity="0.8"/><g fill="currentColor"><circle cx="194.6" cy="182.1" r="1.6" opacity="0.45"/><circle cx="201.6" cy="256.9" r="1.6" opacity="0.45"/><circle cx="142.8" cy="223.2" r="1.6" opacity="0.45"/><circle cx="263.5" cy="211.6" r="1.6" opacity="0.45"/><circle cx="248.3" cy="145" r="1.6" opacity="0.45"/><circle cx="125.9" cy="157.7" r="1.6" opacity="0.45"/><circle cx="189.2" cy="110.4" r="1.6" opacity="0.45"/><circle cx="262.7" cy="277.5" r="1.6" opacity="0.45"/><circle cx="135.6" cy="285.7" r="1.6" opacity="0.45"/><circle cx="308.8" cy="158.5" r="1.6" opacity="0.45"/><circle cx="85.1" cy="221.7" r="1.6" opacity="0.45"/><circle cx="208.8" cy="320.8" r="1.6" opacity="0.45"/><circle cx="260.8" cy="90.8" r="1.6" opacity="0.45"/><circle cx="319" cy="240.9" r="1.6" opacity="0.45"/><circle cx="127.6" cy="97.1" r="1.6" opacity="0.45"/><circle cx="72.2" cy="144.4" r="1.6" opacity="0.45"/><circle cx="186.6" cy="58.1" r="1.6" opacity="0.45"/><circle cx="286.1" cy="314.8" r="1.6" opacity="0.45"/><circle cx="145.9" cy="334.2" r="1.6" opacity="0.45"/><circle cx="81" cy="287.9" r="1.6" opacity="0.45"/><circle cx="348.2" cy="186.8" r="1.6" opacity="0.45"/><circle cx="49.5" cy="213.4" r="2.4" opacity="1"/><circle cx="322" cy="109.9" r="2.4" opacity="1"/><circle cx="257.3" cy="57.8" r="2.4" opacity="1"/><circle cx="107.7" cy="77" r="2.4" opacity="1"/><circle cx="214.4" cy="353.3" r="2.4" opacity="1"/><circle cx="341.6" cy="261.5" r="2.4" opacity="1"/><circle cx="287.5" cy="324.4" r="2.4" opacity="1"/><circle cx="56.2" cy="150.6" r="2.4" opacity="1"/><circle cx="126.2" cy="332.6" r="2.4" opacity="1"/><circle cx="189.1" cy="50.3" r="2.4" opacity="1"/><circle cx="345.4" cy="172.6" r="2.4" opacity="1"/><circle cx="62" cy="252.6" r="2.4" opacity="1"/><circle cx="285.1" cy="86.7" r="2.4" opacity="1"/><circle cx="114.7" cy="94.5" r="2.4" opacity="1"/><circle cx="215.3" cy="326.1" r="2.4" opacity="1"/><circle cx="305.9" cy="260.5" r="2.4" opacity="1"/><circle cx="128.5" cy="281.4" r="2.4" opacity="1"/><circle cx="104.1" cy="182.5" r="2.4" opacity="1"/><circle cx="287" cy="164.8" r="2.4" opacity="1"/><circle cx="197.6" cy="112.6" r="2.4" opacity="1"/><circle cx="208.7" cy="229" r="2.4" opacity="1"/></g></svg>
                 </div>
             </div>
-            <canvas id="hero-canvas" class="hero-canvas"></canvas>
-            <div class="hero-content">
-                <p class="hero-eyebrow">SysOpsBits</p>
-                <h1 class="hero-title">Pass your Azure and PMP exams with labs that actually work</h1>
-                <p class="hero-subtitle">Free practice tests, step-by-step Azure Virtual Desktop and AZ-104 labs, and compressed study guides, written by a PMP-certified sysadmin with seven Microsoft certifications.</p>
-                <div class="cta-buttons">
-                    <a href="#practice-tests" class="btn btn-primary">Take a free practice test</a>
-                    <a href="store.html" class="btn btn-secondary">Browse study guides</a>
-                </div>
-                <ul class="trust-chips" aria-label="Author certifications">
-                    <li>AZ-140</li>
-                    <li>AZ-104</li>
-                    <li>M365 Administrator Expert</li>
-                    <li>PMP</li>
-                    <li>Security+</li>
-                    <li>CCNA</li>
-                </ul>
-            </div>
-        </div>
+        </section>
 
         <div class="container">
             <!-- Free practice tests -->
             <section class="home-section" id="practice-tests">
                 <div class="home-section-head">
+                    <p class="section-path">~/practice-tests</p>
                     <h2>Free practice tests</h2>
                     <p>Scenario-based questions mapped to the current official skills outlines, with an explanation for every answer. No sign-up.</p>
                 </div>
@@ -146,6 +141,7 @@
                             <a href="tutorials/az-140-practice-test.html" class="read-more">Start the AZ-140 test →</a>
                         </div>
                     </article>
+
                     <article class="post-card">
                         <div class="post-image">
                             <img width="768" height="1152" src="images/az900-pt.jpg" alt="AZ-900 practice test" loading="lazy">
@@ -193,144 +189,101 @@
                 </div>
             </section>
 
-            <!-- Latest Articles Section -->
-            <section class="recent-posts home-section">
+            <!-- Featured guides -->
+            <section class="home-section" id="featured">
                 <div class="home-section-head">
-                    <h2>Latest articles</h2>
-                    <p>New guides on Azure mandatory MFA, private subnets, and Windows Autopilot, plus the latest Azure Virtual Desktop labs.</p>
+                    <p class="section-path">~/featured</p>
+                    <h2>Featured guides</h2>
+                    <p>A full Azure Virtual Desktop host pool lab, practical NSG rules, and the PMP earned value formulas with worked answers.</p>
                 </div>
-                <div class="posts-grid">
+                <div class="posts-grid featured-grid">
                     <article class="post-card">
                         <div class="post-image">
-                            <img width="1200" height="630" src="images/azure-mandatory-mfa.jpg" alt="Azure MFA Broke Your Scripts? Fix Them With Managed Identities" loading="lazy">
+                            <img width="1408" height="1408" src="images/az-140-host-pool.jpg" alt="Azure Virtual Desktop host pool deployment diagram" loading="lazy">
                         </div>
                         <div class="post-content">
                             <div class="post-meta">
                                 <a href="microsoft.html" class="category">Microsoft</a>
-                                <time datetime="2026-10-30">2026-10-30</time>
+                                <time datetime="2026-09-01">2026-09-01</time>
                             </div>
-                            <h3><a href="tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a></h3>
-                            <p>Azure now requires MFA for CLI, PowerShell, and IaC changes. Find the user accounts your automation uses and move them to managed identities or service principals.</p>
-                            <a href="tutorials/azure-mandatory-mfa-managed-identities.html" class="read-more">Read More →</a>
+                            <h3><a href="tutorials/az-140-deploy-host-pool-step-by-step.html">AZ-140 Lab Guide: Deploy Your First Azure Virtual Desktop Host Pool</a></h3>
+                            <p>Build a working host pool from scratch: networking, identity, session hosts, workspaces, application groups, and user assignment, with portal and PowerShell steps.</p>
+                            <a href="tutorials/az-140-deploy-host-pool-step-by-step.html" class="read-more">Open the lab →</a>
                         </div>
                     </article>
 
                     <article class="post-card">
                         <div class="post-image">
-                            <img width="1200" height="630" src="images/azure-private-subnets.jpg" alt="Azure VM Has No Internet in a New VNet? Private Subnets Explained" loading="lazy">
+                            <img width="1280" height="853" src="images/azure-nsg-best-practices.jpg" alt="Azure NSG Best Practices" loading="lazy">
                         </div>
                         <div class="post-content">
                             <div class="post-meta">
                                 <a href="microsoft.html" class="category">Microsoft</a>
-                                <time datetime="2026-10-30">2026-10-30</time>
+                                <time datetime="2026-03-05">2026-03-05</time>
                             </div>
-                            <h3><a href="tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a></h3>
-                            <p>New Azure VNets default to private subnets, so VMs can't reach the internet. Choose NAT Gateway, Load Balancer outbound rules, or a public IP, and avoid five transition traps.</p>
-                            <a href="tutorials/azure-private-subnet-default-outbound-access.html" class="read-more">Read More →</a>
+                            <h3><a href="tutorials/azure-nsg-best-practices.html">Azure NSG Best Practices: Practical Rules and Patterns</a></h3>
+                            <p>Host and subnet NSGs, common allow and deny patterns, and how to troubleshoot a rule that does not behave.</p>
+                            <a href="tutorials/azure-nsg-best-practices.html" class="read-more">Read the guide →</a>
                         </div>
                     </article>
 
                     <article class="post-card">
                         <div class="post-image">
-                            <img width="1200" height="630" src="images/autopilot-device-preparation.jpg" alt="Autopilot Device Preparation vs Windows Autopilot: Which to Use" loading="lazy">
+                            <img width="832" height="1248" src="images/pmp_evm_formulas.jpg" alt="PMP Earned Value Management Formulas" loading="lazy">
                         </div>
                         <div class="post-content">
                             <div class="post-meta">
-                                <a href="microsoft.html" class="category">Microsoft</a>
-                                <time datetime="2026-10-30">2026-10-30</time>
+                                <a href="project-management.html" class="category">Project Management</a>
+                                <time datetime="2026-06-13">2026-06-13</time>
                             </div>
-                            <h3><a href="tutorials/autopilot-device-preparation-vs-windows-autopilot.html">Autopilot Device Preparation vs Windows Autopilot: Which to Use</a></h3>
-                            <p>Join types, Windows 11 build rules, app limits, setup steps, and the deployment choice the MD-102 exam now tests, checked against Microsoft Learn.</p>
-                            <a href="tutorials/autopilot-device-preparation-vs-windows-autopilot.html" class="read-more">Read More →</a>
-                        </div>
-                    </article>
-
-                    <article class="post-card">
-                        <div class="post-image">
-                            <img width="1200" height="630" src="images/az-140-entra-kerberos.jpg" alt="AZ-140 Entra Kerberos for FSLogix on Azure Files" loading="lazy">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-meta">
-                                <a href="microsoft.html" class="category">Microsoft</a>
-                                <time datetime="2026-10-21">2026-10-21</time>
-                            </div>
-                            <h3><a href="tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files</a></h3>
-                            <p>FSLogix profiles on Entra joined session hosts without a domain controller, with the registry script explained line by line.</p>
-                            <a href="tutorials/az-140-entra-kerberos-fslogix-azure-files.html" class="read-more">Read More →</a>
-                        </div>
-                    </article>
-
-                    <article class="post-card">
-                        <div class="post-image">
-                            <img width="1200" height="630" src="images/az-140-fslogix.jpg" alt="FSLogix profile containers guide for AZ-140" loading="lazy">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-meta">
-                                <a href="microsoft.html" class="category">Microsoft</a>
-                                <time datetime="2026-10-21">2026-10-21</time>
-                            </div>
-                            <h3><a href="tutorials/az-140-fslogix-profile-containers-guide.html">FSLogix Profile Containers for Azure Virtual Desktop</a></h3>
-                            <p>Profile Containers, ODFC, Cloud Cache, application masking, and choosing between Azure Files and Azure NetApp Files.</p>
-                            <a href="tutorials/az-140-fslogix-profile-containers-guide.html" class="read-more">Read More →</a>
-                        </div>
-                    </article>
-
-                    <article class="post-card">
-                        <div class="post-image">
-                            <img width="1200" height="630" src="images/az-140-networking.jpg" alt="AVD networking with RDP Shortpath and Private Link" loading="lazy">
-                        </div>
-                        <div class="post-content">
-                            <div class="post-meta">
-                                <a href="microsoft.html" class="category">Microsoft</a>
-                                <time datetime="2026-10-21">2026-10-21</time>
-                            </div>
-                            <h3><a href="tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, and Private Link for AVD</a></h3>
-                            <p>Latency assessment, QoS with DSCP 46, Private Link setup, and the order to troubleshoot AVD connectivity.</p>
-                            <a href="tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html" class="read-more">Read More →</a>
+                            <h3><a href="project-management/pmp-formulas-earned-value-management.html">PMP Formulas Guide: Earned Value Management with 10 Practice Questions</a></h3>
+                            <p>PV, EV, AC, SV, CV, SPI, CPI, EAC, ETC, VAC, and TCPI, with ten practice questions and step-by-step solutions.</p>
+                            <a href="project-management/pmp-formulas-earned-value-management.html" class="read-more">Read the guide →</a>
                         </div>
                     </article>
                 </div>
             </section>
 
             <!-- Study guides -->
-            <section class="home-section study-guides">
+            <section class="home-section study-guides" id="study-guides">
                 <div class="home-section-head">
+                    <p class="section-path">~/study-guides</p>
                     <h2>Exam study guides</h2>
                     <p>Each guide compresses the full skills outline into the pages you need, then adds a scored practice exam with an explanation for every answer. Instant PDF download.</p>
                 </div>
                 <div class="guide-grid">
                     <a class="guide-card" href="https://buymeacoffee.com/mattyhip/e/589877" target="_blank" rel="noopener" data-product="az-140">
-                        <img width="1400" height="1400" src="images/az-140-exam-kit.jpg" alt="AZ-140 Exam Kit cover" loading="lazy">
+                        <span class="guide-cover"><img width="1400" height="1400" src="images/az-140-exam-kit.jpg" alt="AZ-140 Exam Kit cover" loading="lazy"></span>
                         <span class="guide-name">AZ-140 Exam Kit</span>
                         <span class="guide-detail">63 pages + 55-question exam</span>
                         <span class="guide-price">$8.99</span>
                     </a>
                     <a class="guide-card" href="https://buymeacoffee.com/mattyhip/e/537655" target="_blank" rel="noopener" data-product="az-104">
-                        <img width="1168" height="784" src="images/az-104.jpg" alt="AZ-104 Exam Cram cover" loading="lazy">
+                        <span class="guide-cover"><img width="1168" height="784" src="images/az-104.jpg" alt="AZ-104 Exam Cram cover" loading="lazy"></span>
                         <span class="guide-name">AZ-104 Exam Cram</span>
                         <span class="guide-detail">Notes, labs + 80-question exam</span>
                         <span class="guide-price">$8.99</span>
                     </a>
                     <a class="guide-card" href="https://buymeacoffee.com/mattyhip/e/538078" target="_blank" rel="noopener" data-product="az-900">
-                        <img width="1000" height="667" src="images/az-900.png" alt="AZ-900 Exam Cracker cover" loading="lazy">
+                        <span class="guide-cover"><img width="1000" height="667" src="images/az-900.png" alt="AZ-900 Exam Cracker cover" loading="lazy"></span>
                         <span class="guide-name">AZ-900 Exam Cracker</span>
                         <span class="guide-detail">61 pages + 40-question test</span>
                         <span class="guide-price">$8.99</span>
                     </a>
                     <a class="guide-card" href="https://buymeacoffee.com/mattyhip/e/537680" target="_blank" rel="noopener" data-product="pmp">
-                        <img width="1248" height="832" src="images/pmp-exam.png" alt="PMP Exam Cracker cover" loading="lazy">
+                        <span class="guide-cover"><img width="1248" height="832" src="images/pmp-exam.png" alt="PMP Exam Cracker cover" loading="lazy"></span>
                         <span class="guide-name">PMP Exam Cracker</span>
                         <span class="guide-detail">64 pages + 80-question test</span>
                         <span class="guide-price">$8.99</span>
                     </a>
                     <a class="guide-card" href="https://buymeacoffee.com/mattyhip/e/552628" target="_blank" rel="noopener" data-product="pmp-charts">
-                        <img width="832" height="1248" src="images/pmp-charts-study-guide.jpg" alt="PMP Charts study guide cover" loading="lazy">
+                        <span class="guide-cover"><img width="832" height="1248" src="images/pmp-charts-study-guide.jpg" alt="PMP Charts study guide cover" loading="lazy"></span>
                         <span class="guide-name">PMP Charts &amp; Visuals</span>
                         <span class="guide-detail">31 charts + 40-question test</span>
                         <span class="guide-price">$6.99</span>
                     </a>
                     <a class="guide-card" href="https://buymeacoffee.com/mattyhip/e/564665" target="_blank" rel="noopener" data-product="psm1">
-                        <img width="1152" height="1728" src="images/psm1-exam-cracker.jpg" alt="PSM I Exam Cracker cover" loading="lazy">
+                        <span class="guide-cover"><img width="1152" height="1728" src="images/psm1-exam-cracker.jpg" alt="PSM I Exam Cracker cover" loading="lazy"></span>
                         <span class="guide-name">PSM I Exam Cracker</span>
                         <span class="guide-detail">14 pages + 80-question exam</span>
                         <span class="guide-price">$8.99</span>
@@ -339,9 +292,52 @@
                 <p class="home-section-foot"><a href="store.html" class="read-more">See what's inside each guide →</a></p>
             </section>
 
-            <!-- Topic hubs -->
-            <section class="home-section">
+            <!-- Latest articles: a text log, newest first -->
+            <section class="home-section" id="latest">
                 <div class="home-section-head">
+                    <p class="section-path">~/latest</p>
+                    <h2>Latest articles</h2>
+                    <p>New guides on Azure mandatory MFA, private subnets, and Windows Autopilot, plus the latest Azure Virtual Desktop labs.</p>
+                </div>
+                <ol class="post-log">
+                    <li class="log-row">
+                        <time datetime="2026-10-30">2026-10-30</time>
+                        <a href="microsoft.html" class="category">Microsoft</a>
+                        <a class="log-title" href="tutorials/azure-mandatory-mfa-managed-identities.html">Azure MFA Broke Your Scripts? Fix Them With Managed Identities</a>
+                    </li>
+                    <li class="log-row">
+                        <time datetime="2026-10-30">2026-10-30</time>
+                        <a href="microsoft.html" class="category">Microsoft</a>
+                        <a class="log-title" href="tutorials/azure-private-subnet-default-outbound-access.html">Azure VM Has No Internet in a New VNet? Private Subnets Explained</a>
+                    </li>
+                    <li class="log-row">
+                        <time datetime="2026-10-30">2026-10-30</time>
+                        <a href="microsoft.html" class="category">Microsoft</a>
+                        <a class="log-title" href="tutorials/autopilot-device-preparation-vs-windows-autopilot.html">Autopilot Device Preparation vs Windows Autopilot: Which to Use</a>
+                    </li>
+                    <li class="log-row">
+                        <time datetime="2026-10-21">2026-10-21</time>
+                        <a href="microsoft.html" class="category">Microsoft</a>
+                        <a class="log-title" href="tutorials/az-140-entra-kerberos-fslogix-azure-files.html">AZ-140: Entra Kerberos for FSLogix on Azure Files</a>
+                    </li>
+                    <li class="log-row">
+                        <time datetime="2026-10-21">2026-10-21</time>
+                        <a href="microsoft.html" class="category">Microsoft</a>
+                        <a class="log-title" href="tutorials/az-140-fslogix-profile-containers-guide.html">FSLogix Profile Containers for Azure Virtual Desktop</a>
+                    </li>
+                    <li class="log-row">
+                        <time datetime="2026-10-21">2026-10-21</time>
+                        <a href="microsoft.html" class="category">Microsoft</a>
+                        <a class="log-title" href="tutorials/az-140-rdp-shortpath-multipath-private-link-networking.html">RDP Shortpath, Multipath, and Private Link for AVD</a>
+                    </li>
+                </ol>
+                <p class="home-section-foot"><a href="categories.html" class="read-more">All articles →</a></p>
+            </section>
+
+            <!-- Topic hubs -->
+            <section class="home-section" id="topics">
+                <div class="home-section-head">
+                    <p class="section-path">~/topics</p>
                     <h2>Browse by topic</h2>
                 </div>
                 <div class="features-grid topic-grid">
@@ -365,18 +361,18 @@
             </section>
 
             <!-- Why section -->
-            <section class="features home-section">
+            <section class="home-section why">
                 <h2>Why SysOpsBits?</h2>
-                <div class="features-grid">
-                    <div class="feature">
+                <div class="features-grid why-grid">
+                    <div class="feature why-item">
                         <h3>Written by a certified practitioner</h3>
                         <p>The Azure and PMP guides come from someone who holds those certifications and does the work every day. <a href="about.html">See the credentials</a>.</p>
                     </div>
-                    <div class="feature">
+                    <div class="feature why-item">
                         <h3>Mapped to the official outline</h3>
                         <p>Exam content follows Microsoft's and PMI's current published skills outlines, and gets updated when they change.</p>
                     </div>
-                    <div class="feature">
+                    <div class="feature why-item">
                         <h3>Free first</h3>
                         <p>Tutorials and practice tests are free. The paid guides are for when you want everything in one place.</p>
                     </div>
@@ -448,7 +444,6 @@
 
     <!-- Scripts -->
     <script src="js/main.js" defer></script>
-    <script src="js/hero-animation.js" defer></script>
     <script src="js/partials.js" defer></script>
     <script src="js/motion.js" defer></script>
 </body>
