@@ -16,7 +16,7 @@ const fullBtn = document.getElementById('sim-fullscreen');
 
 const S = {
     state: 'off', labId: null, machines: {}, hints: {}, progress: loadProgress(),
-    windows: [], modals: [], z: 100, desktop: null, taskList: null, panel: null, startMenu: null, clockTimer: 0, shiftShown: false,
+    windows: [], modals: [], z: 100, bootId: 0, bootCleanup: null, desktop: null, taskList: null, panel: null, startMenu: null, clockTimer: 0, shiftShown: false,
 };
 
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -75,6 +75,8 @@ function stage(...kids) {
 
 function renderOff() {
     clearInterval(S.clockTimer);
+    S.bootId++;
+    if (S.bootCleanup) S.bootCleanup();
     S.windows = [];
     S.modals = [];
     setState('off');
@@ -93,11 +95,16 @@ function powerOn() {
     const lines = ['BitsBIOS v4.10  (c) BitsOS', '', 'Memory test: 65536K OK', 'Detecting drives ... Local Disk (C:)', 'Network adapter ... BitsNet PCI Fast Ethernet', '', 'Starting BitsOS 98 ...'];
     let i = 0;
     let done = false;
-    const finish = () => {
-        if (done) return;
+    const id = ++S.bootId;
+    const cleanup = () => {
         done = true;
         document.removeEventListener('keydown', skip, true);
         screen.removeEventListener('pointerdown', skip);
+        if (S.bootCleanup === cleanup) S.bootCleanup = null;
+    };
+    const finish = () => {
+        if (done || id !== S.bootId) return;
+        cleanup();
         if (S.state === 'boot') renderDesktop();
     };
     const skip = (e) => {
@@ -105,7 +112,7 @@ function powerOn() {
         finish();
     };
     const tick = () => {
-        if (done || S.state !== 'boot') return;
+        if (done || id !== S.bootId || S.state !== 'boot') return;
         if (i < lines.length) {
             pre.append(h('div', { class: i === 0 ? 'os-boot-logo' : null, text: lines[i++] || ' ' }));
             setTimeout(tick, 200);
@@ -113,7 +120,9 @@ function powerOn() {
             setTimeout(finish, 300);
         }
     };
+    S.bootCleanup = cleanup;
     setTimeout(() => {
+        if (done || id !== S.bootId) return;
         document.addEventListener('keydown', skip, true);
         screen.addEventListener('pointerdown', skip);
     }, 0);
@@ -121,8 +130,10 @@ function powerOn() {
 }
 
 function powerOff() {
-    for (const w of [...S.windows]) w.remove();
+    const hadFocus = screen.contains(document.activeElement);
+    closeAllWindows(); // also settles any open message box
     renderOff();
+    if (hadFocus) screen.querySelector('.os-off-btn').focus();
 }
 
 // ---------- desktop ----------
@@ -139,9 +150,7 @@ function renderDesktop() {
     const icons = h('ul', { class: 'os-icons', 'aria-label': 'Desktop' }, DESKTOP_APPS.map(([app, label]) => h('li', {},
         h('button', {
             class: 'os-icon', type: 'button', 'data-app': app,
-            onclick: (e) => { if (e.detail === 0 || e.pointerType === 'touch' || S.lastPointer === 'touch') launch(app); },
-            ondblclick: () => launch(app),
-            onpointerdown: (e) => { S.lastPointer = e.pointerType; },
+            onclick: () => launch(app),
         }, h('span', { icon: app }), h('span', { class: 'os-icon-label', text: label })))));
 
     S.panel = renderPanel();
@@ -166,6 +175,7 @@ function renderDesktop() {
 }
 
 function launch(app) {
+    if (S.modals.length) return;
     closeStart();
     if (app === 'tickets') {
         if (compact()) toggleDrawer(true);
@@ -197,6 +207,7 @@ function renderStartMenu() {
             item('power', 'Shut Down...', () => { closeStart(); powerOff(); })));
 }
 function toggleStart() {
+    if (S.modals.length) return;
     if (S.startMenu.hidden) {
         S.startMenu.hidden = false;
         S.desktop.querySelector('.os-start').setAttribute('aria-expanded', 'true');
@@ -272,8 +283,12 @@ function showHint() {
     const l = lab();
     S.hints[l.id] = Math.min(3, (S.hints[l.id] || 0) + 1);
     fillPanel();
-    const hint = S.panel.querySelector('[data-action="hint"]');
-    (hint.disabled ? S.panel.querySelector('.os-hints li:last-child') || hint : hint).focus?.();
+    // Move focus to the new hint so it is read out; the Hint button stays one Shift+Tab away.
+    const newest = S.panel.querySelector('.os-hints li:last-child');
+    if (newest) {
+        newest.tabIndex = -1;
+        newest.focus();
+    }
 }
 
 function resetMachine() {
@@ -308,6 +323,7 @@ async function closeTicket(e) {
             h('dt', { text: 'Hints used' }), h('dd', { text: `${hints} of 3` })),
         h('p', {}, 'Read next: ', h('a', { class: 'os-link', href: d.link.href, text: d.link.text })));
     await message({ kind: 'debrief', title: `Ticket #${l.id} closed`, icon: 'info', content, opener, width: 420 });
+    if (S.state !== 'desktop') return; // powered off while the debrief was open
     if (closedCount() === LABS.length && !S.shiftShown) {
         S.shiftShown = true;
         await message({
@@ -340,7 +356,8 @@ function openWindow({ app, kind, title, icon, modal = false, opener, width, heig
     win.append(bar, body);
     win._meta = { opener, modal, escClose: escClose || modal, onClose };
     if (modal) {
-        win._backdrop = h('div', { class: 'os-modal-backdrop' });
+        // Covers the whole screen, taskbar included; keeps focus in the dialog when clicked.
+        win._backdrop = h('div', { class: 'os-modal-backdrop', onpointerdown: (e) => e.preventDefault() });
         S.desktop.append(win._backdrop);
         S.modals.push(win);
     }

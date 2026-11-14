@@ -89,3 +89,8 @@ test('simulation.html has a matching h3 for every lab', { skip: !existsSync(path
     assert.match(html, new RegExp(`<h3 id="lab-${lab.id}">${title}</h3>`), lab.id);
   }
 });
+
+test('review: teaching text does not overstate', () => {
+  for (const lab of LABS) assert.doesNotMatch(lab.debrief.remember, /(?<!almost )always means/, lab.id);
+  assert.doesNotMatch(byId('105').debrief.link.text, /route/i);
+});

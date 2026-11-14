@@ -177,7 +177,7 @@ html.sim-fullscreen .sim-controls { width: min(100%, calc((100vh - 90px) * 4 / 3
 .os-msg { display: flex; gap: 12px; align-items: flex-start; max-width: 380px; }
 .os-msg svg { width: 32px; height: 32px; flex: none; }
 .os-msg p { margin: 0 0 6px; }
-.os-modal-backdrop { position: absolute; inset: 0 0 30px 0; z-index: 900; }
+.os-modal-backdrop { position: absolute; inset: 0; z-index: 900; }
 
 /* Command Prompt */
 .os-term { flex: 1; min-height: 0; overflow: auto; background: var(--os-term-bg); color: var(--os-term-text); font: 13px/1.35 var(--font-mono); padding: 4px 6px; cursor: text; }

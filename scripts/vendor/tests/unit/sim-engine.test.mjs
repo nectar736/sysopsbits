@@ -217,7 +217,7 @@ test('files are case-insensitive and parseHosts skips comments', () => {
   const m = writeFile(machine(), 'C:\\Users\\you\\Desktop\\notes.txt', 'hi');
   assert.equal(readFile(m, 'c:\\users\\YOU\\desktop\\NOTES.TXT'), 'hi');
   assert.equal(readFile(m, 'C:\\missing.txt'), null);
-  assert.deepEqual(parseHosts('# c\n\n10.0.0.99  Intranet.corp.local  intranet # trailing\n  127.0.0.1 localhost\nbad line\n'), {
+  assert.deepEqual({ ...parseHosts('# c\n\n10.0.0.99  Intranet.corp.local  intranet # trailing\n  127.0.0.1 localhost\nbad line\n') }, {
     'intranet.corp.local': '10.0.0.99', intranet: '10.0.0.99', localhost: '127.0.0.1',
   });
 });

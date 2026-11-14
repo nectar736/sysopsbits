@@ -245,3 +245,24 @@ test('arp -a lists the gateway when it answers, and nothing without an interface
   assert.ok(a.some((l) => l.startsWith('  10.0.0.1              ') && l.includes('dynamic')));
   assert.deepEqual(run('arp -a', mk({ adapter: { enabled: false } })).lines, ['No ARP Entries Found.']);
 });
+
+test('review: object property names are not hosts', () => {
+  for (const name of ['constructor', '__proto__', 'toString', 'hasOwnProperty']) {
+    assert.deepEqual(run(`ping ${name}`).lines, [`Ping request could not find host ${name}. Please check the name and try again.`], name);
+  }
+  assert.ok(!text(run('nslookup constructor')).includes('function'));
+  assert.ok(!text(run('nslookup intranet constructor')).includes('function'));
+});
+
+test('review: ipconfig/all with no space and .exe names work', () => {
+  assert.deepEqual(run('ipconfig/all').lines, run('ipconfig /all').lines);
+  assert.deepEqual(run('IPCONFIG.EXE /all').lines, run('ipconfig /all').lines);
+  assert.equal(run('ping.exe 10.0.0.20').lines[1], 'Pinging 10.0.0.20 with 32 bytes of data:');
+});
+
+test('review: switches that take a value do not become the target', () => {
+  assert.equal(run('ping -l 100 10.0.0.20').lines[1], 'Pinging 10.0.0.20 with 32 bytes of data:');
+  assert.equal(run('ping -w 500 -n 2 10.0.0.20').lines.filter((l) => l.startsWith('Reply from')).length, 2);
+  assert.equal(run('tracert -h 5 10.0.0.20').lines[1], 'Tracing route to 10.0.0.20 over a maximum of 30 hops');
+  assert.ok(text(run('ping -t 10.0.0.20')).includes('stops after 4 replies'));
+});

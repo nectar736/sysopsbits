@@ -124,8 +124,17 @@ function adapterStatus(m) {
     return 'Connected';
 }
 
+// Redraw a window body and put keyboard focus back on the same control (by data-action / data-drive).
+function keepFocus(body, paint) {
+    const a = body.contains(document.activeElement) ? document.activeElement : null;
+    const key = a && (a.dataset.action ? `[data-action="${a.dataset.action}"]` : a.dataset.drive ? `[data-drive="${a.dataset.drive}"]` : null);
+    paint();
+    const again = key && body.querySelector(key);
+    if (again) again.focus();
+}
+
 function renderNet(ctx, body) {
-    const draw = () => {
+    const draw = () => keepFocus(body, () => {
         const m = ctx.machine();
         const on = m.adapter.enabled;
         body.replaceChildren(
@@ -136,7 +145,7 @@ function renderNet(ctx, body) {
                 button('Status', 'status', { onclick: (e) => showStatus(ctx, e.currentTarget) }),
                 button('Properties', 'properties', { onclick: (e) => openAdapter(ctx, e.currentTarget, draw) })),
         );
-    };
+    });
     draw();
 }
 
@@ -295,7 +304,7 @@ function renderNotepad(ctx, body, win) {
 
 function renderComputer(ctx, body) {
     let selected = 'C';
-    const draw = () => {
+    const draw = () => keepFocus(body, () => {
         const m = ctx.machine();
         const items = [{ letter: 'C', label: 'Local Disk (C:)', icon: 'drive' }];
         for (const [L, unc] of Object.entries(m.drives)) {
@@ -321,7 +330,7 @@ function renderComputer(ctx, body) {
                 } })),
         );
         body.querySelectorAll('[data-drive]').forEach((b, i) => b.append(items[i].label));
-    };
+    });
     draw();
 }
 

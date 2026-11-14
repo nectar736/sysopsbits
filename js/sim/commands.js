@@ -128,14 +128,22 @@ function lookup(m, w, target) {
     return { ip: r.ip, label: `${shown} [${r.ip}]`, fqdn: shown, literal: false };
 }
 
+// ping switches that are followed by a value (case matters: -S is a source address, -s a timestamp count).
+const PING_VALUE_SWITCHES = new Set(['l', 'w', 'i', 'v', 'r', 's', 'j', 'k', 'S', 'c']);
+const TRACERT_VALUE_SWITCHES = new Set(['/h', '/j', '/w', '/s']);
+
 const isInternet = (w, ip) => !w.hosts.some((h) => h.ip === ip) && !(w.router && w.router.ip === ip);
 
 function ping(args, m, w) {
     let count = 4;
     let target = null;
+    let forever = false;
     for (let i = 0; i < args.length; i++) {
         if (isSwitch(args[i])) {
-            if (sw(args[i]) === '/n') count = Math.min(10, Math.max(1, parseInt(args[++i], 10) || 4));
+            const s = sw(args[i]);
+            if (s === '/n') count = Math.min(10, Math.max(1, parseInt(args[++i], 10) || 4));
+            else if (s === '/t') forever = true;
+            else if (PING_VALUE_SWITCHES.has(args[i].slice(1))) i++;
         } else if (!target) target = args[i];
     }
     if (!target) {
@@ -149,6 +157,7 @@ function ping(args, m, w) {
     const r = route(m, w, t.ip);
     const own = effectiveConfig(m).ip;
     const lines = ['', `Pinging ${t.label} with 32 bytes of data:`];
+    if (forever) lines.unshift('(-t keeps pinging until Ctrl+C on a real PC. The simulator stops after 4 replies.)');
     const times = [];
     let received = 0;
     for (let i = 0; i < count; i++) {
@@ -185,7 +194,10 @@ const hop = (n, ms, ip) => `${String(n).padStart(3)}${hopTime(ms[0])}${hopTime(m
 const hopLost = (n) => `${String(n).padStart(3)}     *        *        *     Request timed out.`;
 
 function tracert(args, m, w) {
-    const target = args.find((a) => !isSwitch(a));
+    let target = null;
+    for (let i = 0; i < args.length; i++) {
+        if (isSwitch(args[i])) { if (TRACERT_VALUE_SWITCHES.has(sw(args[i]))) i++; } else if (!target) target = args[i];
+    }
     if (!target) return { machine: m, lines: ['', 'Usage: tracert [-d] [-h maximum_hops] [-j host-list] [-w timeout]', '', 'Try: tracert <name or IP address>'] };
     const t = lookup(m, w, target);
     if (!t) return { machine: m, lines: [`Unable to resolve target system name ${target}.`] };
@@ -231,7 +243,7 @@ function nslookup(args, m, w) {
     }
     const head = [`Server:  ${q.server.name}`, `Address:  ${q.server.ip}`, ''];
     if (q.fail === 'nxdomain') return { machine: m, lines: [...head, `*** ${q.server.name} can't find ${q.fqdn}: Non-existent domain`] };
-    const authoritative = !!w.dns[q.server.ip].records[q.fqdn];
+    const authoritative = Object.prototype.hasOwnProperty.call(w.dns[q.server.ip].records, q.fqdn);
     return { machine: m, lines: [...head, ...(authoritative ? [] : ['Non-authoritative answer:']), `Name:    ${q.fqdn}`, `Address:  ${q.ip}`, ''] };
 }
 
@@ -339,6 +351,11 @@ const HELP = [
 export function runCommand(input, { machine, world }) {
     const tokens = tokenize(String(input).trim());
     if (!tokens.length) return { machine, lines: [] };
+    // cmd accepts "ipconfig/all" and "ping.exe": split a switch glued to the name, drop ".exe".
+    const glued = /^([a-z]+)(?:\.exe)?([/-].*)?$/i.exec(tokens[0]);
+    if (glued && COMMANDS.includes(glued[1].toLowerCase())) {
+        tokens.splice(0, 1, glued[1], ...(glued[2] ? [glued[2]] : []));
+    }
     const [first, ...args] = tokens;
     const cmd = first.toLowerCase();
     switch (cmd) {

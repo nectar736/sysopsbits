@@ -196,6 +196,42 @@ test.describe('simulator', () => {
     }).toBe(true);
   });
 
+  test('review: an open dialog blocks the taskbar too', async ({ page }) => {
+    await page.goto(SIM);
+    await powerOn(page);
+    await page.locator('[data-action="close-ticket"]').click();
+    await expect(win(page, 'still-broken')).toBeVisible();
+    const start = await page.locator('.os-start').boundingBox();
+    await page.mouse.click(start.x + start.width / 2, start.y + start.height / 2);
+    await expect(page.locator('.os-startmenu')).toBeHidden();
+    expect(await page.evaluate(() => !!document.activeElement.closest('.os-window[data-kind="still-broken"]'))).toBe(true);
+  });
+
+  test('review: a single click on a desktop icon opens it', async ({ page }) => {
+    await page.goto(SIM);
+    await powerOn(page);
+    await page.locator('.os-icon[data-app="notepad"]').click();
+    await expect(page.locator('.os-window[data-app="notepad"]')).toBeVisible();
+  });
+
+  test('review: keyboard focus survives redraws and the last hint', async ({ page }) => {
+    await page.goto(SIM);
+    await powerOn(page);
+    await page.locator('.os-icon[data-app="net"]').click();
+    await page.locator('.os-window[data-app="net"] [data-action="toggle"]').focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('.os-window[data-app="net"] [data-action="toggle"]')).toHaveText('Enable');
+    await expect(page.locator('.os-window[data-app="net"] [data-action="toggle"]')).toBeFocused();
+    const hint = page.locator('[data-action="hint"]');
+    for (let i = 0; i < 3; i++) await hint.click();
+    expect(await page.evaluate(() => document.activeElement !== document.body && !!document.activeElement.closest('.os-panel'))).toBe(true);
+  });
+
+  test('review: the screen is a region, not an application', async ({ page }) => {
+    await page.goto(SIM);
+    await expect(page.locator('.sim-screen')).not.toHaveAttribute('role', 'application');
+  });
+
   test('hints reveal one at a time, up to three', async ({ page }) => {
     await page.goto(SIM);
     await powerOn(page);
@@ -309,4 +345,18 @@ test('the boot screen plays with motion allowed and any key skips it', async ({ 
   await expect(page.locator('.sim-screen')).toHaveAttribute('data-state', 'boot');
   await page.keyboard.press('Space');
   await expect(page.locator('.sim-screen')).toHaveAttribute('data-state', 'desktop');
+});
+
+test('review: power off during boot leaves no stale boot state', async ({ page }) => {
+  await page.goto(SIM);
+  await page.locator('#sim-power').click();
+  await expect(page.locator('.sim-screen')).toHaveAttribute('data-state', 'boot');
+  await page.locator('#sim-power').click();
+  await expect(page.locator('.sim-screen')).toHaveAttribute('data-state', 'off');
+  await page.locator('.os-off-btn').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.sim-screen')).toHaveAttribute('data-state', 'boot');
+  await page.waitForTimeout(800);
+  await expect(page.locator('.sim-screen')).toHaveAttribute('data-state', 'boot');
+  await expect(page.locator('.sim-screen')).toHaveAttribute('data-state', 'desktop', { timeout: 5000 });
 });

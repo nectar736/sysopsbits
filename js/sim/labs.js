@@ -181,7 +181,7 @@ export const LABS = [
         ],
         debrief: {
             cause: 'When the jack was dead, DHCP got no answer, so Windows gave itself an APIPA address (169.254.x.x) that only works with other APIPA devices.',
-            remember: '169.254.x.x always means "DHCP didn\'t answer". Windows retries on its own every few minutes; ipconfig /renew asks right now. If renew fails, look at the cable, the switch port or the DHCP server.',
+            remember: 'A 169.254.x.x address almost always means "DHCP didn\'t answer". Windows retries on its own every few minutes; ipconfig /renew asks right now. If renew fails, look at the cable, the switch port or the DHCP server.',
             command: 'ipconfig /renew',
             link: NETWORKING,
         },
@@ -245,7 +245,7 @@ export const LABS = [
             cause: 'The default gateway was 192.168.1.254, an address with no router on it. Local traffic goes straight to the device; everything else goes to the gateway, so only off-network traffic failed.',
             remember: 'Local works, remote fails: check the default gateway. tracert that stops at hop 1 points at the gateway too.',
             command: 'tracert www.example.com',
-            link: { href: 'tutorials/azure-nsg-best-practices.html', text: 'How traffic rules and routes control what reaches what' },
+            link: { href: 'tutorials/azure-nsg-best-practices.html', text: 'How network traffic rules decide what reaches what' },
         },
         fix: (m, w) => applyIpv4(m, { ipAuto: false, ip: '192.168.1.40', mask: '255.255.255.0', gateway: '192.168.1.1', dnsAuto: false, dns1: '192.168.1.10', dns2: '' }, w),
     },

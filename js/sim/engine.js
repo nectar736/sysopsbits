@@ -46,6 +46,8 @@ export function maskBits(mask) {
 }
 
 const fileKey = (path) => String(path).toLowerCase();
+// Own-property lookup, so names like "constructor" or "__proto__" are never treated as hosts or records.
+const own = (obj, key) => (obj && Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : undefined);
 
 function clone(m) {
     return {
@@ -126,9 +128,9 @@ function fqdnOf(w, name) {
 }
 
 function dnsAnswer(w, server, fqdn) {
-    const zone = w.dns && w.dns[server];
+    const zone = own(w.dns, server);
     if (!zone) return undefined;
-    return zone.records[fqdn] || (w.internet || {})[fqdn] || null;
+    return own(zone.records, fqdn) || own(w.internet, fqdn) || null;
 }
 
 export function resolve(m, w, name) {
@@ -137,9 +139,9 @@ export function resolve(m, w, name) {
     const result = (ip, source) => ({ ok: true, ip, fqdn, source, fail: null });
     if (raw === 'localhost') return result('127.0.0.1', 'hosts');
     const hosts = parseHosts(readFile(m, HOSTS_PATH) || '');
-    if (hosts[raw]) return result(hosts[raw], 'hosts');
-    if (hosts[fqdn]) return result(hosts[fqdn], 'hosts');
-    if (m.cache[fqdn]) return result(m.cache[fqdn], 'cache');
+    if (own(hosts, raw)) return result(hosts[raw], 'hosts');
+    if (own(hosts, fqdn)) return result(hosts[fqdn], 'hosts');
+    if (own(m.cache, fqdn)) return result(m.cache[fqdn], 'cache');
     let reached = false;
     for (const server of effectiveConfig(m).dns) {
         if (!route(m, w, server).ok) continue;
@@ -159,7 +161,7 @@ export function nslookupQuery(m, w, name, serverIp) {
     const fqdn = fqdnOf(w, name);
     const server = serverIp || effectiveConfig(m).dns[0];
     if (!server) return { server: { ip: null, name: null }, ok: false, ip: null, fqdn, fail: 'no-server' };
-    const zone = w.dns && w.dns[server];
+    const zone = own(w.dns, server);
     const info = { ip: server, name: zone ? zone.name : null };
     if (!zone || !route(m, w, server).ok) return { server: { ip: server, name: null }, ok: false, ip: null, fqdn, fail: 'timeout' };
     const answer = dnsAnswer(w, server, fqdn);
@@ -268,7 +270,7 @@ const driveLetter = (letter) => String(letter).trim().replace(/:$/, '').toUpperC
 export function mapDrive(m, w, letter, unc) {
     const L = driveLetter(letter);
     if (!/^[A-Z]$/.test(L)) return { machine: m, error: 'bad-path' };
-    if (L === 'C' || m.drives[L]) return { machine: m, error: 'in-use' };
+    if (L === 'C' || own(m.drives, L)) return { machine: m, error: 'in-use' };
     const found = findShare(m, w, unc);
     if (found.error) return { machine: m, error: found.error };
     const next = clone(m);
@@ -278,7 +280,7 @@ export function mapDrive(m, w, letter, unc) {
 
 export function unmapDrive(m, letter) {
     const L = driveLetter(letter);
-    if (!m.drives[L]) return { machine: m, error: 'not-found' };
+    if (!own(m.drives, L)) return { machine: m, error: 'not-found' };
     const next = clone(m);
     delete next.drives[L];
     return { machine: next, error: null };
@@ -290,7 +292,7 @@ export function listShare(m, w, unc) {
 }
 
 export function readFile(m, path) {
-    const v = m.files[fileKey(path)];
+    const v = own(m.files, fileKey(path));
     return v === undefined ? null : v;
 }
 
@@ -301,7 +303,7 @@ export function writeFile(m, path, text) {
 }
 
 export function parseHosts(text) {
-    const out = {};
+    const out = Object.create(null);
     for (const line of String(text).split(/\r?\n/)) {
         const [ip, ...names] = line.replace(/#.*/, '').trim().split(/\s+/);
         if (!names.length || parseIpv4(ip) === null) continue;
