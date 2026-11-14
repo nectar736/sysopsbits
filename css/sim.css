@@ -192,6 +192,7 @@ html.sim-fullscreen .sim-controls { width: min(100%, calc((100vh - 90px) * 4 / 3
 .os-window[data-app="notepad"] .os-body { padding: 2px; gap: 2px; }
 
 /* Tickets panel */
+.os-panel, .os-taskbar, .os-startmenu { color: var(--os-text); }
 .os-panel { position: absolute; top: 6px; left: 6px; bottom: 36px; width: 248px; display: flex; flex-direction: column; padding: 3px; z-index: 20; }
 .os-panel .os-titlebar { background: linear-gradient(90deg, var(--os-title), #1084d0); color: var(--os-title-text); }
 .os-tickets { list-style: none; margin: 0; padding: 2px; background: #fff; overflow: auto; flex: none; max-height: 42%; }
