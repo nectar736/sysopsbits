@@ -30,6 +30,8 @@ git add -A && git commit -m "msg" && git push
   home.js                # index.html only: decides whether/when to load the 3D scene
   home-scene.js          # ES module: Three.js hero scene + GSAP scroll choreography
   vendor/                # Committed, minified Three.js subset and GSAP+ScrollTrigger (build output, do not hand-edit)
+  sim/                   # Help Desk Simulator (simulation.html only): engine.js (network model), commands.js (Command Prompt),
+                         #   labs.js (the six tickets, as data), apps.js (apps + dialogs), desktop.js (shell, entry module)
 /partials/               # header.html, footer.html (inlined into pages), head/category-nav/newsletter (unused)
 /scripts/
   sync_partials.py       # Inline partials into every page
@@ -38,6 +40,7 @@ git add -A && git commit -m "msg" && git push
   check_site.py          # contrast | adsense | idempotent | all
   vendor/                # Dev-only Node tooling: build.mjs, serve.mjs, Playwright tests (node_modules is git-ignored)
 index.html               # Homepage (3D hero with static SVG fallback)
+simulation.html          # Help Desk Simulator page (retro "BitsOS 98" PC, css/sim.css + js/sim/)
 *.html                   # Listing pages: microsoft.html, project-management.html, etc.
 docs/design-system.md    # Tokens, type, motion, animation list, deploy, performance
 docs/superpowers/        # Design specs (specs/) and implementation plans (plans/)
@@ -64,6 +67,8 @@ docs/superpowers/        # Design specs (specs/) and implementation plans (plans
 
 - Nav toggling lives only in `partials.js` (`initNavToggle()`); don't add a second click handler or the menu toggles twice and never opens.
 - `main.js` sends GA4 events for study-guide and Amazon clicks (placements: article_cta, store, home_guides, card, nav, inline).
+- The simulator (`js/sim/desktop.js`, a module) and `css/sim.css` load only on `simulation.html`. Budget: 60 KB gzipped together (pinned by `sim-budget.test.mjs`).
+- Simulator labs are data in `js/sim/labs.js`. Every lab needs a starts-broken / fix-closes-it / wrong-fix-stays-open unit test and a matching `<h3 id="lab-<id>">` in `simulation.html`. Command output formats come from real Windows captures in `scripts/vendor/tests/unit/fixtures/win-output.md`; keep lab facts to what Microsoft documents. Inside the screen, use only the `--os-*` tokens; no Microsoft names or logos.
 - Three.js and GSAP are requested only by `index.html` (via `home.js`), never for reduced-motion or data-saver visitors. Rebuild them with `cd scripts/vendor && npm install && node build.mjs` (budget: 200 KB gzipped together).
 
 ## Layout Constraints

@@ -173,6 +173,29 @@ test.describe('simulator', () => {
     expect(colours[0]).toBe('rgb(0, 0, 0)');
   });
 
+  test('site heading colours do not leak into the screen in dark theme', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('theme', 'dark'); } catch (e) { /* ignore */ } });
+    await page.goto(SIM);
+    await powerOn(page);
+    for (const sel of ['.os-ticket-detail h3', '.os-ticket-detail strong', '.os-ticket-detail li']) {
+      expect(await page.locator(sel).first().evaluate((el) => getComputedStyle(el).color), sel).toBe('rgb(0, 0, 0)');
+    }
+  });
+
+  test('windows stay inside the screen when it shrinks', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 600 });
+    await page.goto(SIM);
+    await powerOn(page);
+    await page.locator('.os-icon[data-app="cmd"]').dblclick();
+    await page.locator('#sim-fullscreen').click();
+    await expect(page.locator('html')).toHaveClass(/sim-fullscreen/);
+    await expect.poll(async () => {
+      const s = await page.locator('.sim-screen').boundingBox();
+      const w = await page.locator('.os-window[data-app="cmd"]').boundingBox();
+      return w.x + w.width <= s.x + s.width + 1 && w.y + w.height <= s.y + s.height + 1;
+    }).toBe(true);
+  });
+
   test('hints reveal one at a time, up to three', async ({ page }) => {
     await page.goto(SIM);
     await powerOn(page);

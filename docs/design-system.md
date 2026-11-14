@@ -73,6 +73,25 @@ Limits: tilt 6 degrees, reveal rise 16px, hero turn once per 90 seconds.
 | 15 | Page fade and rise | All navigations | Link click (Chrome, Edge, Safari) | Instant navigation |
 | 16 | Menu, dropdown, theme thumb | Header | Click, keys | Instant |
 
+## Help Desk Simulator (simulation.html)
+
+The page chrome and monitor bezel use the site tokens. Inside the screen everything uses a fixed retro palette, declared on `.sim-screen` in `css/sim.css` and checked by `python scripts/check_site.py contrast`:
+
+| Token | Value | Use |
+|---|---|---|
+| `--os-face` / `--os-text` | `#c0c0c0` / `#000000` | Window faces, buttons, body text (11.5:1) |
+| `--os-desktop` / `--os-desktop-text` | `#007070` / `#ffffff` | Desktop and icon labels (5.9:1) |
+| `--os-title` / `--os-title-text` | `#000080` / `#ffffff` | Active title bars (16.0:1) |
+| `--os-highlight` / `--os-highlight-text` | `#000080` / `#ffffff` | Selection |
+| `--os-term-bg` / `--os-term-text` | `#000000` / `#c0c0c0` | Command Prompt (11.5:1) |
+| `--os-shadow`, `--os-light`, `--os-soft`, `--os-dark` | greys | Bevels (box-shadow insets) |
+
+- Fonts: Tahoma/Verdana stack at 13px inside the screen (no new web font), `--font-mono` in the terminal.
+- Motion: the power-on squash and the glowing power prompt run only under `html.motion-ok` and `prefers-reduced-motion: no-preference`. With reduced motion, Power goes straight to the desktop and ping/tracert print instantly; otherwise they print a line every 150ms. Scanlines are static.
+- Layout: 4:3 screen (3:4 at 700px and below, where windows open maximized and the ticket queue becomes a drawer). Windows are clamped inside the screen on open, drag, resize and full screen.
+- Size: CSS + JS 31.8 KB gzipped (budget 60 KB, target 45 KB).
+- No JavaScript: an inline SVG picture of the desktop plus all lab text below it.
+
 ## Vendor bundles
 
 Built by `scripts/vendor/build.mjs` (esbuild) from pinned `three@0.187.0` and `gsap@3.15.1`, committed to `js/vendor/`.

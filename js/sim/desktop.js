@@ -380,6 +380,20 @@ function place(win, centered) {
     win.style.top = `${Math.max(0, Math.min(top, dh - wh))}px`;
 }
 
+// Pull every window back inside the desktop after the screen changes size (resize, full screen).
+function clampAll() {
+    if (!S.desktop || !S.desktop.isConnected) return;
+    const dw = S.desktop.clientWidth;
+    const dh = S.desktop.clientHeight - 30;
+    for (const w of S.windows) {
+        if (w.hidden) continue;
+        const left = Math.max(0, Math.min(w.offsetLeft, dw - w.offsetWidth));
+        const top = Math.max(0, Math.min(w.offsetTop, dh - w.offsetHeight));
+        w.style.left = `${left}px`;
+        w.style.top = `${top}px`;
+    }
+}
+
 function focusWindow(win) {
     if (S.modals.length && !S.modals.includes(win) && win !== S.modals[S.modals.length - 1]) return;
     win.style.zIndex = String(++S.z + (win._meta.modal ? 1000 : 0));
@@ -481,6 +495,7 @@ function setFullscreen(on) {
     document.documentElement.classList.toggle('sim-fullscreen', on);
     fullBtn.setAttribute('aria-pressed', String(on));
     fullBtn.textContent = on ? 'Exit full screen' : 'Full screen';
+    requestAnimationFrame(clampAll);
 }
 
 document.addEventListener('keydown', (e) => {
@@ -514,6 +529,8 @@ if (screen && power) {
     fullBtn.hidden = false;
     fullBtn.addEventListener('click', () => setFullscreen(!document.documentElement.classList.contains('sim-fullscreen')));
     power.addEventListener('click', () => (S.state === 'off' ? powerOn() : powerOff()));
+    if ('ResizeObserver' in window) new ResizeObserver(() => clampAll()).observe(screen);
+    else window.addEventListener('resize', clampAll);
     renderOff();
 }
 
