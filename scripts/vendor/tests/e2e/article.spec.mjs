@@ -100,3 +100,23 @@ test('with JavaScript disabled TOC links and related links work', async ({ brows
   await expect(page.locator('.related-posts li > a')).toHaveCount(3);
   await context.close();
 });
+
+// Every standard post keeps the reading column: main > article.post > .container (see AGENTS.md).
+const PM_POSTS = [
+  'agile-vs-predictive-vs-hybrid-pmp', 'avoid-stakeholder-matrix-traps-pmp', 'burnup-vs-burndown-charts-pmp', 'cpm-vs-pert-pmp',
+  'pmbok8-six-principles', 'pmbok8-vs-7-what-changed', 'pmp-formulas-earned-value-management', 'psm1-exam-guide',
+  'psm1-vs-csm', 'raci-matrix-guide-pmp', 'visual-tools-charts-flashcards-pmp',
+];
+for (const slug of PM_POSTS) {
+  test(`project management post keeps side margins: ${slug}`, async ({ page }) => {
+    for (const width of [390, 1280]) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto(`/project-management/${slug}.html`);
+      await expect(page.locator('main > article.post > .container > header.post-header')).toHaveCount(1);
+      const box = await page.locator('article.post .post-content p').first().boundingBox();
+      expect(box.x, `left gutter at ${width}px`).toBeGreaterThanOrEqual(16);
+      expect(box.x + box.width, `right gutter at ${width}px`).toBeLessThanOrEqual(width - 16);
+      if (width === 1280) expect(box.width).toBeLessThanOrEqual(700);
+    }
+  });
+}
