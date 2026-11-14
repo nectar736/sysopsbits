@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free IT Help Desk Simulator: Fix DNS, IP and Network Problems | SysOpsBits</title>
+    <meta name="description" content="Work six real help desk tickets on a retro PC in your browser: fix DNS, static IP, APIPA, default gateway, hosts file and mapped drive problems with real Windows commands.">
+    <meta name="author" content="Matthew Hippensteel">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <link rel="canonical" href="https://sysopsbits.com/simulation.html">
+    <meta property="og:site_name" content="SysOpsBits">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Help Desk Simulator: fix a broken PC in your browser">
+    <meta property="og:description" content="Work six real help desk tickets on a retro PC in your browser: fix DNS, static IP, APIPA, default gateway, hosts file and mapped drive problems with real Windows commands.">
+    <meta property="og:url" content="https://sysopsbits.com/simulation.html">
+    <meta property="og:image" content="https://sysopsbits.com/images/simulation-og.jpg">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Help Desk Simulator: fix a broken PC in your browser">
+    <meta name="twitter:description" content="Work six real help desk tickets on a retro PC in your browser: fix DNS, static IP, APIPA, default gateway, hosts file and mapped drive problems with real Windows commands.">
+    <meta name="twitter:image" content="https://sysopsbits.com/images/simulation-og.jpg">
+    <meta name="theme-color" content="#0a0a0f">
+    <link rel="icon" href="favicon.ico" sizes="32x32">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/shortcodes.css">
+    <link rel="stylesheet" href="css/sim.css">
+    <script>try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&!matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('light-mode')}catch(e){}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "LearningResource", "name": "Help Desk Simulator", "headline": "Free IT Help Desk Simulator: Fix DNS, IP and Network Problems", "description": "Work six real help desk tickets on a retro PC in your browser: fix DNS, static IP, APIPA, default gateway, hosts file and mapped drive problems with real Windows commands.", "url": "https://sysopsbits.com/simulation.html", "image": ["https://sysopsbits.com/images/simulation-og.jpg"], "datePublished": "2026-11-13", "dateModified": "2026-11-13", "author": {"@type": "Person", "@id": "https://sysopsbits.com/about.html#matthew", "name": "Matthew Hippensteel", "url": "https://sysopsbits.com/about.html", "jobTitle": "Systems Administrator", "sameAs": ["https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395"]}, "publisher": {"@type": "Organization", "name": "SysOpsBits", "url": "https://sysopsbits.com/", "logo": {"@type": "ImageObject", "url": "https://sysopsbits.com/images/icon-512.png", "width": 512, "height": 512}}, "inLanguage": "en-US", "learningResourceType": "Simulation", "educationalLevel": "Beginner", "teaches": ["Static IPv4 configuration", "Mapping network drives", "APIPA and DHCP", "DNS troubleshooting", "Default gateways", "The hosts file"], "isAccessibleForFree": true}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://sysopsbits.com/"}, {"@type": "ListItem", "position": 2, "name": "Simulation", "item": "https://sysopsbits.com/simulation.html"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do I need to install anything?", "acceptedAnswer": {"@type": "Answer", "text": "No. Everything runs in your browser. The commands work against a pretend office network inside the page and never touch your own computer or network."}}, {"@type": "Question", "name": "Are these real Windows commands?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. ipconfig, ping, nslookup, tracert and net use print output in the same format Windows does, so what you practise here works at your desk."}}, {"@type": "Question", "name": "Is my progress saved?", "acceptedAnswer": {"@type": "Answer", "text": "Closed tickets are remembered in this browser. Nothing is sent anywhere, and clearing your browser data resets it."}}]}]}</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B67YJF8565"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B67YJF8565');</script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3952146885815694" crossorigin="anonymous"></script>
+</head>
+<body data-page="simulation">
+    <div id="header-placeholder"><!-- partial:header:start -->
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <div class="site-branding">
+                <a href="index.html" class="site-title">SysOpsBits<span class="brand-cursor" aria-hidden="true">_</span></a>
+            </div>
+
+            <nav class="main-nav" aria-label="Main">
+                <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="index.html" data-page="index">Home</a></li>
+                    <li><a href="microsoft.html" data-page="microsoft">Microsoft</a></li>
+                    <li><a href="project-management.html" data-page="project-management">Project Management</a></li>
+                    <li><a href="simulation.html" data-page="simulation">Simulation</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle" type="button" aria-expanded="false" aria-controls="nav-categories">
+                            Categories
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <ul class="dropdown-menu" id="nav-categories">
+                            <li><a href="microsoft.html" data-page="microsoft">Microsoft</a></li>
+                            <li><a href="guided-labs.html" data-page="guided-labs">Guided Labs</a></li>
+                            <li><a href="comparisons.html" data-page="comparisons">Comparisons</a></li>
+                            <li><a href="project-management.html" data-page="project-management">Project Management</a></li>
+                            <li><a href="index.html#practice-tests">Free Practice Tests</a></li>
+                            <li><a href="simulation.html">Help Desk Simulator</a></li>
+                            <li><a href="categories.html" data-page="categories">All Categories</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="about.html" data-page="about">About</a></li>
+                    <li><a href="store.html" data-page="store" class="nav-store">Study Guides</a></li>
+                    <li class="support-link"><a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn" title="Buy me a coffee">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                        </svg>
+                        <span>Support</span>
+                    </a></li>
+                </ul>
+                <button class="theme-toggle" type="button" aria-label="Light mode" aria-pressed="false">
+                    <span class="theme-toggle-label" id="theme-label-dark" data-active="true">Dark</span>
+                    <span class="theme-toggle-track">
+                        <span class="theme-toggle-thumb"></span>
+                    </span>
+                    <span class="theme-toggle-label" id="theme-label-light" data-active="false">Light</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- partial:header:end --></div>
+
+    <main id="main-content">
+        <div class="container sim-page">
+            <header class="section-header sim-intro">
+                <p class="section-path">~/simulation</p>
+                <h1>Help Desk Simulator</h1>
+                <p>Sit down at an old office PC and work real help desk tickets. Each one is a broken machine: read the user's message, find the fault with real Windows commands and network settings, fix it, and close the ticket. It's free, runs in your browser and installs nothing.</p>
+            </header>
+
+            <div class="sim-monitor">
+                <div class="sim-bezel">
+                    <div class="sim-screen" data-state="off" role="application" aria-label="BitsOS 98 simulated computer">
+                        <svg class="sim-fallback" viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+                            <rect width="400" height="300" fill="#007070"/>
+                            <rect x="0" y="282" width="400" height="18" fill="#c0c0c0"/>
+                            <rect x="3" y="285" width="44" height="12" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
+                            <rect x="10" y="10" width="110" height="250" fill="#c0c0c0"/>
+                            <rect x="12" y="12" width="106" height="12" fill="#000080"/>
+                            <rect x="16" y="32" width="96" height="10" fill="#000080"/>
+                            <rect x="16" y="48" width="96" height="10" fill="#fff"/>
+                            <rect x="16" y="64" width="96" height="10" fill="#fff"/>
+                            <rect x="16" y="80" width="96" height="10" fill="#fff"/>
+                            <rect x="150" y="60" width="220" height="150" fill="#c0c0c0"/>
+                            <rect x="152" y="62" width="216" height="12" fill="#000080"/>
+                            <rect x="156" y="78" width="208" height="128" fill="#000"/>
+                            <text x="160" y="94" fill="#c0c0c0" font-family="monospace" font-size="10">C:\Users\you&gt;ipconfig_</text>
+                        </svg>
+                        <noscript><p class="sim-noscript">The simulator needs JavaScript. The labs are described below.</p></noscript>
+                    </div>
+                </div>
+                <div class="sim-controls">
+                    <button id="sim-power" class="sim-power" type="button" aria-pressed="false"><span class="sim-led" aria-hidden="true"></span>Power</button>
+                    <button id="sim-fullscreen" class="sim-fullscreen-btn" type="button" aria-pressed="false" hidden>Full screen</button>
+                    <span class="sim-badge" aria-hidden="true">BitsOS 98</span>
+                </div>
+            </div>
+
+            <div class="sim-article">
+                <h2>How it works</h2>
+                <ol>
+                    <li><strong>Press Power.</strong> The PC boots to the BitsOS 98 desktop with the help desk ticket queue open on the left.</li>
+                    <li><strong>Pick a ticket and investigate.</strong> Open Command Prompt, Network Connections, Notepad or My Computer from the desktop. The network notes on the desktop list the servers and addresses.</li>
+                    <li><strong>Fix it and close the ticket.</strong> Closing checks the machine. If the user's problem isn't fixed, they reply and the ticket stays open. Up to three hints are there if you get stuck.</li>
+                </ol>
+                <p>The desktop looks like the 90s, but the commands and settings windows are the ones you'll use on a Windows PC at work today.</p>
+
+                <h2>The six labs</h2>
+                <h3 id="lab-101">Set up the new print server</h3>
+                <p>A new print server picked up a random DHCP address, but every printer points at a fixed one. You'll set a static IPv4 address, subnet mask, default gateway and DNS server, and learn what each of the four settings does.</p>
+                <h3 id="lab-102">My S: drive disappeared</h3>
+                <p>A user's mapped drive is missing on their new PC. You'll find the file server, map a network drive with <code>net use</code> or the Map Network Drive window, and learn how UNC paths like <code>\\FS01\Shared</code> work.</p>
+                <h3 id="lab-103">The network says 169.254</h3>
+                <p>A laptop shows a 169.254.x.x address and nothing loads. You'll learn what an APIPA address tells you about DHCP and how to get a proper address back with <code>ipconfig /renew</code>.</p>
+                <h3 id="lab-104">Can't open the intranet</h3>
+                <p>The intranet works by IP address but not by name. You'll use <code>ping</code> and <code>nslookup</code> to prove it's DNS, find the wrong DNS server setting and fix it.</p>
+                <h3 id="lab-105">Internet's down, but the file server works</h3>
+                <p>Local servers answer but websites don't. You'll use <code>tracert</code> and <code>ipconfig</code> to find a wrong default gateway and learn how a PC decides what is local and what goes through the router.</p>
+                <h3 id="lab-106">Intranet works for everyone but me</h3>
+                <p>DNS gives the right answer, yet one PC still goes to the intranet's old address. You'll find a stale hosts file entry and learn why <code>nslookup</code> and <code>ping</code> can disagree.</p>
+
+                <h2>Commands you'll use</h2>
+                <div class="sim-table-wrap">
+                    <table class="sim-table">
+                        <thead><tr><th scope="col">Command</th><th scope="col">What it tells you</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>ipconfig /all</code></td><td>The PC's address, mask, gateway, DNS servers and whether DHCP is on.</td></tr>
+                            <tr><td><code>ping &lt;name or IP&gt;</code></td><td>Whether a device answers. Trying both the name and the IP separates DNS problems from network problems.</td></tr>
+                            <tr><td><code>nslookup &lt;name&gt;</code></td><td>What the DNS server says a name's address is. It skips the hosts file.</td></tr>
+                            <tr><td><code>tracert &lt;name or IP&gt;</code></td><td>Each router on the way to a destination, and where the path stops.</td></tr>
+                            <tr><td><code>ipconfig /renew</code></td><td>Asks the DHCP server for an address right now.</td></tr>
+                            <tr><td><code>ipconfig /flushdns</code></td><td>Clears name lookups Windows has cached.</td></tr>
+                            <tr><td><code>net use</code></td><td>Lists, maps and removes network drives.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2>Keep learning</h2>
+                <ul>
+                    <li><a href="tutorials/az-900-azure-networking-fundamentals.html">Networking fundamentals: VNets, subnets, peering and DNS</a></li>
+                    <li><a href="tutorials/fix-vpn-issues-windows-powershell.html">Fix VPN and connection problems with PowerShell</a></li>
+                    <li><a href="tutorials/cmd-vs-powershell-2026.html">CMD vs PowerShell: which to use for admin tasks</a></li>
+                    <li><a href="index.html#practice-tests">Free AZ-900, AZ-104, AZ-140 and PMP practice tests</a></li>
+                </ul>
+
+                <aside class="product-cta" aria-label="Study guide">
+                    <img src="images/az-900.png" alt="AZ-900 Exam Cracker cover" width="1000" height="667" loading="lazy">
+                    <div class="product-cta-body">
+                        <p class="product-cta-eyebrow">Heading for your first cloud certification?</p>
+                        <h3 class="product-cta-title">AZ-900 Exam Cracker</h3>
+                        <p>61 pages of what the Azure Fundamentals exam actually tests: nine chapters with practice questions, plus a 40-question test with a full answer key.</p>
+                        <a class="btn btn-primary" href="https://buymeacoffee.com/mattyhip/e/538078" target="_blank" rel="noopener" data-product="az-900">Get the AZ-900 Exam Cracker, $8.99</a>
+                        <p class="product-cta-note">Written by the author of this simulator. The simulator stays free.</p>
+                    </div>
+                </aside>
+
+                <h2>FAQ</h2>
+                <div class="faq">
+                    <details>
+                        <summary>Do I need to install anything?</summary>
+                        <p>No. Everything runs in your browser. The commands work against a pretend office network inside the page and never touch your own computer or network.</p>
+                    </details>
+                    <details>
+                        <summary>Are these real Windows commands?</summary>
+                        <p>Yes. ipconfig, ping, nslookup, tracert and net use print output in the same format Windows does, so what you practise here works at your desk.</p>
+                    </details>
+                    <details>
+                        <summary>Is my progress saved?</summary>
+                        <p>Closed tickets are remembered in this browser. Nothing is sent anywhere, and clearing your browser data resets it.</p>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"><!-- partial:footer:start -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SysOpsBits</h3>
+                <p>Azure, Microsoft 365, and PMP exam guides, hands-on labs, and honest tool comparisons for system administrators.</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/matthew-hippensteel-pmp-b4a7a8395" target="_blank" rel="noopener">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="store.html">Study Guides</a></li>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="categories.html">All Categories</a></li>
+                    <li><a href="microsoft.html">Microsoft</a></li>
+                    <li><a href="guided-labs.html">Guided Labs</a></li>
+                    <li><a href="comparisons.html">Comparisons</a></li>
+                    <li><a href="project-management.html">Project Management</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section support-section">
+                <h3>Free Practice Tests</h3>
+                <ul>
+                    <li><a href="tutorials/az-140-practice-test.html">AZ-140 Practice Test</a></li>
+                    <li><a href="tutorials/az-900-practice-test.html">AZ-900 Practice Test</a></li>
+                    <li><a href="tutorials/az-104-practice-test.html">AZ-104 Practice Test</a></li>
+                    <li><a href="project-management/pmp-practice-test.html">PMP Practice Test</a></li>
+                </ul>
+                <a href="https://buymeacoffee.com/mattyhip" target="_blank" rel="noopener" class="bmc-btn bmc-btn-footer">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M2,21H20V19H2M20,18H8V6H20M20,3H8V5H20M16,10V8H18V10M16,14V12H18V14M16,18V16H18V18M7,9V7H15V9M7,13V11H15V13M7,17V15H15V17"/>
+                    </svg>
+                    <span>Buy me a coffee</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 SysOpsBits. All rights reserved. As an Amazon Associate I earn from qualifying purchases.</p>
+            <p class="footer-legal">Microsoft, Azure, and related marks are trademarks of the Microsoft group of companies. PMP and PMBOK are registered marks of the Project Management Institute, Inc. SysOpsBits is independent and not affiliated with or endorsed by either.</p>
+        </div>
+    </div>
+</footer>
+<!-- partial:footer:end --></div>
+
+    <script src="js/main.js" defer></script>
+    <script src="js/partials.js" defer></script>
+    <script src="js/motion.js" defer></script>
+    <script type="module" src="js/sim/desktop.js"></script>
+</body>
+</html>

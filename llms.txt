@@ -10,6 +10,7 @@ All tutorials and practice tests are free to read. Practice questions are origin
 - [Free AZ-900 practice test](https://sysopsbits.com/tutorials/az-900-practice-test.html)
 - [Free AZ-104 practice test](https://sysopsbits.com/tutorials/az-104-practice-test.html)
 - [Free PMP practice test](https://sysopsbits.com/project-management/pmp-practice-test.html)
+- [Help Desk Simulator](https://sysopsbits.com/simulation.html): Free in-browser IT troubleshooting labs: DNS, static IP, APIPA, gateway, hosts file, mapped drives
 - [Exam study guides store](https://sysopsbits.com/store.html): AZ-140, AZ-104, AZ-900, PMP, PMP charts, PSM I
 - [About the author and certifications](https://sysopsbits.com/about.html)
 - [All articles by category](https://sysopsbits.com/categories.html)

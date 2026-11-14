@@ -95,9 +95,35 @@ def site_pages(root):
     return sorted(pages)
 
 
+SIM_PAIRS = (
+    ('--os-text', '--os-face', 4.5),
+    ('--os-desktop-text', '--os-desktop', 4.5),
+    ('--os-title-text', '--os-title', 4.5),
+    ('--os-highlight-text', '--os-highlight', 4.5),
+    ('--os-term-text', '--os-term-bg', 4.5),
+)
+
+
+def check_sim_contrast(root):
+    """WCAG contrast of the simulator's retro palette (.sim-screen block of css/sim.css)."""
+    path = Path(root) / 'css' / 'sim.css'
+    if not path.exists():
+        return ['contrast sim: css/sim.css is missing']
+    tokens = _resolve(_block(path.read_text(encoding='utf-8'), '.sim-screen'))
+    failures = []
+    for fg, bg, minimum in SIM_PAIRS:
+        if fg not in tokens or bg not in tokens:
+            failures.append('contrast sim: missing token %s' % (fg if fg not in tokens else bg))
+            continue
+        ratio = contrast(tokens[fg], tokens[bg])
+        if ratio < minimum:
+            failures.append('contrast sim: %s on %s is %.2f, needs %.1f' % (fg, bg, ratio, minimum))
+    return failures
+
+
 def check_contrast(root):
     tokens = parse_tokens((Path(root) / 'css' / 'main.css').read_text(encoding='utf-8'))
-    failures = []
+    failures = check_sim_contrast(root)
     for theme in ('dark', 'light'):
         t = tokens[theme]
         for fg, bg, minimum in PAIRS:

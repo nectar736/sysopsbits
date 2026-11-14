@@ -58,3 +58,21 @@ class PageSetTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class SimPaletteTest(unittest.TestCase):
+    def test_sim_pairs_report_a_failing_pair(self):
+        from check_site import check_sim_contrast
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / 'css').mkdir()
+            (Path(d) / 'css' / 'sim.css').write_text(
+                '.sim-screen {\n  --os-face: #c0c0c0;\n  --os-text: #b0b0b0;\n  --os-desktop: #007070;\n  --os-desktop-text: #ffffff;\n'
+                '  --os-title: #000080;\n  --os-title-text: #ffffff;\n  --os-highlight: #000080;\n  --os-highlight-text: #ffffff;\n'
+                '  --os-term-bg: #000000;\n  --os-term-text: #c0c0c0;\n}\n', encoding='utf-8')
+            failures = check_sim_contrast(d)
+        self.assertEqual(len(failures), 1)
+        self.assertIn('--os-text on --os-face', failures[0])
+
+    def test_real_sim_css_passes(self):
+        from check_site import check_sim_contrast
+        self.assertEqual(check_sim_contrast(Path(__file__).resolve().parents[2]), [])
